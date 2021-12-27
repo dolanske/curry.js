@@ -8,12 +8,14 @@ Another small project to help me learn and also keep me from playing too much vi
 
 ## Install
 
-If you want to try this out, it's really simple. Just like with jQuery, import the `curry.js` in the `<head>` element and add your own scripts file in the `<footer>` element.
+Want to give it a try? Simply clone this repository!
 
-DISCLAIMER: This is important as the library scans the DOM, which is not generated yet when the library is imported. Therefore you must include your script AFTER the whole DOM tree.
+In the root folder reside `scripts.js` and `index.html` which serve as a basic scaffolding to your project. No other folder structure is recommended, you are free to do whatever you want.
+
+Within the `/curry` directory, you can find the `examples.js` folder which should give you an idea about the syntax. And feel free to fork and improve/update the library source files too.
 
 ---
 
-### Last Words
+### Hopes and thoughts
 
 This is a hobby project but I am a perfectionist so I am aiming to develop this as long as it's fun and fits my capabilities. Issues, pull requests, suggestions and comments are encouraged and would help me out!

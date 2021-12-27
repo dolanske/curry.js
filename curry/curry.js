@@ -1,10 +1,10 @@
 "use strict"
 
-/*=============================================
-=            Helpers            =
-=============================================*/
-
-const validSelectors = [".", "#", "[", ":"]
+/**
+ *
+ * Helpers & Utilities
+ *
+ */
 
 function noop(a, b, c) {
   /* NO OPERATIOn */
@@ -23,6 +23,8 @@ function isArray(value) {
 function isNil(value) {
   return value === undefined || value === null
 }
+
+const validSelectors = [".", "#", "[", ":"]
 
 function selectoDomElement(selector) {
   if (isObject(selector) && selector.selectedBy) return selector
@@ -61,6 +63,8 @@ function selectoDomElement(selector) {
     }
   }
 
+  if (!el) throw Error(`Selected '${selector}' element doesn't exist`)
+
   if (el.length !== undefined) {
     for (const element of el) {
       element.selectedBy = selector
@@ -72,7 +76,11 @@ function selectoDomElement(selector) {
   return el
 }
 
-/*=====  End of Helpers  ======*/
+/**
+ *
+ * C U R R Y .js
+ *
+ */
 
 ;(function (global, factory) {
   typeof exports === "object" && typeof module !== "undefined"
