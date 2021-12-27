@@ -93,6 +93,17 @@ function selectoDomElement(selector) {
 
   let element
 
+  /**
+   *
+   * @param {String} selector Selects an existing element in the DOM
+   * @returns Instance of curry for function chaining
+   *
+   * The selector currently accepts this syntax:
+   * `.test`  Class selector
+   * `#id`    Id selector
+   * `h1`     Native HTML elemenets
+   */
+
   const $ = (selector) => {
     if (!selector) throw Error("Selector must contain a string.")
 
@@ -128,12 +139,30 @@ function selectoDomElement(selector) {
       }
     }
 
+    /**
+     *
+     * @returns HTML Node(s) of the selected element
+     */
+
     $.get = () => {
       if (!element || element.length === 0) return undefined
       if (element.length === 1) return element[0]
 
       return element
     }
+
+    /**
+     * Function takes in styles which are then applied to the selected element.
+     * Offers 2 different syntaxes
+     *
+     * css('backgroundColor', 'red')
+     * css({
+     *  backgroundColor: 'red'
+     * })
+     *
+     * @param {String | Object} property
+     * @param {String | undefined} style
+     */
 
     $.css = (property, style) => {
       if (!property) throw Error("No style entered")
