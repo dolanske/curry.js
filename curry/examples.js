@@ -32,16 +32,28 @@
 //   console.log(`Clicked ${self.tagName} which says ${self.textContent}`)
 // })
 
-$("h1").on("mouseenter", ({ self }) => {
-  $(self).css({
-    color: "red",
-    fontSize: "32px",
-  })
-})
+// $("h1").on("mouseenter", ({ self }) => {
+//   $(self).css({
+//     color: "red",
+//     fontSize: "32px",
+//   })
+// })
 
-$("h1").on("mouseleave", ({ self }) => {
-  $(self).css({
-    color: "white",
-    fontSize: "inherit",
-  })
+// $("h1").on("mouseleave", ({ self }) => {
+//   $(self).css({
+//     color: "white",
+//     fontSize: "inherit",
+//   })
+// })
+
+/**
+ *  .addClass ( add class )
+ *  .delClass ( remove class )
+ *  .togClass ( toggle class )
+ *
+ * Adds a class or an array of classes to the selected element(s).
+ */
+
+$("h1").on("click", ({ self }) => {
+  $(self).togClass("flip")
 })

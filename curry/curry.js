@@ -7,8 +7,7 @@
  */
 
 function noop(a, b, c) {
-  /* NO OPERATIOn */
-  console.log("noop")
+  /* NO OPERATION */
 }
 
 function isObject(value) {
@@ -141,7 +140,7 @@ function selectoDomElement(selector) {
 
     /**
      *
-     * @returns HTML Node(s) of the selected element
+     * @returns HTML node(s) of the selected element
      */
 
     $.get = () => {
@@ -165,11 +164,15 @@ function selectoDomElement(selector) {
      */
 
     $.css = (property, style) => {
-      if (!property) throw Error("No style entered")
+      if (!property) {
+        console.warn("No style entered")
+        return false
+      }
 
       // If property && style are a string, it's a singular style addition
       if (typeof property === "string" && typeof style === "string") {
         element.style[property] = style
+        return true
       }
 
       // If property is an object and style is undefined, we assign inline style
@@ -177,20 +180,101 @@ function selectoDomElement(selector) {
         Object.entries(property).map(([key, value]) => {
           element.style[key] = value
         })
+        return true
       }
     }
 
-    // TODO
+    /**
+     * Adds a class name or an array of class names to the selected element(s)
+     *
+     * addClass('class')
+     * addClass(['class1', 'class2'])
+     *
+     * @param {String | Array} classNames
+     * @returns If action was successful
+     */
+
+    $.addClass = (classNames) => {
+      if (!classNames || classNames.length === 0) {
+        console.warn("No class name(s) entered")
+        return false
+      }
+
+      if (isArray(classNames)) {
+        classNames.map((item) => element.classList.add(item))
+        return true
+      }
+
+      if (typeof classNames === "string") {
+        element.classList.add(classNames)
+        return true
+      }
+    }
+
+    /**
+     * Removes a class name or an array of class names from the selected element(s)
+     *
+     * delClass('class')
+     * delClass(['class1', 'class2'])
+     *
+     * @param {String | Array} classNames
+     * @returns If action was successful
+     */
+
+    $.delClass = (classNames) => {
+      if (!classNames || classNames.length === 0) {
+        console.warn("No class name(s) entered")
+        return false
+      }
+
+      if (isArray(classNames)) {
+        classNames.map((item) => element.classList.remove(item))
+        return true
+      }
+
+      if (typeof classNames === "string") {
+        element.classList.remove(classNames)
+        return true
+      }
+    }
+
+    /**
+     * Toggles between the class(es) of the selected element(s)
+     *
+     * @param {String | Array} classNames
+     * @returns If action was successful
+     */
+
+    $.togClass = (classNames) => {
+      if (!classNames || classNames.length === 0) {
+        console.warn("No class name(s) entered")
+        return false
+      }
+
+      const toggle = (cls) => {
+        if (element.classList.contains(cls)) {
+          element.classList.remove(cls)
+        } else {
+          element.classList.add(cls)
+        }
+      }
+
+      if (isArray(classNames)) {
+        classNames.map((item) => toggle(item))
+      }
+
+      if (typeof classNames === "string") {
+        toggle(classNames)
+      }
+    }
+
     // $.click = (which, callback) => {
     // };
 
     // $.text = (str) => {
     // };
 
-    // $.addClass = (which, className) => {};
-    // $.remClass = (which, className) => {};
-    // $.togClass = (which, className, altClassName = null) => {};
-
+    // $.not()
     return $
   }
 
