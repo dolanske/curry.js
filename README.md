@@ -30,8 +30,6 @@ If the .get() function is attached, selector returns the selected elements. Othe
 
 Curently supports '.class', '#id' and 'h1' native element selectors.
 
-Example:
-
 ```js
 // Returns a html node list of every button
 const buttons = $("button").get()
@@ -39,15 +37,13 @@ const buttons = $("button").get()
 
 ---
 
-#### Event Binding
+#### Event binding
 
 `$(selector).on(event, callback)`
 
-Exposed callback params: `self`, `event` or `e`, `helpers`
-
 Attaches an event listener to the selected node(s) and calls the callback function on every listener trigger.
 
-Example:
+Exposed callback params: `self`, `event` or `e`, `helpers`
 
 ```js
 // On click, write out the text within the button to the console
@@ -58,7 +54,7 @@ $("button").on("click", ({ self }) => {
 
 ---
 
-#### Class list Manipulation
+#### Class list manipulation
 
 `$(selector).addClass(class)` Add class(es)
 
@@ -67,8 +63,6 @@ $("button").on("click", ({ self }) => {
 `$(selector).togClass(class)` Toggle class(es)
 
 Manipulates classList of selected node(s). The input parameter 'class' can be a string or an array of strings.
-
-Example:
 
 ```js
 // Applies 'hovered' & 'hover-did-happen' to every p the user hovers
@@ -106,7 +100,7 @@ $(".dogs").css({
 
 ---
 
-#### Element Looping
+#### Element looping
 
 `$(selector).each(callback)`
 
