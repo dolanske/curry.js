@@ -37,14 +37,28 @@ const buttons = $("button").get()
 
 `$(selector).index(n)`
 
-Selects the element at index `n` in a HTML Node list.
+Selects the element at index `n` in a HTML Node list. Is zero indexed.
 
 If n is not specified, automatically returns the first element. If element is not found, nothing in the chain will get executed.
 
 ```js
+// Selects the third list element found and prints out it's text when clicked
 $("li")
   .index(2)
   .on("click", ({ self }) => console.log(self.textContent))
+```
+
+#### DOM manipulation
+
+`$(selected).del()`
+
+Deletes selected element(s)
+
+```js
+// When an element with the class '.delete-me' is clicked, it gets deleted
+$(".delete-me").on("click", ({ self }) => {
+  $(self).del()
+})
 ```
 
 ---
@@ -53,7 +67,7 @@ $("li")
 
 `$(selector).on(event, callback)`
 
-Attaches an event listener to the selected node(s) and calls the callback function on every listener trigger.
+Attaches an event listener to the selected element(s) and calls the callback function on every listener trigger.
 
 Exposed callback params: `self`, `event` or `e`, `helpers`
 
@@ -74,7 +88,7 @@ $("button").on("click", ({ self }) => {
 
 `$(selector).togClass(class)` Toggle class(es)
 
-Manipulates classList of selected node(s). The input parameter 'class' can be a string or an array of strings.
+Manipulates classList of selected element(s). The input parameter 'class' can be a string or an array of strings.
 
 ```js
 // Applies 'hovering' & 'hovered-previously' to every p the user hovers

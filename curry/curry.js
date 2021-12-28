@@ -135,11 +135,7 @@ const api = {
   const $ = (selector) => {
     if (!selector) throw Error("Selector must contain a string.")
 
-    // TODO: should join selector by space and expand selectability for nested elements
     element = selectoDomElement(selector)
-
-    // REVIEW: if this is god
-    if (!element) return
 
     /**
      *
@@ -151,6 +147,23 @@ const api = {
       if (element.length === 1) return element[0]
 
       return element
+    }
+
+    /**
+     * Delets selected element(s)
+     */
+
+    $.del = () => {
+      if (!element) return
+
+      // Only 1 element selected
+      if (element.length === undefined) {
+        element.remove()
+      }
+
+      for (const el of element) {
+        el.remove()
+      }
     }
 
     /**
