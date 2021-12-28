@@ -6,6 +6,10 @@
  *
  */
 
+function getStyleProperty(el, property) {
+  return window.getComputedStyle(el, null).getPropertyValue(property)
+}
+
 function noop(a, b, c) {
   /* NO OPERATION */
 }
@@ -21,6 +25,15 @@ function isArray(value) {
 
 function isNil(value) {
   return value === undefined || value === null
+}
+
+// Helpers object that gets exposed in callback functions
+
+const helpers = {
+  getStyleProperty,
+  isObject,
+  isArray,
+  isNil,
 }
 
 const validSelectors = [".", "#", "[", ":"]
@@ -124,6 +137,7 @@ function selectoDomElement(selector) {
             event: e,
             e: e,
             self: item,
+            helpers,
           })
         })
       }
@@ -268,13 +282,33 @@ function selectoDomElement(selector) {
       }
     }
 
-    // $.click = (which, callback) => {
-    // };
+    /**
+     * Iterates over provided HTML node list with a callback function
+     *
+     * @param {Function} callback Function which executes on each iteration
+     * @returns Instance of curry for function chaining
+     */
 
-    // $.text = (str) => {
-    // };
+    $.each = (callback) => {
+      if (!callback) return false
 
-    // $.not()
+      // Selector picked just 1 item and it is not a HTMl collection
+      if (element.length === undefined) {
+        callback({ self: element, helpers })
+      } else {
+        let prev = null
+        let index = 0
+
+        for (const el of element) {
+          callback({ self: el, prev, helpers, index })
+          prev = el
+          index += 1
+        }
+      }
+
+      return $
+    }
+
     return $
   }
 

@@ -54,6 +54,16 @@
  * Adds a class or an array of classes to the selected element(s).
  */
 
-$("h1").on("click", ({ self }) => {
-  $(self).togClass("flip")
+// $("h1").on("click", ({ self }) => {
+//   $(self).togClass("flip")
+// })
+
+/**
+ *  .each
+ */
+
+$("button").each(({ self, prev, helpers, index }) => {
+  const font = helpers.getStyleProperty(prev ?? self, "font-size")
+
+  self.style.fontSize = parseFloat(font) * (index + 1) + "px"
 })
