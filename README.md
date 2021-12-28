@@ -82,7 +82,7 @@ $("p").on("mouseleave", ({ self }) => {
 
 `$(selector).css('property', 'value')`
 
-`$(selector).css({...propery:value})`
+`$(selector).css({...property:value})`
 
 Applies inline styles for the selected element(s). Allows two different types of syntax. String and an object.
 
@@ -128,7 +128,7 @@ $("button").each(({ self, prev, index, helpers }) => {
 
 Exposed callback params: `self`, `prev`, `index`, `helpers`, `next`
 
-Iterates over selected element(s) in the same fashion as `.each()` except to continue in the loop, we must call the `next()` function on each iteration. This allows us to work with promises or any async/await actions which should not happen synchonously.
+Iterates over selected element(s) in the same fashion as `.each()` except to continue in the loop, we must call the `next()` function on each iteration. This allows us to work with promises or any async/await actions which should not happen synchonously but in order.
 
 ```js
 // Iterate over each post we find
