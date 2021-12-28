@@ -12,8 +12,6 @@ Want to give it a try? Simply clone this repository!
 
 In the root folder reside `scripts.js` and `index.html` which serve as a basic scaffolding to your project. No other folder structure is recommended, you are free to do whatever you want.
 
-Within the `/curry` directory, you can find the `examples.js` folder which should give you an idea about the syntax. And feel free to fork and improve/update the library source files too.
-
 ---
 
 ### Hopes and thoughts
@@ -43,6 +41,8 @@ const buttons = $("button").get()
 
 `$(selector).on(event, callback)`
 
+Exposed callback params: `self`, `event` or `e`, `helpers`
+
 Attaches an event listener to the selected node(s) and calls the callback function on every listener trigger.
 
 Example:
@@ -58,7 +58,7 @@ $("button").on("click", ({ self }) => {
 
 `$(selector).addClass(class)` Add class(es)
 
-`$(selector).remClass(class)` Remove class(es)
+`$(selector).delClass(class)` Remove class(es)
 
 `$(selector).togClass(class)` Toggle class(es)
 
@@ -74,6 +74,71 @@ $("p").on("mouseenter", ({ self }) => {
 
 // When user stops hovering, remove only the 'hovered' class
 $("p").on("mouseleave", ({ self }) => {
-  $(self).remClass("hovered")
+  $(self).delClass("hovered")
+})
+```
+
+---
+
+`$(selector).css('property', 'value')`
+
+`$(selector).css({...propery:value})`
+
+Applies inline styles for the selected element(s). Allows two different types of syntax. String and an object.
+
+```js
+// Applies a single property:value pair to the element
+$(".car").css("color", "blue")
+
+// Allows for inputting as many styles as needed
+$(".dogs").css({
+  width: "16px",
+  height: "56px",
+  color: "brown",
+})
+```
+
+---
+
+`$(selector).each(callback)`
+
+Exposed callback params: `self`, `prev`, `index`, `helpers`
+
+Used for iterating over each selected element and executing a function on each iteration. Also provides the previous selected element.
+
+```js
+// Loops over each button and doubles each button's font size
+
+$("button").each(({ self, prev, index, helpers }) => {
+  // Get previous element's font-size
+  // If previous element is undefined, use self
+  // WARNING: When using getStylePropery, set properties in kebab-case, not camelCase
+  const font = helpers.getStyleProperty(prev ?? self, "font-size")
+
+  // Computed style properties can return a float in some cases
+  self.style.fontSize = parseFloat(font) * (index + 1) + "px"
+})
+```
+
+---
+
+`$(selector).asyncEach(callback)`
+
+Exposed callback params: `self`, `prev`, `index`, `helpers`, `next`
+
+Iterates over selected element(s) in the same fashion as `.each()` except to continue in the loop, we must call the `next()` function on each iteration. This allows us to work with promises or any async/await actions which should not happen synchonously.
+
+```js
+// Iterate over each post we find
+$(".post").asyncEach(({ self, next }) => {
+  // Some async API call to return the post's thumbnail
+  new Promise((resolve) => /* ASYNC API CALL */)
+    .then((url) => {
+      // Assign the thumbnail to self's background-image
+      $(self).css("backgroundImage", `url(${url})`)
+
+      // Call next() to continue the loop
+      next()
+    })
 })
 ```

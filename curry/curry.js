@@ -99,7 +99,7 @@ const api = {
   get: () => {},
   post: () => {},
   put: () => {},
-  delete: () => {},
+  del: () => {},
 }
 
 /*----------  ----------*/
@@ -167,6 +167,8 @@ const api = {
       } else {
         bindListener(element)
       }
+
+      return $
     }
 
     /**

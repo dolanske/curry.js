@@ -20,6 +20,7 @@ Add support for nested selectors, should work the same way as when selecting css
 
 ## CSS selectors
 
+- [x] Document .css
 - [ ] nth child support
 - [ ] nth of type
 
@@ -51,6 +52,7 @@ Adds text content to the selected element(s)
 - [x] Add class (.addClass)
 - [x] Remove class (.delClass)
 - [x] Toggle class (.togClass)
+- [x] Document
 
 ### .parent
 
@@ -73,12 +75,14 @@ Retrieves the html node at the input index
 ### .each
 
 [x]
+[ ] Document
 
 Equivalent of a loop and callback over each node
 
 ### .asyncEach
 
 [x]
+[ ] Document
 
 Async looping over each html node
 
