@@ -39,6 +39,8 @@ const buttons = $("button").get()
 
 ---
 
+#### Event Binding
+
 `$(selector).on(event, callback)`
 
 Exposed callback params: `self`, `event` or `e`, `helpers`
@@ -55,6 +57,8 @@ $("button").on("click", ({ self }) => {
 ```
 
 ---
+
+#### Class list Manipulation
 
 `$(selector).addClass(class)` Add class(es)
 
@@ -80,6 +84,8 @@ $("p").on("mouseleave", ({ self }) => {
 
 ---
 
+#### Style binding
+
 `$(selector).css('property', 'value')`
 
 `$(selector).css({...propery:value})`
@@ -99,6 +105,8 @@ $(".dogs").css({
 ```
 
 ---
+
+#### Element Looping
 
 `$(selector).each(callback)`
 
