@@ -60,10 +60,23 @@
 
 /**
  *  .each
+ *
+ * Iterates over each selected HTML node. Exposes the current, previous element as well as the index
  */
 
-$("button").each(({ self, prev, helpers, index }) => {
-  const font = helpers.getStyleProperty(prev ?? self, "font-size")
+// $("button").each(({ self, prev, helpers, index }) => {
+//   const font = helpers.getStyleProperty(prev ?? self, "font-size")
+//   self.style.fontSize = parseFloat(font) * (index + 1) + "px"
+// })
 
-  self.style.fontSize = parseFloat(font) * (index + 1) + "px"
+/**
+ *  .asyncEach
+ */
+
+$("button").asyncEach(({ self, next }) => {
+  setTimeout(() => {
+    console.log(self.textContent)
+
+    next()
+  }, 500)
 })

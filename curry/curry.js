@@ -87,6 +87,23 @@ function selectoDomElement(selector) {
   return el
 }
 
+/*----------  ----------*/
+
+/**
+ *
+ * fetch API helpers
+ *
+ */
+
+const api = {
+  get: () => {},
+  post: () => {},
+  put: () => {},
+  delete: () => {},
+}
+
+/*----------  ----------*/
+
 /**
  *
  * C U R R Y .js
@@ -283,24 +300,58 @@ function selectoDomElement(selector) {
     }
 
     /**
-     * Iterates over provided HTML node list with a callback function
+     * Iterates over provided HTML node list with a callback function.
      *
      * @param {Function} callback Function which executes on each iteration
      * @returns Instance of curry for function chaining
      */
 
     $.each = (callback) => {
-      if (!callback) return false
+      if (!callback) throw Error("Callback must be a function")
 
       // Selector picked just 1 item and it is not a HTMl collection
       if (element.length === undefined) {
-        callback({ self: element, helpers })
+        callback({ self: element, helpers, index: 0 })
       } else {
         let prev = null
         let index = 0
 
         for (const el of element) {
           callback({ self: el, prev, helpers, index })
+          prev = el
+          index += 1
+        }
+      }
+
+      return $
+    }
+
+    /**
+     * Works exactly like .each but it exposes a next() function
+     * which won't go to the next loop unless called.
+     *
+     * This allows the user to make API calls for each selected NODE and wait until
+     * each is resolved before continuing to the next loop.
+     *
+     * @param {Function} callback Function which executes on each iteration
+     * @returns Instance of curry for function chaining
+     */
+
+    $.asyncEach = async (callback) => {
+      if (!callback) throw Error("Callback must be a function")
+
+      // Selector picked just 1 item and it is not a HTMl collection
+      if (element.length === undefined) {
+        callback({ self: element, helpers, index: 0 })
+      } else {
+        let prev = null
+        let index = 0
+
+        for (const el of element) {
+          await new Promise((resolve) =>
+            callback({ self: el, prev, helpers, index, next: resolve })
+          )
+
           prev = el
           index += 1
         }
