@@ -48,9 +48,27 @@ $("li")
   .on("click", ({ self }) => console.log(self.textContent))
 ```
 
+---
+
+`$(selector).first()`
+
+`$(selector).last()`
+
+Selects first or last element of the HTML Node list. Optionally provides a callback to execute a function with the selected element. Otherwise returns instance of curry for chaining.
+
+```js
+// Selects the first element and applies style
+$("button").first().css("color", "blue")
+
+// Selects the last element and prints it's text content & element's index
+$("button").last(({ self, index }) => console.log(self.textContent, index))
+```
+
+---
+
 #### DOM manipulation
 
-`$(selected).del()`
+`$(selector).del()`
 
 Deletes selected element(s)
 
@@ -59,6 +77,49 @@ Deletes selected element(s)
 $(".delete-me").on("click", ({ self }) => {
   $(self).del()
 })
+```
+
+---
+
+`$(selector).append()` - Renders element(s) after the selector(s)
+
+`$(selector).prepend()` - Renders element(s) before the selector(s)
+
+Creates HTML node(s) before/after the selected element(s). Functions accept's a callback or a string template, depending on how the user needs to generate the content.
+
+Both functions have exactly the same syntax, only where elements are created is different.
+
+```js
+/**
+ * If you are familiar with modern web frameworks, you must have heard the term render functions. If you are very familiar with vue.js, curry's render functions have exactly the same syntax.
+ *
+ * Render function acceppts 3 parameters
+ * - `tag`
+ * - `attrs` (eg: class, id, checked and so on)
+ * - `children` (this can be either a string, or an array of more render functions)
+ *
+ * Attrs can be ommited, inputting render('tag', 'text' | [...children]) will work too
+ *
+ * You can also input a template string instead as the only parameter
+ */
+
+// Select every '.list-wrap' element
+$(".list-wrap").append(({ helpers }) => {
+  // from creates an array of n items at i index
+  // render function is the equivalent of h in vue
+  const { from, render } = helpers
+
+  // Generate an array of 5 items starting at index 1
+  const items = from(5, 1).map((item) => {
+    return render("li", `List item ${item}`)
+  })
+
+  // Create an unordered list and append the items as children
+  return render("ul", { class: ".list" }, items)
+})
+
+// Selects every input in the DOM and prepends a label to it
+$("input").prepend("<label>Input label here</label>")
 ```
 
 ---

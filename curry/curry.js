@@ -31,15 +31,15 @@ function from(n, start = 0) {
   return Array.from({ length: n }, (_, i) => i + start)
 }
 
-function render(tag, props, children) {
+function render(tag, attrs, children) {
   // We can omit prps when calling the function
   if (
-    typeof props === "string" ||
-    typeof props === "number" ||
-    Array.isArray(props)
+    typeof attrs === "string" ||
+    typeof attrs === "number" ||
+    Array.isArray(attrs)
   ) {
-    children = props
-    props = {}
+    children = attrs
+    attrs = {}
   }
 
   // Convert any non-array children to string for the HTML node creation
@@ -53,7 +53,7 @@ function render(tag, props, children) {
 
   return {
     tag,
-    props,
+    attrs,
     children,
   }
 }
@@ -68,9 +68,9 @@ function createElement(vnode, container, where = "child") {
   const el = (vnode.el = document.createElement(vnode.tag))
 
   // Props
-  if (vnode.props) {
-    for (const key in vnode.props) {
-      let value = vnode.props[key]
+  if (vnode.attrs) {
+    for (const key in vnode.attrs) {
+      let value = vnode.attrs[key]
       el.setAttribute(key, value)
     }
   }
