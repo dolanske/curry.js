@@ -4,6 +4,7 @@
 
 Add support for nested selectors, should work the same way as when selecting css classes.
 
+- [ ] `.styles h1`
 - [ ] `ul > li`
 - [ ] `p + span`
 
@@ -19,9 +20,8 @@ Add support for nested selectors, should work the same way as when selecting css
 
 ## CSS selectors
 
-- [ ] Add support for querying using syntax as CSS
-  - [ ] nth child support
-  - [ ] nth of type
+- [ ] nth child support
+- [ ] nth of type
 
 ---
 
@@ -48,10 +48,9 @@ Adds text content to the selected element(s)
 
 ### Class manipulation
 
-- [ ] Add class (.addClass)
-- [ ] Remove class (.delClass)
-- [ ] Toggle class (.togClass)
-  - [ ] Add support for default class (gets added on page load, toggles between default and new class)
+- [x] Add class (.addClass)
+- [x] Remove class (.delClass)
+- [x] Toggle class (.togClass)
 
 ### .parent
 
@@ -59,6 +58,35 @@ Adds text content to the selected element(s)
 
 Selects the first parent in the DOM tree
 
-###
+### .animate
+
+[ ]
+
+Animates transition from the default to the input css style
+
+### .index
+
+[ ]
+
+Retrieves the html node at the input index
+
+### .each
+
+[ ]
+
+Equivalent of a loop and callback over each node
 
 ---
+
+Other jQuery methods to look at
+
+- hide()
+- show()
+- toggle()
+
+- .not
+- .has (Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.)
+- .filter
+- .first
+- .last
+- .is (Check the current matched set of elements against a selector, element, or jQuery object and return true if at least one of these elements matches the given arguments.)

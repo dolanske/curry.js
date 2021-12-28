@@ -31,8 +31,7 @@ function selectoDomElement(selector) {
   let el, prefix
   let element = selector
 
-  if (/* Check if selector is an ACTUAL htmlNODE */ false) {
-  } else if (validSelectors.includes(selector.charAt(0))) {
+  if (validSelectors.includes(selector.charAt(0))) {
     element = selector.substring(1)
     prefix = selector.charAt(0)
   }
@@ -106,6 +105,7 @@ function selectoDomElement(selector) {
   const $ = (selector) => {
     if (!selector) throw Error("Selector must contain a string.")
 
+    // TODO: should join selector by space and expand selectability for nested elements
     element = selectoDomElement(selector)
 
     /**
