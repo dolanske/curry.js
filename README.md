@@ -91,7 +91,8 @@ Both functions have exactly the same syntax, only where elements are created is 
 
 ```js
 /**
- * If you are familiar with modern web frameworks, you must have heard the term render functions. If you are very familiar with vue.js, curry's render functions have exactly the same syntax.
+ * If you are familiar with modern web frameworks, you must have heard the term render functions.
+ * If you are very familiar with vue.js, curry's render functions have exactly the same syntax.
  *
  * Render function acceppts 3 parameters
  * - `tag`
