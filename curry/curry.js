@@ -138,6 +138,21 @@ const api = {
     // TODO: should join selector by space and expand selectability for nested elements
     element = selectoDomElement(selector)
 
+    // REVIEW: if this is god
+    if (!element) return
+
+    /**
+     *
+     * @returns HTML node(s) of the selected element
+     */
+
+    $.get = () => {
+      if (!element || element.length === 0) return undefined
+      if (element.length === 1) return element[0]
+
+      return element
+    }
+
     /**
      * This chained function attaches an event listener to the selected element.
      * Then executes provided callback when event is triggered.
@@ -148,6 +163,8 @@ const api = {
      */
 
     $.on = (event, callback) => {
+      if (!element) return $
+
       const bindListener = (item) => {
         item.addEventListener(event, (e) => {
           callback({
@@ -172,18 +189,6 @@ const api = {
     }
 
     /**
-     *
-     * @returns HTML node(s) of the selected element
-     */
-
-    $.get = () => {
-      if (!element || element.length === 0) return undefined
-      if (element.length === 1) return element[0]
-
-      return element
-    }
-
-    /**
      * Function takes in styles which are then applied to the selected element.
      * Offers 2 different syntaxes
      *
@@ -197,6 +202,8 @@ const api = {
      */
 
     $.css = (property, style) => {
+      if (!element) return $
+
       if (!property) {
         console.warn("No style entered")
         return false
@@ -228,6 +235,8 @@ const api = {
      */
 
     $.addClass = (classNames) => {
+      if (!element) return $
+
       if (!classNames || classNames.length === 0) {
         console.warn("No class name(s) entered")
         return false
@@ -255,6 +264,8 @@ const api = {
      */
 
     $.delClass = (classNames) => {
+      if (!element) return $
+
       if (!classNames || classNames.length === 0) {
         console.warn("No class name(s) entered")
         return false
@@ -279,6 +290,8 @@ const api = {
      */
 
     $.togClass = (classNames) => {
+      if (!element) return $
+
       if (!classNames || classNames.length === 0) {
         console.warn("No class name(s) entered")
         return false
@@ -309,6 +322,8 @@ const api = {
      */
 
     $.each = (callback) => {
+      if (!element) return $
+
       if (!callback) throw Error("Callback must be a function")
 
       // Selector picked just 1 item and it is not a HTMl collection
@@ -343,6 +358,8 @@ const api = {
     // upon fully resolving
 
     $.asyncEach = async (callback) => {
+      if (!element) return $
+
       if (!callback) throw Error("Callback must be a function")
 
       // Selector picked just 1 item and it is not a HTMl collection
@@ -359,6 +376,42 @@ const api = {
 
           prev = el
           index += 1
+        }
+      }
+
+      return $
+    }
+
+    /**
+     * Selects an element at the index `n`, if element is not found, nothing happens
+     *
+     * @param {Number} index
+     * @returns
+     */
+
+    $.index = (index) => {
+      if (!element) return
+
+      // If element doesn't have length, we assume there is just
+      // one element and the index function gets ignored
+      if (element.length !== undefined) {
+        // If index exceeds the element list length,
+        // automatically clear selection and break the chain
+        if (index + 1 > element.length) {
+          element = undefined
+          return $
+        }
+
+        if (isNil(index) || index === 0) {
+          // If index is not set or is 0, return first element
+          element = element[0]
+        } else {
+          for (let i = 0; i <= element.length; i++) {
+            if (index === i) {
+              element = element[i]
+              break
+            }
+          }
         }
       }
 

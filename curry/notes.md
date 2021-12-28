@@ -66,26 +66,6 @@ Selects the first parent in the DOM tree
 
 Animates transition from the default to the input css style
 
-### .index
-
-[ ]
-
-Retrieves the html node at the input index
-
-### .each
-
-[x]
-[ ] Document
-
-Equivalent of a loop and callback over each node
-
-### .asyncEach
-
-[x]
-[ ] Document
-
-Async looping over each html node
-
 ---
 
 Other jQuery methods to look at

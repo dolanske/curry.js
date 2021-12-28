@@ -2,8 +2,6 @@
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
----
-
 Cooking up another small project to help me learn and also keep me from playing too much Rocket League and Factorio. This library aims to create a simple, barebones & from scratch implementation of jQuery without checking its source code. What a challenge right?!
 
 ## Install
@@ -12,15 +10,15 @@ Want to give it a try? Simply clone this repository!
 
 In the root folder reside `scripts.js` and `index.html` which serve as a basic scaffolding to your project. No other folder structure is recommended, you are free to do whatever you want.
 
----
-
-### Hopes and thoughts
+### Author's personal message to you
 
 This is a hobby project but I am a perfectionist so I am aiming to develop this as long as it's fun and fits my capabilities. Issues, pull requests, suggestions and comments are encouraged and would help me out!
 
 ---
 
 ### API Documentation
+
+#### Selecting elements
 
 `$(selector)`
 
@@ -33,6 +31,20 @@ Curently supports '.class', '#id' and 'h1' native element selectors.
 ```js
 // Returns a html node list of every button
 const buttons = $("button").get()
+```
+
+---
+
+`$(selector).index(n)`
+
+Selects the element at index `n` in a HTML Node list.
+
+If n is not specified, automatically returns the first element. If element is not found, nothing in the chain will get executed.
+
+```js
+$("li")
+  .index(2)
+  .on("click", ({ self }) => console.log(self.textContent))
 ```
 
 ---
@@ -65,14 +77,14 @@ $("button").on("click", ({ self }) => {
 Manipulates classList of selected node(s). The input parameter 'class' can be a string or an array of strings.
 
 ```js
-// Applies 'hovered' & 'hover-did-happen' to every p the user hovers
+// Applies 'hovering' & 'hovered-previously' to every p the user hovers
 $("p").on("mouseenter", ({ self }) => {
-  $(self).addClass(["hovered", "hover-did-happen"])
+  $(self).addClass(["hovering", "hovered-previously"])
 })
 
-// When user stops hovering, remove only the 'hovered' class
+// When user stops hovering, remove only the 'hovering' class
 $("p").on("mouseleave", ({ self }) => {
-  $(self).delClass("hovered")
+  $(self).delClass("hovering")
 })
 ```
 
