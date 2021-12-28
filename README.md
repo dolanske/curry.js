@@ -4,7 +4,7 @@ We've all heard it, "If you add jQuery to your resume, don't expect an interview
 
 ---
 
-Another small project to help me learn and also keep me from playing too much videogames. This jQuery inspired library aims to create a simple, barebones and from scratch implementation of jQuery without checking its source code. What a challenge right?!
+Cooking up another small project to help me learn and also keep me from playing too much Rocket League and Factorio. This library aims to create a simple, barebones & from scratch implementation of jQuery without checking its source code. What a challenge right?!
 
 ## Install
 
