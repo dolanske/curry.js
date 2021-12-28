@@ -30,20 +30,23 @@ Add support for nested selectors, should work the same way as when selecting css
 
 ### .hover
 
-[ ]
+[ ] Iimplement
+[ ] Document
 
 Shorthand for adding onmouseenter & onmouseleave event listener
 Might need to implement add global map, in which to store the pre-hover styling
 
 ### .click
 
-[ ]
+[ ] Iimplement
+[ ] Document
 
 Shorthand for adding .on('click') event listener.
 
 ### .text
 
-[ ]
+[ ] Iimplement
+[ ] Document
 
 Adds text content to the selected element(s)
 
@@ -56,23 +59,76 @@ Adds text content to the selected element(s)
 
 ### .parent
 
-[ ]
+[ ] Iimplement
+[ ] Document
 
 Selects the first parent in the DOM tree
 
+### .first
+
+[ ] Iimplement
+[ ] Document
+
+### .last
+
+[ ] Iimplement
+[ ] Document
+
 ### .animate
 
-[ ]
+[ ] Iimplement
+[ ] Document
 
 Animates transition from the default to the input css style
 
+### .slideDown
+
+[ ] Iimplement
+[ ] Document
+
+if element is not displayed, it should roll it down
+
+### .slideUp
+
+[ ] Iimplement
+[ ] Document
+
+### .slideToggle
+
+[ ] Iimplement
+[ ] Document
+
+### .append
+
+- [x] Implement
+- [ ] Documentation
+
+### .prepend
+
+- [x] Implement
+- [ ] Documentation
+
+### .addChild
+
+- [ ] Implement
+- [ ] Documentation
+
+### hide
+
+[ ] Iimplement
+[ ] Document
+
+### show
+
+[ ] Iimplement
+[ ] Document
+
+### toggle
+
+[ ] Iimplement
+[ ] Document
+
 ---
-
-Other jQuery methods to look at
-
-- hide()
-- show()
-- toggle()
 
 - .not
 - .has (Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.)

@@ -27,6 +27,90 @@ function isNil(value) {
   return value === undefined || value === null
 }
 
+function from(n, start = 0) {
+  return Array.from({ length: n }, (_, i) => i + start)
+}
+
+function render(tag, props, children) {
+  // We can omit prps when calling the function
+  if (
+    typeof props === "string" ||
+    typeof props === "number" ||
+    Array.isArray(props)
+  ) {
+    children = props
+    props = {}
+  }
+
+  // Convert any non-array children to string for the HTML node creation
+  if (!isNil(children)) {
+    if (!Array.isArray(children)) {
+      children = `${children}`
+    } else if (typeof children[0] === "string") {
+      children = children[0]
+    }
+  }
+
+  return {
+    tag,
+    props,
+    children,
+  }
+}
+
+function createElement(vnode, container, where = "child") {
+  if (isArray(vnode)) {
+    vnode.map((node) => createElement(node, container, where))
+    return
+  }
+
+  // We assign it to vnode.el to also compare when we use the patch function
+  const el = (vnode.el = document.createElement(vnode.tag))
+
+  // Props
+  if (vnode.props) {
+    for (const key in vnode.props) {
+      let value = vnode.props[key]
+      el.setAttribute(key, value)
+    }
+  }
+
+  // Children
+  if (vnode.children) {
+    if (typeof vnode.children === "string") {
+      // If child is just a text, add it to the element
+      el.textContent = vnode.children
+    } else {
+      // If its an array, call itself and repeat the process
+      vnode.children.forEach((child) => {
+        if (typeof child === "string") {
+          el.textContent += " " + child
+        } else {
+          createElement(child, el)
+        }
+      })
+    }
+  }
+
+  switch (where) {
+    case "prepend": {
+      container.parentNode.insertBefore(el, container)
+      break
+    }
+    case "append": {
+      container.parentNode.insertBefore(el, container.nextSibling)
+      break
+    }
+    case "child":
+    default: {
+      container.appendChild(el)
+      break
+    }
+  }
+
+  return el
+}
+
 // Helpers object that gets exposed in callback functions
 
 const helpers = {
@@ -34,6 +118,8 @@ const helpers = {
   isObject,
   isArray,
   isNil,
+  from,
+  render,
 }
 
 const validSelectors = [".", "#", "[", ":"]
@@ -205,11 +291,6 @@ const api = {
      * Function takes in styles which are then applied to the selected element.
      * Offers 2 different syntaxes
      *
-     * css('backgroundColor', 'red')
-     * css({
-     *  backgroundColor: 'red'
-     * })
-     *
      * @param {String | Object} property
      * @param {String | undefined} style
      */
@@ -239,9 +320,6 @@ const api = {
 
     /**
      * Adds a class name or an array of class names to the selected element(s)
-     *
-     * addClass('class')
-     * addClass(['class1', 'class2'])
      *
      * @param {String | Array} classNames
      * @returns If action was successful
@@ -399,7 +477,7 @@ const api = {
      * Selects an element at the index `n`, if element is not found, nothing happens
      *
      * @param {Number} index
-     * @returns
+     * @returns Instance of curry for function chaining
      */
 
     $.index = (index) => {
@@ -424,6 +502,114 @@ const api = {
               element = element[i]
               break
             }
+          }
+        }
+      }
+
+      return $
+    }
+
+    /**
+     * Selects the first element in the
+     *
+     * @param {Function} (Optional) callback
+     * @returns Instance of curry for function chaining
+     */
+
+    $.first = (callback) => {
+      if (!element) return
+
+      if (element.length !== undefined) {
+        element = element[0]
+      }
+
+      if (callback) callback({ self: element, helpers })
+
+      return $
+    }
+
+    $.last = (callback) => {
+      if (!element) return
+
+      let index = 0
+
+      if (element.length !== undefined) {
+        index = element.length - 1
+        element = element[index]
+      }
+
+      if (callback) callback({ self: element, helpers, index })
+
+      return $
+    }
+
+    /**
+     * Appends html to the selected element(s)
+     *
+     * @param {String | Function} callback
+     * @returns Instance of curry for function chaining
+     */
+    $.append = (callback) => {
+      if (!element) return
+
+      // If callback is a string, we just render a new html template
+      if (typeof callback === "string") {
+        if (element.length !== undefined) {
+          for (const el of element) {
+            el.insertAdjacentHTML("afterend", callback)
+          }
+        } else {
+          element.insertAdjacentHTML("afterend", callback)
+        }
+
+        return $
+      }
+
+      const vdom = callback({ self: element, render, helpers })
+
+      if (!isNil(vdom)) {
+        if (element.length === undefined) {
+          createElement(vdom, element, "append")
+        } else {
+          for (const el of element) {
+            createElement(vdom, el, "append")
+          }
+        }
+      }
+
+      return $
+    }
+
+    /**
+     * Prepends html to the selected element(s)
+     *
+     * @param {String | Function} callback
+     * @returns Instance of curry for function chaining
+     */
+    $.prepend = (callback) => {
+      if (!element) return
+
+      // If callback is a string, we just render a new html template
+      if (typeof callback === "string") {
+        if (element.length !== undefined) {
+          for (const el of element) {
+            el.insertAdjacentHTML("beforebegin", callback)
+          }
+        } else {
+          element.insertAdjacentHTML("beforebegin", callback)
+        }
+
+        return $
+      }
+
+      const vdom = callback({ self: element, render, helpers })
+
+      if (!isNil(vdom)) {
+        if (element.length === undefined) {
+          createElement(vdom, element, "prepend")
+        } else {
+          for (const el of element) {
+            createElement(vdom, el, "prepend")
           }
         }
       }
