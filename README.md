@@ -87,23 +87,20 @@ $(".delete-me").on("click", ({ self }) => {
 
 Creates HTML node(s) before/after the selected element(s). Functions accept's a callback or a string template, depending on how the user needs to generate the content.
 
-Both functions have exactly the same syntax, only where elements are created is different.
+If you are familiar with modern web frameworks, you must have heard the term render functions.
+If you know vue.js, curry's render functions have exactly the same syntax.
+
+Render function acceppts 3 parameters
+
+- `tag` html tag
+- `attrs` class, id, name etc.
+- `children` string or array of render functions
+
+Attrs can be ommited, inputting `render('tag', 'text' | [...children])` will work too
+
+You can also input a template string instead as the only parameter
 
 ```js
-/**
- * If you are familiar with modern web frameworks, you must have heard the term render functions.
- * If you are very familiar with vue.js, curry's render functions have exactly the same syntax.
- *
- * Render function acceppts 3 parameters
- * - `tag`
- * - `attrs` (eg: class, id, checked and so on)
- * - `children` (this can be either a string, or an array of more render functions)
- *
- * Attrs can be ommited, inputting render('tag', 'text' | [...children]) will work too
- *
- * You can also input a template string instead as the only parameter
- */
-
 // Select every '.list-wrap' element
 $(".list-wrap").append(({ helpers }) => {
   // from creates an array of n items at i index
