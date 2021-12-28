@@ -337,6 +337,9 @@ const api = {
      * @returns Instance of curry for function chaining
      */
 
+    // TODO: Should be wrapped in Promise.all and return curry instance
+    // upon fully resolving
+
     $.asyncEach = async (callback) => {
       if (!callback) throw Error("Callback must be a function")
 

@@ -72,9 +72,15 @@ Retrieves the html node at the input index
 
 ### .each
 
-[ ]
+[x]
 
 Equivalent of a loop and callback over each node
+
+### .asyncEach
+
+[x]
+
+Async looping over each html node
 
 ---
 
