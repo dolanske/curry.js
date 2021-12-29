@@ -93,26 +93,9 @@ if element is not displayed, it should roll it down
 - [ ] Implement
 - [ ] Documentation
 
-### hide
-
-[ ] Implement
-[ ] Document
-
-### show
-
-[ ] Implement
-[ ] Document
-
-### toggle
-
-[ ] Implement
-[ ] Document
-
 ---
 
 - .not
 - .has (Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.)
 - .filter
-- .first
-- .last
 - .is (Check the current matched set of elements against a selector, element, or jQuery object and return true if at least one of these elements matches the given arguments.)

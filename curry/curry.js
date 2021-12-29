@@ -774,6 +774,49 @@ const api = {
       }
     }
 
+    /**
+     * Shorthand for $(selecor).on('mouseenter') and $(selector).on('mouselave')
+     *
+     * Takes in an object with enter and leave functions, if leave function is not present,
+     * it resets the element to the previous state
+     */
+
+    // let previousState
+
+    $.hover = (callback) => {
+      if (!element) return $
+
+      const { enter, leave } = callback
+
+      if (!enter || !leave)
+        throw Error("Function $.hover({enter, leave}) is missing a parameter.")
+
+      if (isNodeList(element)) {
+        for (const el of element) {
+          $(el).on("mouseenter", (args) => enter({ ...args }))
+          $(el).on("mouseleave", (args) => leave({ ...args }))
+        }
+      } else {
+        $(element).on("mouseenter", (args) => enter({ ...args }))
+        $(element).on("mouseleave", (args) => leave({ ...args }))
+        // $(element).on("mouseenter", (args) => {
+        //   previousState = element.cloneNode(true)
+        //   enter({ ...args })
+        // })
+
+        // $(element).on("mouseleave", (args) => {
+        //   if (leave) {
+        //     leave({ ...args })
+        //   } else {
+        //     element.replaceNode(previousState)
+
+        //     console.log("h")
+        //     $(element).hover(callback)
+        //   }
+        // })
+      }
+    }
+
     return $
   }
 
