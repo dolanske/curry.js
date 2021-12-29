@@ -43,13 +43,6 @@ Might need to implement add global map, in which to store the pre-hover styling
 
 Shorthand for adding .on('click') event listener.
 
-### .text
-
-[ ] Implement
-[ ] Document
-
-Adds text content to the selected element(s)
-
 ### .parent
 
 Selects parent element

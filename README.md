@@ -206,6 +206,29 @@ $(".dogs").css({
 
 ---
 
+`$(selector).show(displayType)`
+
+`$(selector).hide()`
+
+`$(selector).toggle(displayType)`
+
+Utility functions which show, hide or toggle between the two states for the selected element(s).
+Setting the optional parameter to a valid property value for `display` will use that, instead of `block`.
+
+For allowed values, check the 'property values' list at [W3](https://www.w3schools.com/cssref/pr_class_display.asp) documentation.
+
+It's very useful when toggling between inline / flex styles, where we'd have to wrap the elements in an additional <div> to no break any custom styling.
+
+```js
+$(".show-paragraph").on("click", ({ self }) => {
+  // Default style of .p is { display: none }
+  // This function will toggle between display: none & display: inline-block
+  $("p").toggle("inline-block")
+})
+```
+
+---
+
 #### Element looping
 
 `$(selector).each(callback)`

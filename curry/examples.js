@@ -1,1 +1,3 @@
-$("p").text(" I am good", "cum")
+$("button").on("click", ({ self }) => {
+  $("p").toggle("block")
+})

@@ -128,6 +128,31 @@ const helpers = {
 
 const validSelectors = [".", "#", "[", ":"]
 
+const validDisplayValues = [
+  "inline",
+  "block",
+  "contents",
+  "flex",
+  "grid",
+  "inline-block",
+  "inline-flex",
+  "inline-grid",
+  "inline-table",
+  "list-item",
+  "run-in",
+  "table",
+  "table-caption",
+  "table-column-group",
+  "table-header-group",
+  "table-footer-group",
+  "table-row-group",
+  "table-cell",
+  "table-column",
+  "table-row",
+  "initial",
+  "inherit",
+]
+
 function selectoDomElement(selector) {
   if (isObject(selector) && selector.selectedBy) return selector
 
@@ -621,13 +646,21 @@ const api = {
       return $
     }
 
+    /**
+     * Replaces or adds text content to the selected element(s)
+     *
+     * @param {String} text
+     * @param {String} ['replace', 'prepend', 'append'] location
+     * @returns Instance of curry for function chaining
+     */
+
     $.text = (text, location = "replace") => {
       if (!element) return $
 
       // Invalid location argument
       if (!["replace", "prepend", "append"].includes(location)) {
         console.warn(
-          `Function $.(text, location) doesn't accept parameter "${location}" as a valid argument.`,
+          `Function $.text(text, location) doesn't accept parameter "${location}" as a valid argument.`,
           "Please use 'replace', 'prepend' or 'append'"
         )
 
@@ -661,6 +694,84 @@ const api = {
       }
 
       return $
+    }
+
+    /**
+     * Adds, removes toggles inline 'display' property of the selected element(s)
+     */
+
+    $.show = (display = "block") => {
+      if (!element) return $
+
+      if (!validDisplayValues.includes(display)) {
+        console.warn(
+          `Function $.show(displayValue) doesn't accept parameter "${display}" as a valid argument.`,
+          "Please use the correct css property value."
+        )
+
+        return $
+      }
+
+      if (isNodeList(element)) {
+        for (const el of element) {
+          el.style.display = display
+        }
+      } else {
+        element.style.display = display
+      }
+
+      return $
+    }
+
+    $.hide = () => {
+      if (!element) return $
+
+      if (isNodeList(element)) {
+        for (const el of element) {
+          el.style.display = "none"
+        }
+      } else {
+        element.style.display = "none"
+      }
+
+      return $
+    }
+
+    $.toggle = (onActive = "block") => {
+      if (!element) return $
+
+      if (!validDisplayValues.includes(onActive)) {
+        console.warn(
+          `Function $.toggle(onActive) doesn't accept parameter "${onActive}" as a valid argument.`,
+          "Please use the correct css property value."
+        )
+
+        return $
+      }
+
+      const isActive =
+        getStyleProperty(
+          isNodeList(element) ? element[0] : element,
+          "display"
+        ) === "none"
+          ? false
+          : true
+
+      const toggleSelf = (active, element, onActive) => {
+        if (active) {
+          $(element).hide()
+        } else {
+          $(element).show(onActive)
+        }
+      }
+
+      if (isNodeList(element)) {
+        for (const el of element) {
+          toggleSelf(isActive, el, onActive)
+        }
+      } else {
+        toggleSelf(isActive, element, onActive)
+      }
     }
 
     return $
