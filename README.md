@@ -50,9 +50,9 @@ $("li")
 
 ---
 
-`$(selector).first()`
+`$(selector).first(callback)`
 
-`$(selector).last()`
+`$(selector).last(callback)`
 
 Selects first or last element of the HTML Node list. Optionally provides a callback to execute a function with the selected element. Otherwise returns instance of curry for chaining.
 
@@ -81,9 +81,9 @@ $(".delete-me").on("click", ({ self }) => {
 
 ---
 
-`$(selector).append()` - Renders element(s) after the selector(s)
+`$(selector).append(callback | template string)` - Renders element(s) after the selector(s)
 
-`$(selector).prepend()` - Renders element(s) before the selector(s)
+`$(selector).prepend(callback | template string)` - Renders element(s) before the selector(s)
 
 Creates HTML node(s) before/after the selected element(s). Functions accept's a callback or a string template, depending on how the user needs to generate the content.
 
@@ -162,11 +162,11 @@ $("button").on("click", ({ self }) => {
 
 #### Class list manipulation
 
-`$(selector).addClass(class)` Add class(es)
+`$(selector).addClass(class | list of classes)` Add class(es)
 
-`$(selector).delClass(class)` Remove class(es)
+`$(selector).delClass(class | list of classes)` Remove class(es)
 
-`$(selector).toggleClass(class)` Toggle class(es)
+`$(selector).toggleClass(class | list of classes)` Toggle class(es)
 
 Manipulates classList of selected element(s). The input parameter 'class' can be a string or an array of strings.
 
