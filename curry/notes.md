@@ -30,7 +30,7 @@ Add support for nested selectors, should work the same way as when selecting css
 
 ### .hover
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 Shorthand for adding onmouseenter & onmouseleave event listener
@@ -38,75 +38,62 @@ Might need to implement add global map, in which to store the pre-hover styling
 
 ### .click
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 Shorthand for adding .on('click') event listener.
 
 ### .text
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 Adds text content to the selected element(s)
 
-### Class manipulation
-
-- [x] Add class (.addClass)
-- [x] Remove class (.delClass)
-- [x] Toggle class (.togClass)
-- [x] Document
-
 ### .parent
 
-[ ] Iimplement
+Selects parent element
+
+[ ] Implement
 [ ] Document
 
-Selects the first parent in the DOM tree
+### .next
 
-### .first
+Selects next child
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
-### .last
+### .prev
 
-[ ] Iimplement
+Selects previous child
+
+[ ] Implement
 [ ] Document
 
 ### .animate
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 Animates transition from the default to the input css style
 
 ### .slideDown
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 if element is not displayed, it should roll it down
 
 ### .slideUp
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 ### .slideToggle
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
-
-### .append
-
-- [x] Implement
-- [ ] Documentation
-
-### .prepend
-
-- [x] Implement
-- [ ] Documentation
 
 ### .addChild
 
@@ -115,17 +102,17 @@ if element is not displayed, it should roll it down
 
 ### hide
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 ### show
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 ### toggle
 
-[ ] Iimplement
+[ ] Implement
 [ ] Document
 
 ---

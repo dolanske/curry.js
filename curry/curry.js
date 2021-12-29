@@ -31,6 +31,10 @@ function from(n, start = 0) {
   return Array.from({ length: n }, (_, i) => i + start)
 }
 
+function isNodeList(list) {
+  return list.length !== undefined
+}
+
 function render(tag, attrs, children) {
   // We can omit prps when calling the function
   if (
@@ -276,7 +280,7 @@ const api = {
       }
 
       // Is HTML collection
-      if (element.length !== undefined) {
+      if (isNodeList(element)) {
         for (const item of element) {
           bindListener(item)
         }
@@ -380,7 +384,7 @@ const api = {
      * @returns If action was successful
      */
 
-    $.togClass = (classNames) => {
+    $.toggleClass = (classNames) => {
       if (!element) return $
 
       if (!classNames || classNames.length === 0) {
@@ -481,11 +485,11 @@ const api = {
      */
 
     $.index = (index) => {
-      if (!element) return
+      if (!element) return $
 
       // If element doesn't have length, we assume there is just
       // one element and the index function gets ignored
-      if (element.length !== undefined) {
+      if (isNodeList(element)) {
         // If index exceeds the element list length,
         // automatically clear selection and break the chain
         if (index + 1 > element.length) {
@@ -517,9 +521,9 @@ const api = {
      */
 
     $.first = (callback) => {
-      if (!element) return
+      if (!element) return $
 
-      if (element.length !== undefined) {
+      if (isNodeList(element)) {
         element = element[0]
       }
 
@@ -529,11 +533,11 @@ const api = {
     }
 
     $.last = (callback) => {
-      if (!element) return
+      if (!element) return $
 
       let index = 0
 
-      if (element.length !== undefined) {
+      if (isNodeList(element)) {
         index = element.length - 1
         element = element[index]
       }
@@ -550,11 +554,11 @@ const api = {
      * @returns Instance of curry for function chaining
      */
     $.append = (callback) => {
-      if (!element) return
+      if (!element) return $
 
       // If callback is a string, we just render a new html template
       if (typeof callback === "string") {
-        if (element.length !== undefined) {
+        if (isNodeList(element)) {
           for (const el of element) {
             el.insertAdjacentHTML("afterend", callback)
           }
@@ -587,11 +591,11 @@ const api = {
      * @returns Instance of curry for function chaining
      */
     $.prepend = (callback) => {
-      if (!element) return
+      if (!element) return $
 
       // If callback is a string, we just render a new html template
       if (typeof callback === "string") {
-        if (element.length !== undefined) {
+        if (isNodeList(element)) {
           for (const el of element) {
             el.insertAdjacentHTML("beforebegin", callback)
           }
@@ -612,6 +616,48 @@ const api = {
             createElement(vdom, el, "prepend")
           }
         }
+      }
+
+      return $
+    }
+
+    $.text = (text, location = "replace") => {
+      if (!element) return $
+
+      // Invalid location argument
+      if (!["replace", "prepend", "append"].includes(location)) {
+        console.warn(
+          `Function $.(text, location) doesn't accept parameter "${location}" as a valid argument.`,
+          "Please use 'replace', 'prepend' or 'append'"
+        )
+
+        return $
+      }
+
+      const setText = (el, text, location) => {
+        switch (location) {
+          case "prepend": {
+            el.insertAdjacentText("afterbegin", text)
+            break
+          }
+          case "append": {
+            el.insertAdjacentText("beforeend", text)
+            break
+          }
+          default:
+          case "replace": {
+            el.textContent = text
+            break
+          }
+        }
+      }
+
+      if (isNodeList(element)) {
+        for (const el of element) {
+          setText(el, text, location)
+        }
+      } else {
+        setText(element, text, location)
       }
 
       return $

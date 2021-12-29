@@ -90,15 +90,15 @@ Creates HTML node(s) before/after the selected element(s). Functions accept's a 
 If you are familiar with modern web frameworks, you must have heard the term render functions.
 If you know vue.js, curry's render functions have exactly the same syntax.
 
-Render function acceppts 3 parameters
+Render function accepts 3 parameters
 
 - `tag` html tag
 - `attrs` class, id, name etc.
 - `children` string or array of render functions
 
-Attrs can be ommited, inputting `render('tag', 'text' | [...children])` will work too
+Attrs can be ommited, inputting `render('tag', 'text' | [...children])` will work too.
 
-You can also input a template string instead as the only parameter
+You can also input a template string instead. As the only parameter.
 
 ```js
 // Select every '.list-wrap' element
@@ -118,6 +118,27 @@ $(".list-wrap").append(({ helpers }) => {
 
 // Selects every input in the DOM and prepends a label to it
 $("input").prepend("<label>Input label here</label>")
+```
+
+---
+
+`$(selector).text(text, location)`
+
+Sets the selected element(s) textContent to the input string.
+Optionally, you can set in what location the text appears.
+
+`location` parameter accepts the following values:
+
+- `replace` replaces inner textContent
+- `prepend` prepends text before the existing text content
+- `append` appends text after the existing text content
+
+```js
+// Each blockquote element starts with 'so he said: '
+$("blockquote").text("So he said: ", "prepend")
+
+// Every paragraph's text is replaced
+$("p").text("I am the text content now")
 ```
 
 ---
@@ -145,7 +166,7 @@ $("button").on("click", ({ self }) => {
 
 `$(selector).delClass(class)` Remove class(es)
 
-`$(selector).togClass(class)` Toggle class(es)
+`$(selector).toggleClass(class)` Toggle class(es)
 
 Manipulates classList of selected element(s). The input parameter 'class' can be a string or an array of strings.
 
