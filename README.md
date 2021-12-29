@@ -66,32 +66,6 @@ $("button").last(({ self, index }) => console.log(self.textContent, index))
 
 ---
 
-`$(selector).hover({enter, leave})`
-
-Shorthand for binding event listener `mouseenter` and `mouseleave` to the selected element(s).
-The parameter is an object with 2 required parameters.
-
-- `enter` executes when cursor hovers over element
-- `leave` executes when cursor leaves element
-
-Each callback exposes the same destructured parameters as the `$.on()` function.
-
-Planned feature: if leave function is ommited, return element to it's original state.
-
-```js
-// When any button is hovered, change its color to red
-// When mouse leaves the button, change its color to blue
-$("button").hover({
-  // Two different possible syntax options
-  enter: ({ self }) => $(self).css("color", "red"),
-  leave({ self }) {
-    $(self).css("color", "blue")
-  },
-})
-```
-
----
-
 #### DOM manipulation
 
 `$(selector).del()`
@@ -181,6 +155,32 @@ Exposed callback params: `self`, `event` or `e`, `helpers`
 // On click, write out the text within the button to the console
 $("button").on("click", ({ self }) => {
   console.log(`Clicked button with ${self.textContent} inside.`)
+})
+```
+
+---
+
+`$(selector).hover({enter, leave})`
+
+Shorthand for binding event listener `mouseenter` and `mouseleave` to the selected element(s).
+The parameter is an object with 2 required parameters.
+
+- `enter` executes when cursor hovers over element
+- `leave` executes when cursor leaves element
+
+Each callback exposes the same destructured parameters as the `$.on()` function.
+
+Planned feature: if leave function is ommited, return element to it's original state.
+
+```js
+// When any button is hovered, change its color to red
+// When mouse leaves the button, change its color to blue
+$("button").hover({
+  // Two different possible syntax options
+  enter: ({ self }) => $(self).css("color", "red"),
+  leave({ self }) {
+    $(self).css("color", "blue")
+  },
 })
 ```
 
