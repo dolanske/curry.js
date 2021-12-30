@@ -10,9 +10,7 @@ function getStyleProperty(el, property) {
   return window.getComputedStyle(el, null).getPropertyValue(property)
 }
 
-function noop(a, b, c) {
-  /* NO OPERATION */
-}
+function noop(a, b, c) { /* NO OPERATION */ } // prettier-ignore
 
 function isObject(value) {
   let type = typeof value
@@ -33,6 +31,20 @@ function from(n, start = 0) {
 
 function isNodeList(list) {
   return list.length !== undefined
+}
+
+/**
+ * Loops over HTML node list and applies callback for each item
+ *
+ * @param {HTMLNodeList} elements
+ * @param {Function} callback
+ */
+function iterate(elements, callback) {
+  if (isNodeList(elements)) {
+    for (let i = 0; i < elements.length; i++) {
+      callback(elements[i], i)
+    }
+  }
 }
 
 function render(tag, attrs, children) {
@@ -124,6 +136,8 @@ const helpers = {
   isNil,
   from,
   render,
+  isHTMLCollection: isNodeList,
+  iterateHTMLCollection: iterate,
 }
 
 const validSelectors = [".", "#", "[", ":"]
@@ -154,10 +168,12 @@ const validDisplayValues = [
 ]
 
 function selectoDomElement(selector) {
-  if (isObject(selector) && selector.selectedBy) return selector
+  if (isObject(selector) || selector.nodeType) return selector
 
   let el, prefix
   let element = selector
+
+  console.log(selector)
 
   if (validSelectors.includes(selector.charAt(0))) {
     element = selector.substring(1)
@@ -772,6 +788,8 @@ const api = {
       } else {
         toggleSelf(isActive, element, onActive)
       }
+
+      return $
     }
 
     /**
@@ -779,14 +797,16 @@ const api = {
      *
      * Takes in an object with enter and leave functions, if leave function is not present,
      * it resets the element to the previous state
+     *
+     * TODO: If leave function is ommited, figure out how to restore it to its pre enter() value
      */
 
     // let previousState
 
-    $.hover = (callback) => {
+    $.hover = (functions) => {
       if (!element) return $
 
-      const { enter, leave } = callback
+      const { enter, leave } = functions
 
       if (!enter || !leave)
         throw Error("Function $.hover({enter, leave}) is missing a parameter.")
@@ -815,6 +835,47 @@ const api = {
         //   }
         // })
       }
+
+      return $
+    }
+
+    /**
+     * Select parent node of each selected element(s)
+     *
+     * @param {Function} callback Optional
+     */
+
+    $.parent = (callback) => {
+      if (!element) return
+
+      if (isNodeList(element)) {
+        // Create a new HTMLCollection
+        const fragment = document.createDocumentFragment()
+
+        iterate(element, (node) => {
+          if (node && node.parentNode) {
+            const parent = node.parentNode
+
+            if (callback) callback({ self: parent, child: node, helpers })
+
+            // Clone parent node to the HTMLCollection
+            fragment.appendChild(parent.cloneNode(true))
+          }
+        })
+
+        // Set all found parents as the new selected element
+        element = fragment.children
+      } else {
+        if (element && element.parentNode) {
+          const parent = element.parentNode
+
+          if (callback) callback({ self: parent, child: element, helpers })
+
+          element = parent
+        }
+      }
+
+      return $
     }
 
     return $

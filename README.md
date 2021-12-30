@@ -18,6 +18,30 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 ### API Documentation
 
+Currently implemented functions as of 30.12.2021 02:33
+
+- `$(selector)`
+- `$.get()`
+- `$.del()`
+- `$.on(event, callback)`
+- `$.css(property, style)` or `$.css(styleObject)`
+- `$.addClass(class)` | `$.addClass(classList)`
+- `$.delClass(class)` | `$.delClass(classList)`
+- `$.toggleClass(class)` | `$.toggleClass(classList)`
+- `$.each(callback)`
+- `$.asyncEach(callback)`
+- `$.index(n)`
+- `$.first(callback)`
+- `$.last(callback)`
+- `$.append(callback)`
+- `$.prepend(callback)`
+- `$.text(text, location)`
+- `$.show(displayType)`
+- `$.hide()`
+- `$.toggle(activeDisplayType)`
+- `$.hover({ enter(), leave() })`
+- `$.parent(callback)`
+
 #### Selecting elements
 
 `$(selector)`
@@ -63,6 +87,34 @@ $("button").first().css("color", "blue")
 // Selects the last element and prints it's text content & element's index
 $("button").last(({ self, index }) => console.log(self.textContent, index))
 ```
+
+---
+
+`$(selector).parent(callback)`
+
+Selects parent node(s) of the selected element(s). Provides a new HTMLCollection of selected parent(s) which can be used by chained functions.
+
+Optionally, you can use the callback function which will execute for every element it finds.
+
+Callback exposes:
+
+- `self` the selected parent
+- `child` parent's child (the original selector)
+- `helpers`
+
+```js
+// If any list-item is clicked, the class .ul-clicked gets added to its parent
+$("li")
+  .parent()
+  .on("click", ({ self }) => $(self).addClass("ul-clicked"))
+
+// This could also be implemented this way
+$("li").parent(({ self }) => $(self).addClass("ul-clicked"))
+```
+
+---
+
+`$(selector).parent(callback)`
 
 ---
 
@@ -255,7 +307,7 @@ $(".show-paragraph").on("click", ({ self }) => {
 
 ---
 
-#### Element looping
+#### Element iteration
 
 `$(selector).each(callback)`
 

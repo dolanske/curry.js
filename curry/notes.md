@@ -1,5 +1,7 @@
 # NOTES & TODO
 
+- [ ] Add better example code in $.parent in documentation
+
 ## Selection
 
 Add support for nested selectors, should work the same way as when selecting css classes.
@@ -28,10 +30,18 @@ Add support for nested selectors, should work the same way as when selecting css
 
 ## Chain Functions
 
+### .getIndex
+
+- accepts only 1 element, not a collection
+- can't get chained
+- accepts a callback and exposes the 'index' value or returns the index if no callback
+
 ### .hover
 
-[ ] Implement
-[ ] Document
+[x] Implement
+[x] Document
+
+- TODO:
 
 Shorthand for adding onmouseenter & onmouseleave event listener
 Might need to implement add global map, in which to store the pre-hover styling
@@ -43,12 +53,14 @@ Might need to implement add global map, in which to store the pre-hover styling
 
 Shorthand for adding .on('click') event listener.
 
-### .parent
-
-Selects parent element
+### .children
 
 [ ] Implement
 [ ] Document
+
+### .child(selector, depth)
+
+Returns the n level deep child node
 
 ### .next
 
