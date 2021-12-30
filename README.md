@@ -18,7 +18,7 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 ### API Documentation
 
-Currently implemented functions as of 30.12.2021 22:13
+Currently implemented functions as of 31.12.2021 01:18
 
 - [`$(selector)`](#base-selector)
 - [`$.get()`](#base-selector)
@@ -44,6 +44,7 @@ Currently implemented functions as of 30.12.2021 22:13
 - [`$.toggle(activeDisplayType)`](#element-visibility)
 - [`$.hover({ enter(), leave() })`](#hover-shorthand)
 - [`$.parent(callback)`](#parent-selector)
+- [`$.click(callback)`](#click-shorthand)
 
 ### Selecting elements
 
@@ -296,6 +297,19 @@ $("button").hover({
   leave({ self }) {
     $(self).css("color", "blue")
   },
+})
+```
+
+#### Click shorthand
+
+`$(selector).click(callback)`
+
+Shorthand for binding a `click` listener to the selected HTMLCollection. Callback exposes the same destructured parameters as the `$.on()` function.
+
+```js
+// Clicking the button will toggle between showing and hiding the next child
+$("button").click(({ self }) => {
+  $(self).next().toggle()
 })
 ```
 

@@ -990,6 +990,20 @@ const api = {
       return $
     }
 
+    $.click = (callback) => {
+      if (!element || !callback) return $
+
+      if (isNodeList(element)) {
+        iterate(element, (node) => {
+          $(node).on("click", (args) => callback({ ...args }))
+        })
+      } else {
+        $(element).on("click", (args) => callback({ ...args }))
+      }
+
+      return $
+    }
+
     /**
      * Select parent node of each selected element(s)
      *
