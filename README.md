@@ -78,8 +78,6 @@ $("li")
   .on("click", ({ self }) => console.log(self.textContent))
 ```
 
----
-
 #### First or last items
 
 `$(selector).first(callback)`
@@ -95,8 +93,6 @@ $("button").first().css("color", "blue")
 // Selects the last element and prints it's text content & element's index
 $("button").last(({ self, index }) => console.log(self.textContent, index))
 ```
-
----
 
 #### Parent selector
 
@@ -139,8 +135,6 @@ $(".delete-me").on("click", ({ self }) => {
 })
 ```
 
----
-
 #### Append or delete element
 
 `$(selector).append(callback | template string)` - Renders element(s) after the selector(s)
@@ -182,8 +176,6 @@ $(".list-wrap").append(({ helpers }) => {
 $("input").prepend("<label>Input label here</label>")
 ```
 
----
-
 #### Text content
 
 `$(selector).text(text, location)`
@@ -221,8 +213,6 @@ $("button").on("click", ({ self }) => {
   console.log(`Clicked button with ${self.textContent} inside.`)
 })
 ```
-
----
 
 #### Hover shorthand
 
@@ -298,8 +288,6 @@ $(".dogs").css({
 })
 ```
 
----
-
 #### Element visibility
 
 `$(selector).show(displayType)`
@@ -348,8 +336,6 @@ $("button").each(({ self, prev, index, helpers }) => {
   self.style.fontSize = parseFloat(font) * (index + 1) + "px"
 })
 ```
-
----
 
 #### Asynchronous iteration
 
