@@ -90,6 +90,20 @@ Selects previous child
 - [ ] Implement
 - [ ] Documentation
 
+---
+
+### .exe()
+
+Essentially just takes in callback and executes it
+
+- [ ] Does it make sense to implement?
+
+### .asyncExe()
+
+Doesn't continue the chain until resolved / rejected
+
+- [ ] Does it make sense to implement?
+
 --- ANIMATIONS (version number + 0.0.1)
 
 ### .animate
