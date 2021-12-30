@@ -98,7 +98,7 @@ function getSiblingIndex(el) {
   return i
 }
 
-function createElement(vnode, container, where = "child") {
+function createElement(vnode, container, where) {
   if (isArray(vnode)) {
     vnode.map((node) => createElement(node, container, where))
     return
@@ -141,7 +141,11 @@ function createElement(vnode, container, where = "child") {
       container.parentNode.insertBefore(el, container.nextSibling)
       break
     }
-    case "child":
+    case "prependchild": {
+      container.insertBefore(el, container.firstChild)
+      break
+    }
+    case "appendchild":
     default: {
       container.appendChild(el)
       break
@@ -162,6 +166,7 @@ const helpers = {
   render,
   isHTMLCollection: isNodeList,
   iterateHTMLCollection: iterate,
+  getSiblingIndex,
 }
 
 const validSelectors = [".", "#", "[", ":"]
@@ -596,14 +601,14 @@ const api = {
      */
 
     $.next = (index, callback) => {
-      return selectNTHChild("next", index, callback)
+      return selectNTHSibling("next", index, callback)
     }
 
     $.prev = (index, callback) => {
-      return selectNTHChild("prev", index, callback)
+      return selectNTHSibling("prev", index, callback)
     }
 
-    const selectNTHChild = (selectType, index, callback) => {
+    const selectNTHSibling = (selectType, index, callback) => {
       if (!element) return $
 
       const type =
@@ -726,12 +731,10 @@ const api = {
       const vdom = callback({ self: element, render, helpers })
 
       if (!isNil(vdom)) {
-        if (element.length === undefined) {
-          createElement(vdom, element, "append")
+        if (isNodeList(element)) {
+          iterate(element, (node) => createElement(vdom, node, "append"))
         } else {
-          for (const el of element) {
-            createElement(vdom, el, "append")
-          }
+          createElement(vdom, element, "append")
         }
       }
 
@@ -763,12 +766,54 @@ const api = {
       const vdom = callback({ self: element, render, helpers })
 
       if (!isNil(vdom)) {
-        if (element.length === undefined) {
-          createElement(vdom, element, "prepend")
+        if (isNodeList(element)) {
+          iterate(element, (node) => createElement(vdom, node, "prepend"))
         } else {
-          for (const el of element) {
-            createElement(vdom, el, "prepend")
-          }
+          createElement(vdom, element, "prepend")
+        }
+      }
+
+      return $
+    }
+
+    /**
+     * Prepends / Appends new child node(s)
+     *
+     * @param {Function} callback
+     * @param {Boolean} append
+     * @returns Instance of curry for function chaining
+     */
+
+    $.addChild = (callback, append = true) => {
+      if (!element) return $
+
+      if (typeof callback === "string") {
+        if (isNodeList(element)) {
+          iterate(element, (node) =>
+            node.insertAdjacentHTML(
+              append ? "beforeend" : "afterbegin",
+              callback
+            )
+          )
+        } else {
+          element.insertAdjacentHTML(
+            append ? "beforeend" : "afterbegin",
+            callback
+          )
+        }
+
+        return $
+      }
+
+      const vdom = callback({ self: element, render, helpers })
+
+      if (!isNil(vdom)) {
+        if (isNodeList(element)) {
+          iterate(element, (node) => {
+            createElement(vdom, node, append ? "appendchild" : "prependchild")
+          })
+        } else {
+          createElement(vdom, element, append ? "appendchild" : "prependchild")
         }
       }
 

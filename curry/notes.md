@@ -4,6 +4,8 @@
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
 - [ ] NodeList -> HTMLCollection in documentation
 
+- [ ] Redo prepend,append & addChild callback. Even callback as a function can return a template string
+
 ## ROADMAP
 
 - [x] Add links to functions with headings
@@ -76,15 +78,15 @@ Returns the n level deep child node
 
 Selects next child
 
-[ ] Implement
-[ ] Document
+[x] Implement
+[x] Document
 
 ### .prev
 
 Selects previous child
 
-[ ] Implement
-[ ] Document
+[x] Implement
+[x] Document
 
 ### .addChild
 

@@ -37,6 +37,7 @@ Currently implemented functions as of 30.12.2021 19:03
 - [`$.next(index, callback)`](#prev-or-next-item)
 - [`$.append(callback)`](#append-or-delete-element)
 - [`$.prepend(callback)`](#append-or-delete-element)
+- [`$.addChild(callback, append)`](#add-child)
 - [`$.text(text, location)`](#text-content)
 - [`$.show(displayType)`](#element-visibility)
 - [`$.hide()`](#element-visibility)
@@ -205,6 +206,26 @@ $(".list-wrap").append(({ helpers }) => {
 
 // Selects every input in the DOM and prepends a label to it
 $("input").prepend("<label>Input label here</label>")
+```
+
+#### Add child
+
+`$(selector).addChild(callback, append = true|false)`
+
+Works exactly the same as `prepend`& `append` except the created node(s) are added as children. The append parameter controls if nodes are added before or after the present children. If element has no control, the parameter has no effect.
+
+```js
+$(".add-todo").on("click", ({ self }) => {
+  $(self)
+    // Selects the next element, which in our example is an empty <ul>
+    .next()
+    // Appends a child
+    .addChild(({ self, render }) => {
+      const index = self.children.length
+      // Creates a new list-item
+      return render("li", `New to-do (${index})`)
+    })
+})
 ```
 
 #### Text content
