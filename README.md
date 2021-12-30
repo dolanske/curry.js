@@ -51,14 +51,14 @@ Currently implemented functions as of 30.12.2021 22:13
 
 `$(selector)`
 
-Selects matching html nodes. Allows for selecting by class, id or element name. In the future will also support for CSS selectors and attr / value matching.
+Selects matching html elements. Allows for selecting by class, id or element name. In the future will also support for CSS selectors and attr / value matching.
 
 If the `.get()` function is attached, selector returns the selected elements. Otherwise it waits for chained function calls.
 
 Curently supports '.class', '#id' and 'h1' native element selectors.
 
 ```js
-// Returns a html node list of every button
+// Returns a HTMLCollection of every button
 const buttons = $("button").get()
 ```
 
@@ -87,7 +87,7 @@ $("li")
 
 `$(selector).last(callback)`
 
-Selects first or last element of the HTML Node list. Optionally provides a callback to execute a function with the selected element. Otherwise returns instance of curry for chaining.
+Selects first or last element of the HTMLCollection. Optionally provides a callback to execute a function with the selected element. Otherwise returns instance of curry for chaining.
 
 ```js
 // Selects the first element and applies style
@@ -133,7 +133,7 @@ $("button").on("click", ({ self }) => {
 
 `$(selector).parent(callback)`
 
-Selects parent node(s) of the selected element(s). Provides a new HTMLCollection of selected parent(s) which can be used by chained functions.
+Selects parent element(s) of the selected element(s). Provides a new HTMLCollection of selected parent(s) which can be used by chained functions.
 
 Optionally, you can use the callback function which will execute for every element it finds.
 
@@ -173,7 +173,7 @@ $(".delete-me").on("click", ({ self }) => {
 
 `$(selector).prepend(callback | template string)` - Renders element(s) before the selector(s)
 
-Creates HTML node(s) before/after the selected element(s). Functions accept's a callback or a string template, depending on how the user needs to generate the content.
+Adds new elements before/after the selected element(s). Functions accept's a callback or a string template, depending on how the user needs to generate the content.
 
 If you are familiar with modern web frameworks, you must have heard the term render functions.
 If you know vue.js, curry's render functions have exactly the same syntax.
@@ -186,7 +186,7 @@ Render function accepts 3 parameters
 
 Attrs can be ommited, inputting `render('tag', 'text' | [...children])` will work too.
 
-You can also input a template string instead. As the only parameter.
+You can also input a template string instead. Either as the only parameter or as a return of a callback
 
 ```js
 // Select every '.list-wrap' element
@@ -204,15 +204,22 @@ $(".list-wrap").append(({ helpers }) => {
   return render("ul", { class: ".list" }, items)
 })
 
-// Selects every input in the DOM and prepends a label to it
-$("input").prepend("<label>Input label here</label>")
+$("input").prepend(({ self }) => {
+  // Gets the data-name="_text_" attribute of every input
+  const label = self.dataset.name
+  // And prepends a <label> element with the name attribute as text
+  return `<label>${label}</label>`
+})
+
+// In case we want to set a simple static string, we can also use the function like this
+$("blockquote").prepend("<p>I am a placeholder quote</p>")
 ```
 
 #### Add child
 
 `$(selector).addChild(callback, append = true|false)`
 
-Works exactly the same as `prepend`& `append` except the created node(s) are added as children. The append parameter controls if nodes are added before or after the present children. If element has no control, the parameter has no effect.
+Works exactly the same as `prepend`& `append` except the created elements are added as children. The append parameter controls if elements are added before or after the present children. If element has no control, the parameter has no effect.
 
 ```js
 $(".add-todo").on("click", ({ self }) => {

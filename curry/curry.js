@@ -712,25 +712,25 @@ const api = {
      * @param {String | Function} callback
      * @returns Instance of curry for function chaining
      */
+
     $.append = (callback) => {
       if (!element) return $
 
+      const vdom =
+        typeof callback === "function"
+          ? callback({ self: element, render, helpers })
+          : callback
+
       // If callback is a string, we just render a new html template
-      if (typeof callback === "string") {
+      if (typeof vdom === "string") {
         if (isNodeList(element)) {
           for (const el of element) {
-            el.insertAdjacentHTML("afterend", callback)
+            el.insertAdjacentHTML("afterend", vdom)
           }
         } else {
-          element.insertAdjacentHTML("afterend", callback)
+          element.insertAdjacentHTML("afterend", vdom)
         }
-
-        return $
-      }
-
-      const vdom = callback({ self: element, render, helpers })
-
-      if (!isNil(vdom)) {
+      } else if (!isNil(vdom)) {
         if (isNodeList(element)) {
           iterate(element, (node) => createElement(vdom, node, "append"))
         } else {
@@ -747,25 +747,25 @@ const api = {
      * @param {String | Function} callback
      * @returns Instance of curry for function chaining
      */
+
     $.prepend = (callback) => {
       if (!element) return $
 
+      const vdom =
+        typeof callback === "function"
+          ? callback({ self: element, render, helpers })
+          : callback
+
       // If callback is a string, we just render a new html template
-      if (typeof callback === "string") {
+      if (typeof vdom === "string") {
         if (isNodeList(element)) {
           for (const el of element) {
-            el.insertAdjacentHTML("beforebegin", callback)
+            el.insertAdjacentHTML("beforebegin", vdom)
           }
         } else {
-          element.insertAdjacentHTML("beforebegin", callback)
+          element.insertAdjacentHTML("beforebegin", vdom)
         }
-
-        return $
-      }
-
-      const vdom = callback({ self: element, render, helpers })
-
-      if (!isNil(vdom)) {
+      } else if (!isNil(vdom)) {
         if (isNodeList(element)) {
           iterate(element, (node) => createElement(vdom, node, "prepend"))
         } else {
@@ -787,27 +787,20 @@ const api = {
     $.addChild = (callback, append = true) => {
       if (!element) return $
 
-      if (typeof callback === "string") {
+      const vdom =
+        typeof callback === "function"
+          ? callback({ self: element, render, helpers })
+          : callback
+
+      if (typeof vdom === "string") {
         if (isNodeList(element)) {
           iterate(element, (node) =>
-            node.insertAdjacentHTML(
-              append ? "beforeend" : "afterbegin",
-              callback
-            )
+            node.insertAdjacentHTML(append ? "beforeend" : "afterbegin", vdom)
           )
         } else {
-          element.insertAdjacentHTML(
-            append ? "beforeend" : "afterbegin",
-            callback
-          )
+          element.insertAdjacentHTML(append ? "beforeend" : "afterbegin", vdom)
         }
-
-        return $
-      }
-
-      const vdom = callback({ self: element, render, helpers })
-
-      if (!isNil(vdom)) {
+      } else if (!isNil(vdom)) {
         if (isNodeList(element)) {
           iterate(element, (node) => {
             createElement(vdom, node, append ? "appendchild" : "prependchild")

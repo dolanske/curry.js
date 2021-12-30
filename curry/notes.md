@@ -2,9 +2,9 @@
 
 - [ ] Add better example code in $.parent in documentation
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
-- [ ] NodeList -> HTMLCollection in documentation
+- [x] NodeList -> HTMLCollection in documentation
 
-- [ ] Redo prepend,append & addChild callback. Even callback as a function can return a template string
+- [x] Redo prepend,append & addChild callback. Even callback as a function can return a template string
 
 ## ROADMAP
 
@@ -73,25 +73,6 @@ Shorthand for adding .on('click') event listener.
 Returns the n level deep child node
 
 ### .nthSibling
-
-### .next
-
-Selects next child
-
-[x] Implement
-[x] Document
-
-### .prev
-
-Selects previous child
-
-[x] Implement
-[x] Document
-
-### .addChild
-
-- [ ] Implement
-- [ ] Documentation
 
 ---
 
