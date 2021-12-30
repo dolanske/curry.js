@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.0.10-alpha
+# jCurry (curry.js) 0.0.11-alpha
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -18,7 +18,7 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 ### API Documentation
 
-Currently implemented functions as of 30.12.2021 17:47
+Currently implemented functions as of 30.12.2021 19:03
 
 - [`$(selector)`](#base-selector)
 - [`$.get()`](#base-selector)
