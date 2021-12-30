@@ -20,7 +20,7 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 Currently implemented functions as of 30.12.2021 02:33
 
-- `$(selector)`
+- [`$(selector)`](#base-selector)
 - `$.get()`
 - `$.del()`
 - `$.on(event, callback)`
@@ -44,6 +44,8 @@ Currently implemented functions as of 30.12.2021 02:33
 
 #### Selecting elements
 
+##### Base selector
+
 `$(selector)`
 
 Selects matching html nodes. Allows for selecting by class, id or element name. In the future will also support for CSS selectors and attr / value matching.
@@ -58,6 +60,8 @@ const buttons = $("button").get()
 ```
 
 ---
+
+##### Index selector
 
 `$(selector).index(n)`
 
@@ -74,6 +78,8 @@ $("li")
 
 ---
 
+##### First & Last selectors
+
 `$(selector).first(callback)`
 
 `$(selector).last(callback)`
@@ -89,6 +95,8 @@ $("button").last(({ self, index }) => console.log(self.textContent, index))
 ```
 
 ---
+
+##### Parent selector
 
 `$(selector).parent(callback)`
 
@@ -116,6 +124,8 @@ $("li").parent(({ self }) => $(self).addClass("ul-clicked"))
 
 #### DOM manipulation
 
+##### Delete
+
 `$(selector).del()`
 
 Deletes selected element(s)
@@ -128,6 +138,8 @@ $(".delete-me").on("click", ({ self }) => {
 ```
 
 ---
+
+##### Append & Delete element
 
 `$(selector).append(callback | template string)` - Renders element(s) after the selector(s)
 
@@ -170,6 +182,8 @@ $("input").prepend("<label>Input label here</label>")
 
 ---
 
+##### Add text
+
 `$(selector).text(text, location)`
 
 Sets the selected element(s) textContent to the input string.
@@ -207,6 +221,8 @@ $("button").on("click", ({ self }) => {
 ```
 
 ---
+
+##### Hover
 
 `$(selector).hover({enter, leave})`
 
@@ -279,6 +295,8 @@ $(".dogs").css({
 ```
 
 ---
+
+##### Element display
 
 `$(selector).show(displayType)`
 
