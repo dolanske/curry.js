@@ -21,36 +21,36 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 Currently implemented functions as of 30.12.2021 02:33
 
 - [`$(selector)`](#base-selector)
-- `$.get()`
-- `$.del()`
-- `$.on(event, callback)`
-- `$.css(property, style)` or `$.css(styleObject)`
-- `$.addClass(class)` | `$.addClass(classList)`
-- `$.delClass(class)` | `$.delClass(classList)`
-- `$.toggleClass(class)` | `$.toggleClass(classList)`
-- `$.each(callback)`
-- `$.asyncEach(callback)`
-- `$.index(n)`
-- `$.first(callback)`
-- `$.last(callback)`
-- `$.append(callback)`
-- `$.prepend(callback)`
-- `$.text(text, location)`
-- `$.show(displayType)`
-- `$.hide()`
-- `$.toggle(activeDisplayType)`
-- `$.hover({ enter(), leave() })`
-- `$.parent(callback)`
+- [`$.get()`](#base-selector)
+- [`$.del()`](#index-selector)
+- [`$.on(event, callback)`](#event-binding)
+- [`$.css(property, style)`](#css-injection)
+- [`$.addClass(class)`](#class-list-manipulation)
+- [`$.delClass(class)`](#class-list-manipulation)
+- [`$.toggleClass(class)`](#class-list-manipulation)
+- [`$.each(callback)`](#synchronous-iteration)
+- [`$.asyncEach(callback)`](#asynchronous-iteration)
+- [`$.index(n)`](#index-selector)
+- [`$.first(callback)`](#first-or-last-items)
+- [`$.last(callback)`](#first-or-last-items)
+- [`$.append(callback)`](#append-or-delete-element)
+- [`$.prepend(callback)`](#append-or-delete-element)
+- [`$.text(text, location)`](#text-content)
+- [`$.show(displayType)`](#element-visibility)
+- [`$.hide()`](#element-visibility)
+- [`$.toggle(activeDisplayType)`](#element-visibility)
+- [`$.hover({ enter(), leave() })`](#hover-shorthand)
+- [`$.parent(callback)`](#parent-selector)
 
-#### Selecting elements
+### Selecting elements
 
-##### Base selector
+#### Base selector
 
 `$(selector)`
 
 Selects matching html nodes. Allows for selecting by class, id or element name. In the future will also support for CSS selectors and attr / value matching.
 
-If the .get() function is attached, selector returns the selected elements. Otherwise it waits for chained function calls.
+If the `.get()` function is attached, selector returns the selected elements. Otherwise it waits for chained function calls.
 
 Curently supports '.class', '#id' and 'h1' native element selectors.
 
@@ -61,7 +61,9 @@ const buttons = $("button").get()
 
 ---
 
-##### Index selector
+### List Selection
+
+#### Index selector
 
 `$(selector).index(n)`
 
@@ -78,7 +80,7 @@ $("li")
 
 ---
 
-##### First & Last selectors
+#### First or last items
 
 `$(selector).first(callback)`
 
@@ -96,7 +98,7 @@ $("button").last(({ self, index }) => console.log(self.textContent, index))
 
 ---
 
-##### Parent selector
+#### Parent selector
 
 `$(selector).parent(callback)`
 
@@ -122,9 +124,9 @@ $("li").parent(({ self }) => $(self).addClass("ul-clicked"))
 
 ---
 
-#### DOM manipulation
+### DOM manipulation
 
-##### Delete
+#### Delete
 
 `$(selector).del()`
 
@@ -139,7 +141,7 @@ $(".delete-me").on("click", ({ self }) => {
 
 ---
 
-##### Append & Delete element
+#### Append or delete element
 
 `$(selector).append(callback | template string)` - Renders element(s) after the selector(s)
 
@@ -182,7 +184,7 @@ $("input").prepend("<label>Input label here</label>")
 
 ---
 
-##### Add text
+#### Text content
 
 `$(selector).text(text, location)`
 
@@ -205,7 +207,7 @@ $("p").text("I am the text content now")
 
 ---
 
-#### Event binding
+### Event binding
 
 `$(selector).on(event, callback)`
 
@@ -222,7 +224,7 @@ $("button").on("click", ({ self }) => {
 
 ---
 
-##### Hover
+#### Hover shorthand
 
 `$(selector).hover({enter, leave})`
 
@@ -250,7 +252,7 @@ $("button").hover({
 
 ---
 
-#### Class list manipulation
+### Class list manipulation
 
 `$(selector).addClass(class | list of classes)` Add class(es)
 
@@ -274,7 +276,9 @@ $("p").on("mouseleave", ({ self }) => {
 
 ---
 
-#### Style binding
+### Style binding
+
+#### CSS injection
 
 `$(selector).css('property', 'value')`
 
@@ -296,7 +300,7 @@ $(".dogs").css({
 
 ---
 
-##### Element display
+#### Element visibility
 
 `$(selector).show(displayType)`
 
@@ -321,7 +325,9 @@ $(".show-paragraph").on("click", ({ self }) => {
 
 ---
 
-#### Element iteration
+### Element iteration
+
+#### Synchronous iteration
 
 `$(selector).each(callback)`
 
@@ -344,6 +350,8 @@ $("button").each(({ self, prev, index, helpers }) => {
 ```
 
 ---
+
+#### Asynchronous iteration
 
 `$(selector).asyncEach(callback)`
 
