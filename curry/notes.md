@@ -1,6 +1,9 @@
 # NOTES & TODO
 
 - [ ] Add better example code in $.parent in documentation
+- [ ] Add documentation for helper functions (probably different page (figure how github does taht))
+
+- [ ] Add like ###### subtitle to every function + add anchor which points to the more detailed documentaion in the function list
 
 ## Selection
 

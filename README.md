@@ -114,10 +114,6 @@ $("li").parent(({ self }) => $(self).addClass("ul-clicked"))
 
 ---
 
-`$(selector).parent(callback)`
-
----
-
 #### DOM manipulation
 
 `$(selector).del()`
