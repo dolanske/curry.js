@@ -2,16 +2,15 @@
 
 - [ ] Add better example code in $.parent in documentation
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
-
-- [ ] Add like ###### subtitle to every function + add anchor which points to the more detailed documentaion in the function list
+- [ ] NodeList -> HTMLCollection in documentation
 
 ## ROADMAP
 
-- [ ] Add links to functions with headings
+- [x] Add links to functions with headings
 - [ ] Resolve todos in curry.js
 - [ ] finish basic chain functions 0.0.2
 
-## Selection (version number + 0.0.1)
+## Selection (version number + 0.1.0)
 
 Add support for nested selectors, should work the same way as when selecting css classes.
 
@@ -19,7 +18,7 @@ Add support for nested selectors, should work the same way as when selecting css
 - [ ] `ul > li`
 - [ ] `p + span`
 
-## Attribute selector (version number + 0.0.1)
+## Attribute selector (version number + 0.1.0)
 
 - [ ] Add support for selecting attribnutes
   - [ ] Basic implementation
@@ -29,7 +28,7 @@ Add support for nested selectors, should work the same way as when selecting css
   - [ ] Starts with attr<val
   - [ ] Ends with attr>val
 
-## CSS selectors (version number + 0.0.1)
+## CSS selectors (version number + 0.1.0)
 
 - [x] Document .css
 - [ ] nth child support
@@ -67,9 +66,11 @@ Shorthand for adding .on('click') event listener.
 [ ] Implement
 [ ] Document
 
-### .child(selector, depth)
+### .nthChild(selector, depth)
 
 Returns the n level deep child node
+
+### .nthSibling
 
 ### .next
 
@@ -104,7 +105,7 @@ Doesn't continue the chain until resolved / rejected
 
 - [ ] Does it make sense to implement?
 
---- ANIMATIONS (version number + 0.0.1)
+--- ANIMATIONS (version number + 0.1.0)
 
 ### .animate
 

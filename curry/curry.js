@@ -85,6 +85,19 @@ function render(tag, attrs, children) {
   }
 }
 
+function getSiblingIndex(el) {
+  if (!el) return 0
+
+  let i = 0
+  let cloned = el
+  // While it has previous siblings, add +1 to the index
+  while ((cloned = cloned.previousElementSibling) != null) {
+    i++
+  }
+
+  return i
+}
+
 function createElement(vnode, container, where = "child") {
   if (isArray(vnode)) {
     vnode.map((node) => createElement(node, container, where))
@@ -296,13 +309,10 @@ const api = {
     $.del = () => {
       if (!element) return
 
-      // Only 1 element selected
-      if (element.length === undefined) {
+      if (isNodeList(element)) {
+        iterate(element, (node) => node.remove())
+      } else {
         element.remove()
-      }
-
-      for (const el of element) {
-        el.remove()
       }
     }
 
@@ -523,7 +533,7 @@ const api = {
      * @returns Instance of curry for function chaining
      */
 
-    $.index = (index) => {
+    $.nth = (index) => {
       if (!element) return $
 
       // If element doesn't have length, we assume there is just
@@ -547,6 +557,111 @@ const api = {
             }
           }
         }
+      }
+
+      return $
+    }
+
+    /**
+     * Selects element at index n of all its available siblings
+     *
+     * @returns Instance of curry for function chaining
+     */
+
+    // TODO: Implement
+
+    $.nthSibling = (n) => {
+      throw Error("Function not supported")
+    }
+
+    /**
+     * Selects element at index n of all its available siblings
+     *
+     * @returns Instance of curry for function chaining
+     */
+
+    // TODO: Implement
+
+    $.nthChild = (n) => {
+      throw Error("Function not supported")
+    }
+
+    /**
+     * Selects the next or next nth child if available
+     *
+     * @param {Number | Function} index
+     * @param {Function | undefined} callback
+     *
+     * @returns Instance of curry for function chaining
+     */
+
+    $.next = (index, callback) => {
+      return selectNTHChild("next", index, callback)
+    }
+
+    $.prev = (index, callback) => {
+      return selectNTHChild("prev", index, callback)
+    }
+
+    const selectNTHChild = (selectType, index, callback) => {
+      if (!element) return $
+
+      const type =
+        selectType === "next" ? "nextElementSibling" : "previousElementSibling"
+
+      if (isNodeList(element)) {
+        if (element.length === 1) {
+          element = element[0]
+        } else {
+          throw Error(
+            "Cannot use function $.next() on a node list. Wrap your functionality in $.each() if you are selecting a HTMLCollection"
+          )
+        }
+      }
+
+      // If callback has been provided but index hasn't
+      if (typeof index !== "number") {
+        callback = index
+        index = null
+      }
+
+      if (element[type]) {
+        // If index is provided
+        if (index) {
+          const prev = element
+          // Loop over next children and find element at index
+          for (let i = 0; i < index; i++) {
+            if (element[type]) {
+              element = element[type]
+            }
+          }
+
+          // Callback
+          if (callback) {
+            callback({
+              self: element,
+              prev,
+              index: getSiblingIndex(element),
+              helpers,
+            })
+          }
+        } else {
+          // otherwise just select the next item
+          if (callback) {
+            callback({
+              self: element[type],
+              prev: element,
+              index: getSiblingIndex(element[type]),
+              helpers,
+            })
+          }
+
+          element = element[type]
+        }
+      } else {
+        element = undefined
+
+        return $
       }
 
       return $

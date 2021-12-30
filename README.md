@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.0.1-alpha
+# jCurry (curry.js) 0.0.10-alpha
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -18,7 +18,7 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 ### API Documentation
 
-Currently implemented functions as of 30.12.2021 02:33
+Currently implemented functions as of 30.12.2021 17:47
 
 - [`$(selector)`](#base-selector)
 - [`$.get()`](#base-selector)
@@ -30,9 +30,11 @@ Currently implemented functions as of 30.12.2021 02:33
 - [`$.toggleClass(class)`](#class-list-manipulation)
 - [`$.each(callback)`](#synchronous-iteration)
 - [`$.asyncEach(callback)`](#asynchronous-iteration)
-- [`$.index(n)`](#index-selector)
+- [`$.nth(n)`](#nth-selector)
 - [`$.first(callback)`](#first-or-last-items)
 - [`$.last(callback)`](#first-or-last-items)
+- [`$.prev(index, callback)`](#prev-or-next-item)
+- [`$.next(index, callback)`](#prev-or-next-item)
 - [`$.append(callback)`](#append-or-delete-element)
 - [`$.prepend(callback)`](#append-or-delete-element)
 - [`$.text(text, location)`](#text-content)
@@ -63,18 +65,18 @@ const buttons = $("button").get()
 
 ### List Selection
 
-#### Index selector
+#### Nth selector
 
-`$(selector).index(n)`
+`$(selector).nth(n)`
 
-Selects the element at index `n` in a HTML Node list. Is zero indexed.
+Selects the element at index `n` in from the selected element(s). Zero indexed.
 
 If n is not specified, automatically returns the first element. If element is not found, nothing in the chain will get executed.
 
 ```js
 // Selects the third list element found and prints out it's text when clicked
 $("li")
-  .index(2)
+  .nth(2)
   .on("click", ({ self }) => console.log(self.textContent))
 ```
 
@@ -92,6 +94,38 @@ $("button").first().css("color", "blue")
 
 // Selects the last element and prints it's text content & element's index
 $("button").last(({ self, index }) => console.log(self.textContent, index))
+```
+
+#### Prev or next item
+
+`$(selector).prev(index, callback)`
+
+`$(selector).next(index, callback)`
+
+Selects the previous / next or nth sibling if element has any, otherwise returns undefined and skips this chain node. Index and callback are both optional, this function should primarily be used for chaining.
+
+If you use custom index, it is recommended to use `2` and higher, as `1` has the same functionality as no index. And 0 would select itself.
+
+Callback exposes:
+
+- `self` the newly selected sibling
+- `index` index of the newly selected sibling
+- `prev` the previous siblings
+- `helpers`
+
+```js
+$("li").on("click", ({ self }) => {
+  $(self).next(({ self, prev, index }) => {
+    console.log(
+      `${prev.textContent}'s next sibling is ${self.textContent} with index ${index}`
+    )
+  })
+})
+
+// When button is clicked, it removes a sibling element 2 items before it
+$("button").on("click", ({ self }) => {
+  $(self).prev(2).del()
+})
 ```
 
 #### Parent selector
@@ -113,9 +147,6 @@ Callback exposes:
 $("li")
   .parent()
   .on("click", ({ self }) => $(self).addClass("ul-clicked"))
-
-// This could also be implemented this way
-$("li").parent(({ self }) => $(self).addClass("ul-clicked"))
 ```
 
 ---
