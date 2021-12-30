@@ -5,7 +5,13 @@
 
 - [ ] Add like ###### subtitle to every function + add anchor which points to the more detailed documentaion in the function list
 
-## Selection
+## ROADMAP
+
+- [ ] Add links to functions with headings
+- [ ] Resolve todos in curry.js
+- [ ] finish basic chain functions 0.0.2
+
+## Selection (version number + 0.0.1)
 
 Add support for nested selectors, should work the same way as when selecting css classes.
 
@@ -13,7 +19,7 @@ Add support for nested selectors, should work the same way as when selecting css
 - [ ] `ul > li`
 - [ ] `p + span`
 
-## Attribute selector
+## Attribute selector (version number + 0.0.1)
 
 - [ ] Add support for selecting attribnutes
   - [ ] Basic implementation
@@ -23,7 +29,7 @@ Add support for nested selectors, should work the same way as when selecting css
   - [ ] Starts with attr<val
   - [ ] Ends with attr>val
 
-## CSS selectors
+## CSS selectors (version number + 0.0.1)
 
 - [x] Document .css
 - [ ] nth child support
@@ -79,6 +85,13 @@ Selects previous child
 [ ] Implement
 [ ] Document
 
+### .addChild
+
+- [ ] Implement
+- [ ] Documentation
+
+--- ANIMATIONS (version number + 0.0.1)
+
 ### .animate
 
 [ ] Implement
@@ -102,11 +115,6 @@ if element is not displayed, it should roll it down
 
 [ ] Implement
 [ ] Document
-
-### .addChild
-
-- [ ] Implement
-- [ ] Documentation
 
 ---
 

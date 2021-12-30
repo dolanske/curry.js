@@ -33,6 +33,17 @@ function isNodeList(list) {
   return list.length !== undefined
 }
 
+function bindListener(el, name, callback) {
+  el.addEventListener(name, (e) => {
+    callback({
+      event: e,
+      e: e,
+      self: el,
+      helpers,
+    })
+  })
+}
+
 /**
  * Loops over HTML node list and applies callback for each item
  *
@@ -173,8 +184,6 @@ function selectoDomElement(selector) {
   let el, prefix
   let element = selector
 
-  console.log(selector)
-
   if (validSelectors.includes(selector.charAt(0))) {
     element = selector.substring(1)
     prefix = selector.charAt(0)
@@ -309,24 +318,13 @@ const api = {
     $.on = (event, callback) => {
       if (!element) return $
 
-      const bindListener = (item) => {
-        item.addEventListener(event, (e) => {
-          callback({
-            event: e,
-            e: e,
-            self: item,
-            helpers,
-          })
-        })
-      }
-
       // Is HTML collection
       if (isNodeList(element)) {
         for (const item of element) {
-          bindListener(item)
+          bindListener(item, event, callback)
         }
       } else {
-        bindListener(element)
+        bindListener(element, event, callback)
       }
 
       return $
