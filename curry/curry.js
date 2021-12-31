@@ -33,15 +33,20 @@ function isNodeMap(list) {
   return list.length !== undefined
 }
 
-function bindListener(el, name, callback) {
-  el.addEventListener(name, (e) => {
-    callback({
-      event: e,
-      e: e,
-      self: el,
-      helpers,
-    })
-  })
+function bindListener(el, name, callback, state, options) {
+  el.addEventListener(
+    name,
+    (e) => {
+      callback({
+        event: e,
+        e: e,
+        self: el,
+        helpers,
+        state,
+      })
+    },
+    options
+  )
 }
 
 /**
@@ -277,7 +282,9 @@ const api = {
 })(this, function () {
   "use strict"
 
+  // Define global variables
   let element
+  const state = {}
 
   /**
    *
@@ -341,20 +348,20 @@ const api = {
      * Then executes provided callback when event is triggered.
      *
      * @param {String} event        Event name
-     * @param {String} which        Optional selector
      * @param {Function} callback   Function to execute when event is triggered
+     * @param {Object} options
      */
 
-    $.on = (event, callback) => {
+    $.on = (event, callback, options) => {
       if (!element) return $
 
       // Is HTML collection
       if (isNodeMap(element)) {
         for (const item of element) {
-          bindListener(item, event, callback)
+          bindListener(item, event, callback, state, options)
         }
       } else {
-        bindListener(element, event, callback)
+        bindListener(element, event, callback, state, options)
       }
 
       return $
@@ -492,13 +499,13 @@ const api = {
 
       // Selector picked just 1 item and it is not a HTMl collection
       if (element.length === undefined) {
-        callback({ self: element, helpers, index: 0 })
+        callback({ self: element, helpers, index: 0, state })
       } else {
         let prev = null
         let index = 0
 
         for (const el of element) {
-          callback({ self: el, prev, helpers, index })
+          callback({ self: el, prev, helpers, index, state })
           prev = el
           index += 1
         }
@@ -528,14 +535,14 @@ const api = {
 
       // Selector picked just 1 item and it is not a HTMl collection
       if (element.length === undefined) {
-        callback({ self: element, helpers, index: 0 })
+        callback({ self: element, helpers, index: 0, state })
       } else {
         let prev = null
         let index = 0
 
         for (const el of element) {
           await new Promise((resolve) =>
-            callback({ self: el, prev, helpers, index, next: resolve })
+            callback({ self: el, prev, helpers, index, next: resolve, state })
           )
 
           prev = el
@@ -581,7 +588,7 @@ const api = {
         }
       }
 
-      if (callback) callback({ self: element, helpers, index })
+      if (callback) callback({ self: element, helpers, index, state })
 
       return $
     }
@@ -625,10 +632,17 @@ const api = {
         })
       }
 
-      if (callback) callback({ self: element, helpers, index: n })
+      if (callback) callback({ self: element, helpers, index: n, state })
 
       return $
     }
+
+    /**
+     * Returns the children of selected element
+     *
+     * @param {Function | undefined} callback
+     * @returns Instance of curry for function chaining
+     */
 
     $.children = (callback) => {
       if (!element) return undefined
@@ -649,7 +663,8 @@ const api = {
       const self = element
       element = element.children
 
-      if (callback) callback({ self, children: element.children, helpers })
+      if (callback)
+        callback({ self, children: element.children, helpers, state })
 
       return $
     }
@@ -711,6 +726,7 @@ const api = {
               prev,
               index: getSiblingIndex(element),
               helpers,
+              state,
             })
           }
         } else {
@@ -721,6 +737,7 @@ const api = {
               prev: element,
               index: getSiblingIndex(element[type]),
               helpers,
+              state,
             })
           }
 
@@ -749,7 +766,7 @@ const api = {
         element = element[0]
       }
 
-      if (callback) callback({ self: element, helpers })
+      if (callback) callback({ self: element, helpers, state })
 
       return $
     }
@@ -764,7 +781,7 @@ const api = {
         element = element[index]
       }
 
-      if (callback) callback({ self: element, helpers, index })
+      if (callback) callback({ self: element, helpers, index, state })
 
       return $
     }
@@ -781,7 +798,7 @@ const api = {
 
       const vdom =
         typeof callback === "function"
-          ? callback({ self: element, render, helpers })
+          ? callback({ self: element, render, helpers, state })
           : callback
 
       // If callback is a string, we just render a new html template
@@ -816,7 +833,7 @@ const api = {
 
       const vdom =
         typeof callback === "function"
-          ? callback({ self: element, render, helpers })
+          ? callback({ self: element, render, helpers, state })
           : callback
 
       // If callback is a string, we just render a new html template
@@ -852,7 +869,7 @@ const api = {
 
       const vdom =
         typeof callback === "function"
-          ? callback({ self: element, render, helpers })
+          ? callback({ self: element, render, helpers, state })
           : callback
 
       if (typeof vdom === "string") {
@@ -1020,19 +1037,19 @@ const api = {
     $.hover = (functions) => {
       if (!element) return $
 
-      const { enter, leave } = functions
+      const { enter, leave, options } = functions
 
       if (!enter || !leave)
         throw Error("Function $.hover({enter, leave}) is missing a parameter.")
 
       if (isNodeMap(element)) {
         for (const el of element) {
-          $(el).on("mouseenter", (args) => enter({ ...args }))
-          $(el).on("mouseleave", (args) => leave({ ...args }))
+          $(el).on("mouseenter", (args) => enter({ ...args }), options)
+          $(el).on("mouseleave", (args) => leave({ ...args }), options)
         }
       } else {
-        $(element).on("mouseenter", (args) => enter({ ...args }))
-        $(element).on("mouseleave", (args) => leave({ ...args }))
+        $(element).on("mouseenter", (args) => enter({ ...args }), options)
+        $(element).on("mouseleave", (args) => leave({ ...args }), options)
         // $(element).on("mouseenter", (args) => {
         //   previousState = element.cloneNode(true)
         //   enter({ ...args })
@@ -1060,15 +1077,15 @@ const api = {
      * @returns Instance of curry for function chaining
      */
 
-    $.click = (callback) => {
+    $.click = (callback, options) => {
       if (!element || !callback) return $
 
       if (isNodeMap(element)) {
         map(element, (node) => {
-          $(node).on("click", (args) => callback({ ...args }))
+          $(node).on("click", (args) => callback({ ...args }), options)
         })
       } else {
-        $(element).on("click", (args) => callback({ ...args }))
+        $(element).on("click", (args) => callback({ ...args }), options)
       }
 
       return $
@@ -1092,7 +1109,8 @@ const api = {
           if (node && node.parentNode) {
             const parent = node.parentNode
 
-            if (callback) callback({ self: parent, child: node, helpers })
+            if (callback)
+              callback({ self: parent, child: node, helpers, state })
 
             // Clone parent node to the HTMLCollection
             fragment.appendChild(parent.cloneNode(true))
@@ -1105,11 +1123,37 @@ const api = {
         if (element && element.parentNode) {
           const parent = element.parentNode
 
-          if (callback) callback({ self: parent, child: element, helpers })
+          if (callback)
+            callback({ self: parent, child: element, helpers, state })
 
           element = parent
         }
       }
+
+      return $
+    }
+
+    /**
+     * Executes a callback function only once even if element is a HTMLCollection
+     *
+     * @param {Function} callback
+     * @returns Instance of curry for function chaining
+     */
+
+    $.exe = (callback) => {
+      if (!element || !callback) return $
+
+      callback({ self: element, helpers, state })
+
+      return $
+    }
+
+    $.asyncExe = async (callback) => {
+      if (!element || !callback) return $
+
+      await new Promise((resolve, reject) => {
+        callback({ self: element, helpers, next: resolve, reject, state })
+      })
 
       return $
     }

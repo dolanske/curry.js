@@ -24,9 +24,9 @@ Currently implemented functions as of 31.12.2021 02:28
 - [`$.get(property)`](#base-selector)
 - [`$.del()`](#index-selector)
 
-- [`$.on(event, callback)`](#event-binding)
-- [`$.hover({ enter(), leave() })`](#hover-shorthand)
-- [`$.click(callback)`](#click-shorthand)
+- [`$.on(event, callback, options)`](#event-binding)
+- [`$.hover({ enter(), leave(), options })`](#hover-shorthand)
+- [`$.click(callback, options)`](#click-shorthand)
 
 - [`$.addClass(class)`](#class-list-manipulation)
 - [`$.delClass(class)`](#class-list-manipulation)
@@ -52,6 +52,30 @@ Currently implemented functions as of 31.12.2021 02:28
 - [`$.prepend(callback)`](#append-or-delete-element)
 - [`$.addChild(callback, append)`](#add-child)
 - [`$.text(text, location)`](#text-content)
+
+- [`$.exe(callback)`](#code-execution)
+- [`$.asyncExe(callback)`](#code-execution)
+
+### State
+
+Each callback exposes a `state` property which is a simple way of sharing data in a function chain or even between multiple different chains.
+
+```js
+// Selects all list items and saves their text content to an array
+$("ul")
+  .children()
+  .each(({ self, state }) => {
+    if (!state.names) state.names = []
+    state.names.push(self.textContent)
+  })
+
+// When <ul> is clicked, read the state
+$("ul").on("click", ({ state }) => console.log(state.names))
+
+// ['first', 'second', 'third']
+```
+
+---
 
 ### Selecting elements
 
@@ -302,7 +326,7 @@ $("p").text("I am the text content now")
 
 ### Event binding
 
-`$(selector).on(event, callback)`
+`$(selector).on(event, callback, options)`
 
 Attaches an event listener to the selected element(s) and calls the callback function on every listener trigger.
 
@@ -317,7 +341,7 @@ $("button").on("click", ({ self }) => {
 
 #### Hover shorthand
 
-`$(selector).hover({enter, leave})`
+`$(selector).hover({enter, leave, options})`
 
 Shorthand for binding event listener `mouseenter` and `mouseleave` to the selected element(s).
 The parameter is an object with 2 required parameters.
@@ -338,12 +362,16 @@ $("button").hover({
   leave({ self }) {
     $(self).css("color", "blue")
   },
+  options: {
+    // Event listener characteristics
+    // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+  },
 })
 ```
 
 #### Click shorthand
 
-`$(selector).click(callback)`
+`$(selector).click(callback, options)`
 
 Shorthand for binding a `click` listener to the selected HTMLCollection. Callback exposes the same destructured parameters as the `$.on()` function.
 
@@ -473,3 +501,20 @@ $(".post").asyncEach(({ self, next }) => {
     })
 })
 ```
+
+---
+
+### Code execution
+
+Utility selector to execute code during chaining. This should be used rarely as most functions have their own callbacks. Callback is executed only once no matter how many selected elements. For execution per element, use the `$.each()` or `$.asyncEach()` iteration functions.
+
+Callback exposes:
+
+- `self` selected element(s)
+- `helpers`
+
+`$(selector).exe(callback)`
+
+Executes an async function in the chain. Callback exposes the `next()`. Without calling it the chain won't continue.
+
+`$(selector).asyncExe(callback)`

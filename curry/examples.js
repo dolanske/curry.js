@@ -1,3 +1,8 @@
 $("ul")
   .children()
-  .nth(2, ({ self }) => console.log(self.textContent))
+  .each(({ self, state }) => {
+    if (!state.names) state.names = []
+    state.names.push(self.textContent)
+  })
+
+$("ul").on("click", ({ state }) => console.log(state))

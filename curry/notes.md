@@ -50,20 +50,6 @@ Add support for nested selectors, should work the same way as when selecting css
 Shorthand for adding onmouseenter & onmouseleave event listener
 Might need to implement add global map, in which to store the pre-hover styling
 
----
-
-### .exe()
-
-Essentially just takes in callback and executes it
-
-- [ ] Does it make sense to implement?
-
-### .asyncExe()
-
-Doesn't continue the chain until resolved / rejected
-
-- [ ] Does it make sense to implement?
-
 --- ANIMATIONS (version number + 0.1.0)
 
 ### .animate
@@ -89,6 +75,12 @@ if element is not displayed, it should roll it down
 
 [ ] Implement
 [ ] Document
+
+### State object
+
+Each chain will receive its own state object, which is accessible in every callback
+
+### Global object
 
 ---
 
