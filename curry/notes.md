@@ -1,16 +1,11 @@
 # TODO
 
 - [ ] Add better example code in $.parent in documentation
+- [ ] Add example to $.exe and $.asyncExe
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
-- [ ] Reorganize the API documentaiton function list
+- [x] Reorganize the API documentaiton function list
 
 - [ ] Check how $.parent is written and consider every non-iterable selector to actually be iterable
-
-## ROADMAP
-
-- [x] Add links to functions with headings
-- [x] Resolve todos in curry.js
-- [ ] finish basic chain functions 0.0.2
 
 ## Selection (version number + 0.1.0)
 
@@ -29,12 +24,6 @@ Add support for nested selectors, should work the same way as when selecting css
   - [ ] Includes in attribute value attr\*val
   - [ ] Starts with attr<val
   - [ ] Ends with attr>val
-
-## CSS selectors (version number + 0.1.0)
-
-- [x] Document .css
-- [ ] nth child support
-- [ ] nth of type
 
 ---
 
@@ -76,15 +65,11 @@ if element is not displayed, it should roll it down
 [ ] Implement
 [ ] Document
 
-### State object
-
-Each chain will receive its own state object, which is accessible in every callback
-
-### Global object
-
 ---
 
 - .not
 - .has (Reduce the set of matched elements to those that have a descendant that matches the selector or DOM element.)
 - .filter
 - .is (Check the current matched set of elements against a selector, element, or jQuery object and return true if at least one of these elements matches the given arguments.)
+
+- element creation?

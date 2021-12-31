@@ -1,8 +1,3 @@
-$("ul")
-  .children()
-  .each(({ self, state }) => {
-    if (!state.names) state.names = []
-    state.names.push(self.textContent)
-  })
-
-$("ul").on("click", ({ state }) => console.log(state))
+$("li")
+  .filter(({ index }) => (index + 1) % 2 === 0)
+  .each(({ self }) => $(self).text("cum"))

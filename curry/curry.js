@@ -52,8 +52,8 @@ function bindListener(el, name, callback, state, options) {
 /**
  * Loops over HTML node list and applies callback for each item
  *
- * @param {HTMLNodeList} elements
- * @param {Function} callback
+ * @param {HTMLNodeList} elements Elements to iterate on
+ * @param {Function} callback Execute on each loop
  */
 function map(elements, callback) {
   if (isNodeMap(elements)) {
@@ -174,7 +174,8 @@ const helpers = {
   getSiblingIndex,
 }
 
-const validSelectors = [".", "#", "[", ":"]
+// const validSelectors = [".", "#", "[", ":"]
+const validSelectors = [".", "#"]
 
 const validDisplayValues = [
   "inline",
@@ -258,7 +259,7 @@ function selectoDomElement(selector) {
  *
  */
 
-const api = {
+const $api = {
   get: () => {},
   post: () => {},
   put: () => {},
@@ -299,6 +300,21 @@ const api = {
 
   const $ = (selector) => {
     if (!selector) throw Error("Selector must contain a string.")
+
+    if (typeof selector === "string" && selector.startsWith("$")) {
+      // Special selectors start with $
+      switch (selector) {
+        case "$state": {
+          return state
+        }
+        case "$helpers": {
+          return helpers
+        }
+        default:
+          console.warn("Unsupported magic selector.")
+          return
+      }
+    }
 
     element = selectoDomElement(selector)
 
@@ -933,9 +949,7 @@ const api = {
       }
 
       if (isNodeMap(element)) {
-        for (const el of element) {
-          setText(el, text, location)
-        }
+        map(element, (node) => setText(node, text, location))
       } else {
         setText(element, text, location)
       }
@@ -1154,6 +1168,42 @@ const api = {
       await new Promise((resolve, reject) => {
         callback({ self: element, helpers, next: resolve, reject, state })
       })
+
+      return $
+    }
+
+    /**
+     * Iterates over a HTMLCollection and removes those which do not fit the condition
+     *
+     * @param {*} callback
+     */
+    $.filter = (callback) => {
+      if (!element) return $
+
+      if (!callback)
+        console.warn(
+          "No condition to iterate on, this chain node will be skipped."
+        )
+
+      if (isNodeMap(element)) {
+        // Create a new HTMLCollection
+        const filtered = []
+
+        map(element, (node, index) => {
+          const result = callback({ self: node, index, helpers, state })
+
+          if (result) {
+            filtered.push(node)
+          }
+        })
+
+        // Set all found parents as the new selected element
+        element = filtered
+      } else {
+        const result = callback({ self: element, helpers, state, index: 0 })
+
+        if (!result) element = undefined
+      }
 
       return $
     }

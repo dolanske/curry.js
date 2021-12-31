@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.1.1-alpha
+# jCurry (curry.js) 0.1.2-beta
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -47,6 +47,7 @@ Currently implemented functions as of 31.12.2021 02:28
 
 - [`$.each(callback)`](#synchronous-iteration)
 - [`$.asyncEach(callback)`](#asynchronous-iteration)
+- [`$.filter(condition)`](#filter-iteration)
 
 - [`$.append(callback)`](#append-or-delete-element)
 - [`$.prepend(callback)`](#append-or-delete-element)
@@ -500,6 +501,33 @@ $(".post").asyncEach(({ self, next }) => {
       next()
     })
 })
+```
+
+#### Filter iteration
+
+`$(selector).filter(callback)`
+
+Iterates over provided HTMLCollection and removes items which do not fit the provided codition. This function works similarly to how `Array.prtotype.filter()` works, but it only accepts 1 parameter which is a callback function.
+
+Callback exposes: `self`, `index`, `helpers`, `state`
+
+```js
+// Selects all child nodes of .rows element
+$(".rows")
+  .children()
+  // Filters out all odd indexed items
+  .filter(({ index }) => (index + 1) % 2 === 0)
+  // Each even row has it's text changed
+  .text("I am an even row")
+```
+
+```html
+<ul class="rows">
+  <li>Item 1</li>
+  <li>I am an even row</li>
+  <li>Item 3</li>
+  <li>I am an even row</li>
+</ul>
 ```
 
 ---
