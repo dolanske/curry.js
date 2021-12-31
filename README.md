@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.0.12-alpha
+# jCurry (curry.js) 0.0.15-alpha
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -18,10 +18,10 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 ### API Documentation
 
-Currently implemented functions as of 31.12.2021 01:18
+Currently implemented functions as of 31.12.2021 02:28
 
 - [`$(selector)`](#base-selector)
-- [`$.get()`](#base-selector)
+- [`$.get(property)`](#base-selector)
 - [`$.del()`](#index-selector)
 - [`$.on(event, callback)`](#event-binding)
 - [`$.css(property, style)`](#css-injection)
@@ -30,7 +30,8 @@ Currently implemented functions as of 31.12.2021 01:18
 - [`$.toggleClass(class)`](#class-list-manipulation)
 - [`$.each(callback)`](#synchronous-iteration)
 - [`$.asyncEach(callback)`](#asynchronous-iteration)
-- [`$.nth(n)`](#nth-selector)
+- [`$.nth(index, callback)`](#nth-selector)
+- [`$.nthChild(index, callback)`](#nth-child)
 - [`$.first(callback)`](#first-or-last-items)
 - [`$.last(callback)`](#first-or-last-items)
 - [`$.prev(index, callback)`](#prev-or-next-item)
@@ -54,13 +55,16 @@ Currently implemented functions as of 31.12.2021 01:18
 
 Selects matching html elements. Allows for selecting by class, id or element name. In the future will also support for CSS selectors and attr / value matching.
 
-If the `.get()` function is attached, selector returns the selected elements. Otherwise it waits for chained function calls.
-
 Curently supports '.class', '#id' and 'h1' native element selectors.
+
+If the `.get(property)` function is attached, selector returns the selected elements. Otherwise it waits for chained function calls. If property is provided, it will check if such property exists in the selected element(s) and will return an array containing its findings.
 
 ```js
 // Returns a HTMLCollection of every button
 const buttons = $("button").get()
+
+// Returns the value of each input element
+const values = $("input").get("value")
 ```
 
 ---
@@ -69,7 +73,7 @@ const buttons = $("button").get()
 
 #### Nth selector
 
-`$(selector).nth(n)`
+`$(selector).nth(index, callback)`
 
 Selects the element at index `n` in from the selected element(s). Zero indexed.
 
@@ -80,6 +84,17 @@ If n is not specified, automatically returns the first element. If element is no
 $("li")
   .nth(2)
   .on("click", ({ self }) => console.log(self.textContent))
+```
+
+#### Nth child
+
+`$(selector).nthChild(index, callback)`
+
+Works exactly the same as `$.nth()` except it looks for children at `index` within the selected element.
+
+```js
+// Selects the first list-item and prints its text & index
+$("ul").nthChild(1, ({ self, index }) => console.log(self.textContent))
 ```
 
 #### First or last items

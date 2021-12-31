@@ -297,11 +297,26 @@ const api = {
 
     /**
      *
+     * @param {String} property
      * @returns HTML node(s) of the selected element
      */
 
-    $.get = () => {
+    $.get = (property) => {
       if (!element || element.length === 0) return undefined
+
+      if (property) {
+        if (isNodeList(element)) {
+          const params = []
+          iterate(element, (el) => {
+            if (el[property]) params.push(el[property])
+          })
+
+          return params
+        } else {
+          if (element[property]) return [element[property]]
+        }
+      }
+
       if (element.length === 1) return element[0]
 
       return element
@@ -535,10 +550,11 @@ const api = {
      * Selects an element at the index `n`, if element is not found, nothing happens
      *
      * @param {Number} index
+     * @param {Function | undefined} callback
      * @returns Instance of curry for function chaining
      */
 
-    $.nth = (index) => {
+    $.nth = (index, callback) => {
       if (!element) return $
 
       // If element doesn't have length, we assume there is just
@@ -564,6 +580,8 @@ const api = {
         }
       }
 
+      if (callback) callback({ self: element, helpers, index })
+
       return $
     }
 
@@ -582,13 +600,44 @@ const api = {
     /**
      * Selects element at index n of all its available siblings
      *
+     * @param {Number} n
+     * @param {Function | undefined} callback
      * @returns Instance of curry for function chaining
      */
 
-    // TODO: Implement
+    $.nthChild = (n, callback) => {
+      if (!element) return $
 
-    $.nthChild = (n) => {
-      throw Error("Function not supported")
+      if (isNodeList(element)) {
+        if (element.length === 1) {
+          element = element[0]
+        } else {
+          throw Error(
+            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in $.each() if you are selecting a HTMLCollection"
+          )
+        }
+      }
+
+      if (n > element.children.length) {
+        throw Error(`No child found for index '${n}'`)
+      }
+
+      if (!n || n === 1) {
+        // Select the first child
+        element = element.firstElementChild
+      }
+
+      if (element.children && n > 1) {
+        iterate(element.children, (child, index) => {
+          if (n - 1 === index) {
+            element = child
+          }
+        })
+      }
+
+      if (callback) callback({ self: element, helpers, index: n })
+
+      return $
     }
 
     /**
@@ -619,7 +668,7 @@ const api = {
           element = element[0]
         } else {
           throw Error(
-            "Cannot use function $.next() on a node list. Wrap your functionality in $.each() if you are selecting a HTMLCollection"
+            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in $.each() if you are selecting a HTMLCollection"
           )
         }
       }
@@ -990,6 +1039,13 @@ const api = {
       return $
     }
 
+    /**
+     * Shorthand for attaching an $.on('click') event listener
+     *
+     * @param {Function} callback
+     * @returns Instance of curry for function chaining
+     */
+
     $.click = (callback) => {
       if (!element || !callback) return $
 
@@ -1008,6 +1064,7 @@ const api = {
      * Select parent node of each selected element(s)
      *
      * @param {Function} callback Optional
+     * @returns Instance of curry for function chaining
      */
 
     $.parent = (callback) => {

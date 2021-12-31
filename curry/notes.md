@@ -2,14 +2,11 @@
 
 - [ ] Add better example code in $.parent in documentation
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
-- [x] NodeList -> HTMLCollection in documentation
-
-- [x] Redo prepend,append & addChild callback. Even callback as a function can return a template string
 
 ## ROADMAP
 
 - [x] Add links to functions with headings
-- [ ] Resolve todos in curry.js
+- [x] Resolve todos in curry.js
 - [ ] finish basic chain functions 0.0.2
 
 ## Selection (version number + 0.1.0)
@@ -55,24 +52,6 @@ Add support for nested selectors, should work the same way as when selecting css
 
 Shorthand for adding onmouseenter & onmouseleave event listener
 Might need to implement add global map, in which to store the pre-hover styling
-
-### .click
-
-[ ] Implement
-[ ] Document
-
-Shorthand for adding .on('click') event listener.
-
-### .children
-
-[ ] Implement
-[ ] Document
-
-### .nthChild(selector, depth)
-
-Returns the n level deep child node
-
-### .nthSibling
 
 ---
 
