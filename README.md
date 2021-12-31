@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.1.0-alpha
+# jCurry (curry.js) 0.1.1-alpha
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -330,7 +330,7 @@ $("p").text("I am the text content now")
 
 Attaches an event listener to the selected element(s) and calls the callback function on every listener trigger.
 
-Exposed callback params: `self`, `event` or `e`, `helpers`
+Exposed callback params: `self`, `event` or `e`, `helpers`, `state`
 
 ```js
 // On click, write out the text within the button to the console
@@ -461,7 +461,7 @@ $(".show-paragraph").on("click", ({ self }) => {
 
 `$(selector).each(callback)`
 
-Exposed callback params: `self`, `prev`, `index`, `helpers`
+Exposed callback params: `self`, `prev`, `index`, `helpers`, `state`
 
 Used for iterating over each selected element and executing a function on each iteration. Also provides the previous selected element.
 
@@ -483,7 +483,7 @@ $("button").each(({ self, prev, index, helpers }) => {
 
 `$(selector).asyncEach(callback)`
 
-Exposed callback params: `self`, `prev`, `index`, `helpers`, `next`
+Exposed callback params: `self`, `prev`, `index`, `helpers`, `next`, `state`
 
 Iterates over selected element(s) in the same fashion as `.each()` except to continue in the loop, we must call the `next()` function on each iteration. This allows us to work with promises or any async/await actions which should not happen synchonously but in order.
 
