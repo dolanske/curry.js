@@ -202,51 +202,10 @@ const validDisplayValues = [
   "inherit",
 ]
 
-function selectoDomElement(selector) {
+function queryElement(selector) {
   if (isObject(selector) || selector.nodeType) return selector
 
-  let el, prefix
-  let element = selector
-
-  if (validSelectors.includes(selector.charAt(0))) {
-    element = selector.substring(1)
-    prefix = selector.charAt(0)
-  }
-
-  switch (prefix) {
-    // Class name selector
-    case ".": {
-      el = document.getElementsByClassName(element)
-      break
-    }
-    // ID selector
-    case "#": {
-      el = document.getElementById(element)
-      break
-    }
-    // Attribute selector
-    case "[": {
-    }
-    // Index / nth selector
-    case ":": {
-    }
-
-    // Element Selector
-    default: {
-      el = document.getElementsByTagName(element)
-      break
-    }
-  }
-
-  if (!el) throw Error(`Selected '${selector}' element doesn't exist`)
-
-  if (el.length !== undefined) {
-    for (const element of el) {
-      element.selectedBy = selector
-    }
-  } else if (el) {
-    el.selectedBy = selector
-  }
+  const el = document.querySelectorAll(selector)
 
   return el
 }
@@ -292,10 +251,6 @@ const $api = {
    * @param {String} selector Selects an existing element in the DOM
    * @returns Instance of curry for function chaining
    *
-   * The selector currently accepts this syntax:
-   * `.test`  Class selector
-   * `#id`    Id selector
-   * `h1`     Native HTML elemenets
    */
 
   const $ = (selector) => {
@@ -316,7 +271,7 @@ const $api = {
       }
     }
 
-    element = selectoDomElement(selector)
+    element = queryElement(selector)
 
     /**
      *

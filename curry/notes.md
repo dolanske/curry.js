@@ -7,14 +7,6 @@
 
 - [ ] Check how $.parent is written and consider every non-iterable selector to actually be iterable
 
-## Selection (version number + 0.1.0)
-
-Add support for nested selectors, should work the same way as when selecting css classes.
-
-- [ ] `.styles h1`
-- [ ] `ul > li`
-- [ ] `p + span`
-
 ## Attribute selector (version number + 0.1.0)
 
 - [ ] Add support for selecting attribnutes

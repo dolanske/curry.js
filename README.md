@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.1.2-beta
+# jCurry (curry.js) 0.1.3-beta
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -84,9 +84,7 @@ $("ul").on("click", ({ state }) => console.log(state.names))
 
 `$(selector)`
 
-Selects matching html elements. Allows for selecting by class, id or element name. In the future will also support for CSS selectors and attr / value matching.
-
-Curently supports '.class', '#id' and 'h1' native element selectors.
+Selects matching html elements. It is implemented using the `document.querySelector`function. It offers some extensive ways to query elements. For full documentation check it out on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector)
 
 If the `.get(property)` function is attached, selector returns the selected elements. Otherwise it waits for chained function calls. If property is provided, it will check if such property exists in the selected element(s) and will return an array containing its findings.
 
