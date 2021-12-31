@@ -1,7 +1,10 @@
-# NOTES & TODO
+# TODO
 
 - [ ] Add better example code in $.parent in documentation
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
+- [ ] Reorganize the API documentaiton function list
+
+- [ ] Check how $.parent is written and consider every non-iterable selector to actually be iterable
 
 ## ROADMAP
 
@@ -36,12 +39,6 @@ Add support for nested selectors, should work the same way as when selecting css
 ---
 
 ## Chain Functions
-
-### .getIndex
-
-- accepts only 1 element, not a collection
-- can't get chained
-- accepts a callback and exposes the 'index' value or returns the index if no callback
 
 ### .hover
 

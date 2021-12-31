@@ -29,7 +29,7 @@ function from(n, start = 0) {
   return Array.from({ length: n }, (_, i) => i + start)
 }
 
-function isNodeList(list) {
+function isNodeMap(list) {
   return list.length !== undefined
 }
 
@@ -50,8 +50,8 @@ function bindListener(el, name, callback) {
  * @param {HTMLNodeList} elements
  * @param {Function} callback
  */
-function iterate(elements, callback) {
-  if (isNodeList(elements)) {
+function map(elements, callback) {
+  if (isNodeMap(elements)) {
     for (let i = 0; i < elements.length; i++) {
       callback(elements[i], i)
     }
@@ -164,8 +164,8 @@ const helpers = {
   isNil,
   from,
   render,
-  isHTMLCollection: isNodeList,
-  iterateHTMLCollection: iterate,
+  isElements: isNodeMap,
+  mapElements: map,
   getSiblingIndex,
 }
 
@@ -305,9 +305,9 @@ const api = {
       if (!element || element.length === 0) return undefined
 
       if (property) {
-        if (isNodeList(element)) {
+        if (isNodeMap(element)) {
           const params = []
-          iterate(element, (el) => {
+          map(element, (el) => {
             if (el[property]) params.push(el[property])
           })
 
@@ -329,8 +329,8 @@ const api = {
     $.del = () => {
       if (!element) return
 
-      if (isNodeList(element)) {
-        iterate(element, (node) => node.remove())
+      if (isNodeMap(element)) {
+        map(element, (node) => node.remove())
       } else {
         element.remove()
       }
@@ -349,7 +349,7 @@ const api = {
       if (!element) return $
 
       // Is HTML collection
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         for (const item of element) {
           bindListener(item, event, callback)
         }
@@ -559,20 +559,21 @@ const api = {
 
       // If element doesn't have length, we assume there is just
       // one element and the index function gets ignored
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         // If index exceeds the element list length,
         // automatically clear selection and break the chain
-        if (index + 1 > element.length) {
-          element = undefined
-          return $
+        if (index > element.length) {
+          // element = undefined
+          // return $
+          return undefined
         }
 
-        if (isNil(index) || index === 0) {
+        if (!index || index === 1) {
           // If index is not set or is 0, return first element
           element = element[0]
         } else {
           for (let i = 0; i <= element.length; i++) {
-            if (index === i) {
+            if (index - 1 === i) {
               element = element[i]
               break
             }
@@ -588,18 +589,6 @@ const api = {
     /**
      * Selects element at index n of all its available siblings
      *
-     * @returns Instance of curry for function chaining
-     */
-
-    // TODO: Implement
-
-    $.nthSibling = (n) => {
-      throw Error("Function not supported")
-    }
-
-    /**
-     * Selects element at index n of all its available siblings
-     *
      * @param {Number} n
      * @param {Function | undefined} callback
      * @returns Instance of curry for function chaining
@@ -608,18 +597,19 @@ const api = {
     $.nthChild = (n, callback) => {
       if (!element) return $
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         if (element.length === 1) {
           element = element[0]
         } else {
           throw Error(
-            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in $.each() if you are selecting a HTMLCollection"
+            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in the $.each() iterator."
           )
         }
       }
 
       if (n > element.children.length) {
-        throw Error(`No child found for index '${n}'`)
+        // throw Error(`No child found for index '${n}'`)
+        return undefined
       }
 
       if (!n || n === 1) {
@@ -628,7 +618,7 @@ const api = {
       }
 
       if (element.children && n > 1) {
-        iterate(element.children, (child, index) => {
+        map(element.children, (child, index) => {
           if (n - 1 === index) {
             element = child
           }
@@ -636,6 +626,30 @@ const api = {
       }
 
       if (callback) callback({ self: element, helpers, index: n })
+
+      return $
+    }
+
+    $.children = (callback) => {
+      if (!element) return undefined
+
+      if (isNodeMap(element)) {
+        if (element.length === 1) {
+          element = element[0]
+        } else {
+          throw Error(
+            "Cannot use function $.children() on a HTMLCollection. Wrap your functionality in the $.each() iterator."
+          )
+        }
+      }
+
+      if (element.children.length === 0) return undefined
+
+      // Save current element before its overriden by the selected children
+      const self = element
+      element = element.children
+
+      if (callback) callback({ self, children: element.children, helpers })
 
       return $
     }
@@ -663,12 +677,12 @@ const api = {
       const type =
         selectType === "next" ? "nextElementSibling" : "previousElementSibling"
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         if (element.length === 1) {
           element = element[0]
         } else {
           throw Error(
-            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in $.each() if you are selecting a HTMLCollection"
+            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in the $.each() iterator."
           )
         }
       }
@@ -731,7 +745,7 @@ const api = {
     $.first = (callback) => {
       if (!element) return $
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         element = element[0]
       }
 
@@ -745,7 +759,7 @@ const api = {
 
       let index = 0
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         index = element.length - 1
         element = element[index]
       }
@@ -772,7 +786,7 @@ const api = {
 
       // If callback is a string, we just render a new html template
       if (typeof vdom === "string") {
-        if (isNodeList(element)) {
+        if (isNodeMap(element)) {
           for (const el of element) {
             el.insertAdjacentHTML("afterend", vdom)
           }
@@ -780,8 +794,8 @@ const api = {
           element.insertAdjacentHTML("afterend", vdom)
         }
       } else if (!isNil(vdom)) {
-        if (isNodeList(element)) {
-          iterate(element, (node) => createElement(vdom, node, "append"))
+        if (isNodeMap(element)) {
+          map(element, (node) => createElement(vdom, node, "append"))
         } else {
           createElement(vdom, element, "append")
         }
@@ -807,7 +821,7 @@ const api = {
 
       // If callback is a string, we just render a new html template
       if (typeof vdom === "string") {
-        if (isNodeList(element)) {
+        if (isNodeMap(element)) {
           for (const el of element) {
             el.insertAdjacentHTML("beforebegin", vdom)
           }
@@ -815,8 +829,8 @@ const api = {
           element.insertAdjacentHTML("beforebegin", vdom)
         }
       } else if (!isNil(vdom)) {
-        if (isNodeList(element)) {
-          iterate(element, (node) => createElement(vdom, node, "prepend"))
+        if (isNodeMap(element)) {
+          map(element, (node) => createElement(vdom, node, "prepend"))
         } else {
           createElement(vdom, element, "prepend")
         }
@@ -842,16 +856,16 @@ const api = {
           : callback
 
       if (typeof vdom === "string") {
-        if (isNodeList(element)) {
-          iterate(element, (node) =>
+        if (isNodeMap(element)) {
+          map(element, (node) =>
             node.insertAdjacentHTML(append ? "beforeend" : "afterbegin", vdom)
           )
         } else {
           element.insertAdjacentHTML(append ? "beforeend" : "afterbegin", vdom)
         }
       } else if (!isNil(vdom)) {
-        if (isNodeList(element)) {
-          iterate(element, (node) => {
+        if (isNodeMap(element)) {
+          map(element, (node) => {
             createElement(vdom, node, append ? "appendchild" : "prependchild")
           })
         } else {
@@ -901,7 +915,7 @@ const api = {
         }
       }
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         for (const el of element) {
           setText(el, text, location)
         }
@@ -928,7 +942,7 @@ const api = {
         return $
       }
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         for (const el of element) {
           el.style.display = display
         }
@@ -942,7 +956,7 @@ const api = {
     $.hide = () => {
       if (!element) return $
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         for (const el of element) {
           el.style.display = "none"
         }
@@ -967,7 +981,7 @@ const api = {
 
       const isActive =
         getStyleProperty(
-          isNodeList(element) ? element[0] : element,
+          isNodeMap(element) ? element[0] : element,
           "display"
         ) === "none"
           ? false
@@ -981,7 +995,7 @@ const api = {
         }
       }
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         for (const el of element) {
           toggleSelf(isActive, el, onActive)
         }
@@ -1011,7 +1025,7 @@ const api = {
       if (!enter || !leave)
         throw Error("Function $.hover({enter, leave}) is missing a parameter.")
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         for (const el of element) {
           $(el).on("mouseenter", (args) => enter({ ...args }))
           $(el).on("mouseleave", (args) => leave({ ...args }))
@@ -1049,8 +1063,8 @@ const api = {
     $.click = (callback) => {
       if (!element || !callback) return $
 
-      if (isNodeList(element)) {
-        iterate(element, (node) => {
+      if (isNodeMap(element)) {
+        map(element, (node) => {
           $(node).on("click", (args) => callback({ ...args }))
         })
       } else {
@@ -1070,11 +1084,11 @@ const api = {
     $.parent = (callback) => {
       if (!element) return
 
-      if (isNodeList(element)) {
+      if (isNodeMap(element)) {
         // Create a new HTMLCollection
         const fragment = document.createDocumentFragment()
 
-        iterate(element, (node) => {
+        map(element, (node) => {
           if (node && node.parentNode) {
             const parent = node.parentNode
 

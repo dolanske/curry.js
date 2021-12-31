@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.0.15-alpha
+# jCurry (curry.js) 0.1.0-alpha
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -23,29 +23,35 @@ Currently implemented functions as of 31.12.2021 02:28
 - [`$(selector)`](#base-selector)
 - [`$.get(property)`](#base-selector)
 - [`$.del()`](#index-selector)
+
 - [`$.on(event, callback)`](#event-binding)
-- [`$.css(property, style)`](#css-injection)
+- [`$.hover({ enter(), leave() })`](#hover-shorthand)
+- [`$.click(callback)`](#click-shorthand)
+
 - [`$.addClass(class)`](#class-list-manipulation)
 - [`$.delClass(class)`](#class-list-manipulation)
 - [`$.toggleClass(class)`](#class-list-manipulation)
-- [`$.each(callback)`](#synchronous-iteration)
-- [`$.asyncEach(callback)`](#asynchronous-iteration)
+- [`$.show(displayType)`](#element-visibility)
+- [`$.hide()`](#element-visibility)
+- [`$.toggle(activeDisplayType)`](#element-visibility)
+- [`$.css(property, style)`](#css-injection)
+
 - [`$.nth(index, callback)`](#nth-selector)
 - [`$.nthChild(index, callback)`](#nth-child)
 - [`$.first(callback)`](#first-or-last-items)
 - [`$.last(callback)`](#first-or-last-items)
 - [`$.prev(index, callback)`](#prev-or-next-item)
 - [`$.next(index, callback)`](#prev-or-next-item)
+- [`$.parent(callback)`](#parent-selector)
+- [`$.children(callback)`](#children-selector)
+
+- [`$.each(callback)`](#synchronous-iteration)
+- [`$.asyncEach(callback)`](#asynchronous-iteration)
+
 - [`$.append(callback)`](#append-or-delete-element)
 - [`$.prepend(callback)`](#append-or-delete-element)
 - [`$.addChild(callback, append)`](#add-child)
 - [`$.text(text, location)`](#text-content)
-- [`$.show(displayType)`](#element-visibility)
-- [`$.hide()`](#element-visibility)
-- [`$.toggle(activeDisplayType)`](#element-visibility)
-- [`$.hover({ enter(), leave() })`](#hover-shorthand)
-- [`$.parent(callback)`](#parent-selector)
-- [`$.click(callback)`](#click-shorthand)
 
 ### Selecting elements
 
@@ -75,7 +81,7 @@ const values = $("input").get("value")
 
 `$(selector).nth(index, callback)`
 
-Selects the element at index `n` in from the selected element(s). Zero indexed.
+Selects the element at index `n` in from the selected element(s). _Indexing starts at `1`_.
 
 If n is not specified, automatically returns the first element. If element is not found, nothing in the chain will get executed.
 
@@ -123,7 +129,7 @@ Selects the previous / next or nth sibling if element has any, otherwise returns
 
 If you use custom index, it is recommended to use `2` and higher, as `1` has the same functionality as no index. And 0 would select itself.
 
-Callback exposes:
+Optional callback exposes:
 
 - `self` the newly selected sibling
 - `index` index of the newly selected sibling
@@ -153,7 +159,7 @@ Selects parent element(s) of the selected element(s). Provides a new HTMLCollect
 
 Optionally, you can use the callback function which will execute for every element it finds.
 
-Callback exposes:
+Optional callback exposes:
 
 - `self` the selected parent
 - `child` parent's child (the original selector)
@@ -164,6 +170,26 @@ Callback exposes:
 $("li")
   .parent()
   .on("click", ({ self }) => $(self).addClass("ul-clicked"))
+```
+
+#### Children selector
+
+`$(selector).children(callback)
+
+Selects all children element(s) of the currently selected element. Works similarly to the `$.parent()` function except that it cannot be used with HTMLCollection. If you want to iterate over a collection an select each element's children, please use the `$.each()` iterator.
+
+Optional callback exposes:
+
+- `self` the selector
+- `children` elements's children
+- `helpers`
+
+```js
+$("#list")
+  // Returns all list-items of <ul>
+  .children()
+  // Assing the index of each child as its text content
+  .each(({ self, index }) => $(self).text(index))
 ```
 
 ---
