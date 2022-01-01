@@ -61,7 +61,7 @@ Currently implemented functions as of 1.2.2022
 
 ### Helpers
 
-Each callback epxoses the `$util` object which contains a set of helpers functions for development. Documentation for each function can be found [here](https://github.com/dolanske/curry.js/blob/main/HELPERS.md).
+Each callback epxoses the `$util` object which contains a set of helpers functions for development. Documentation for each function can be found [here](/HELPERS.md).
 
 ### State
 
