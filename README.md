@@ -18,7 +18,7 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 ### API Documentation
 
-Currently implemented functions as of 1.1.2022
+Currently implemented functions as of 1.2.2022
 
 - [`$(selector)`](#base-selector)
 - [`$.get(property)`](#base-selector)
@@ -58,6 +58,10 @@ Currently implemented functions as of 1.1.2022
 - [`$.asyncExe(callback)`](#code-execution)
 
 - [`$.animate(properties, options)`](#element-animation)
+
+### Helpers
+
+Each callback epxoses the `$util` object which contains a set of helpers functions for development. Documentation for each function can be found [here]().
 
 ### State
 
