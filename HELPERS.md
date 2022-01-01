@@ -25,3 +25,14 @@ You can access the `$util` helper object in any callback with destructuring. Sai
 - `$util.bez(x1,x2,y1,y1)` - Formats input cubic bezoar values into CSS like syntax. Essentially a shorthand for writing "cubic-bezoar(1,0,1,0)"
 
 - `$util.bez(name)` - Optionally a generic cubic-bezoar function name can be inputted and if it exists, it returns a preset cubic bezoar. List of all available bezoards can be found [here](https://easings.net/). Every easing except the bottom row is available.
+
+<table>
+  <tr>
+    <td>
+      `$util.getStyleProperty(element, property)`
+    <td />
+    <td>
+      Returns element's applied style, property must be accessed in kebab-case just like in CSS
+    <td />
+  <tr />
+</table>
