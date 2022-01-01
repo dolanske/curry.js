@@ -33,7 +33,16 @@ function isNodeMap(list) {
   return list.length !== undefined
 }
 
-function bindListener(el, name, callback, state, options) {
+function undef(property, def) {
+  return isNil(property) ? def : property
+}
+
+function bez(...args) {
+  const format = args.map((item) => Math.max(Math.min(item, 1), 0))
+  return `cubic-bezier(${format.join(",")})`
+}
+
+function bindListener(el, name, callback, $state, options) {
   el.addEventListener(
     name,
     (e) => {
@@ -41,8 +50,8 @@ function bindListener(el, name, callback, state, options) {
         event: e,
         e: e,
         self: el,
-        helpers,
-        state,
+        $util,
+        $state,
       })
     },
     options
@@ -162,7 +171,7 @@ function createElement(vnode, container, where) {
 
 // Helpers object that gets exposed in callback functions
 
-const helpers = {
+const $util = {
   getStyleProperty,
   isObject,
   isArray,
@@ -172,10 +181,9 @@ const helpers = {
   isElements: isNodeMap,
   mapElements: map,
   getSiblingIndex,
+  undef,
+  bez,
 }
-
-// const validSelectors = [".", "#", "[", ":"]
-const validSelectors = [".", "#"]
 
 const validDisplayValues = [
   "inline",
@@ -205,7 +213,9 @@ const validDisplayValues = [
 function queryElement(selector) {
   if (isObject(selector) || selector.nodeType) return selector
 
-  const el = document.querySelectorAll(selector)
+  let el = document.querySelectorAll(selector)
+
+  if (el && el.length === 1) el = el[0]
 
   return el
 }
@@ -214,7 +224,7 @@ function queryElement(selector) {
 
 /**
  *
- * fetch API helpers
+ * fetch API $util
  *
  */
 
@@ -244,7 +254,7 @@ const $api = {
 
   // Define global variables
   let element
-  const state = {}
+  const $state = {}
 
   /**
    *
@@ -260,10 +270,10 @@ const $api = {
       // Special selectors start with $
       switch (selector) {
         case "$state": {
-          return state
+          return $state
         }
-        case "$helpers": {
-          return helpers
+        case "$util": {
+          return $util
         }
         default:
           console.warn("Unsupported magic selector.")
@@ -329,10 +339,10 @@ const $api = {
       // Is HTML collection
       if (isNodeMap(element)) {
         for (const item of element) {
-          bindListener(item, event, callback, state, options)
+          bindListener(item, event, callback, $state, options)
         }
       } else {
-        bindListener(element, event, callback, state, options)
+        bindListener(element, event, callback, $state, options)
       }
 
       return $
@@ -470,13 +480,13 @@ const $api = {
 
       // Selector picked just 1 item and it is not a HTMl collection
       if (element.length === undefined) {
-        callback({ self: element, helpers, index: 0, state })
+        callback({ self: element, $util, index: 0, $state })
       } else {
         let prev = null
         let index = 0
 
         for (const el of element) {
-          callback({ self: el, prev, helpers, index, state })
+          callback({ self: el, prev, $util, index, $state })
           prev = el
           index += 1
         }
@@ -506,14 +516,21 @@ const $api = {
 
       // Selector picked just 1 item and it is not a HTMl collection
       if (element.length === undefined) {
-        callback({ self: element, helpers, index: 0, state })
+        callback({ self: element, $util, index: 0, $state })
       } else {
         let prev = null
         let index = 0
 
         for (const el of element) {
           await new Promise((resolve) =>
-            callback({ self: el, prev, helpers, index, next: resolve, state })
+            callback({
+              self: el,
+              prev,
+              $util,
+              index,
+              next: resolve,
+              $state,
+            })
           )
 
           prev = el
@@ -559,7 +576,7 @@ const $api = {
         }
       }
 
-      if (callback) callback({ self: element, helpers, index, state })
+      if (callback) callback({ self: element, $util, index, $state })
 
       return $
     }
@@ -603,7 +620,7 @@ const $api = {
         })
       }
 
-      if (callback) callback({ self: element, helpers, index: n, state })
+      if (callback) callback({ self: element, $util, index: n, $state })
 
       return $
     }
@@ -635,7 +652,7 @@ const $api = {
       element = element.children
 
       if (callback)
-        callback({ self, children: element.children, helpers, state })
+        callback({ self, children: element.children, $util, $state })
 
       return $
     }
@@ -696,8 +713,8 @@ const $api = {
               self: element,
               prev,
               index: getSiblingIndex(element),
-              helpers,
-              state,
+              $util,
+              $state,
             })
           }
         } else {
@@ -707,8 +724,8 @@ const $api = {
               self: element[type],
               prev: element,
               index: getSiblingIndex(element[type]),
-              helpers,
-              state,
+              $util,
+              $state,
             })
           }
 
@@ -737,7 +754,7 @@ const $api = {
         element = element[0]
       }
 
-      if (callback) callback({ self: element, helpers, state })
+      if (callback) callback({ self: element, $util, $state })
 
       return $
     }
@@ -752,7 +769,7 @@ const $api = {
         element = element[index]
       }
 
-      if (callback) callback({ self: element, helpers, index, state })
+      if (callback) callback({ self: element, $util, index, $state })
 
       return $
     }
@@ -769,7 +786,7 @@ const $api = {
 
       const vdom =
         typeof callback === "function"
-          ? callback({ self: element, render, helpers, state })
+          ? callback({ self: element, render, $util, $state })
           : callback
 
       // If callback is a string, we just render a new html template
@@ -804,7 +821,7 @@ const $api = {
 
       const vdom =
         typeof callback === "function"
-          ? callback({ self: element, render, helpers, state })
+          ? callback({ self: element, render, $util, $state })
           : callback
 
       // If callback is a string, we just render a new html template
@@ -840,7 +857,7 @@ const $api = {
 
       const vdom =
         typeof callback === "function"
-          ? callback({ self: element, render, helpers, state })
+          ? callback({ self: element, render, $util, $state })
           : callback
 
       if (typeof vdom === "string") {
@@ -1079,7 +1096,12 @@ const $api = {
             const parent = node.parentNode
 
             if (callback)
-              callback({ self: parent, child: node, helpers, state })
+              callback({
+                self: parent,
+                child: node,
+                $util,
+                $state,
+              })
 
             // Clone parent node to the HTMLCollection
             fragment.appendChild(parent.cloneNode(true))
@@ -1093,7 +1115,12 @@ const $api = {
           const parent = element.parentNode
 
           if (callback)
-            callback({ self: parent, child: element, helpers, state })
+            callback({
+              self: parent,
+              child: element,
+              $util,
+              $state,
+            })
 
           element = parent
         }
@@ -1112,7 +1139,7 @@ const $api = {
     $.exe = (callback) => {
       if (!element || !callback) return $
 
-      callback({ self: element, helpers, state })
+      callback({ self: element, $util, $state })
 
       return $
     }
@@ -1121,7 +1148,13 @@ const $api = {
       if (!element || !callback) return $
 
       await new Promise((resolve, reject) => {
-        callback({ self: element, helpers, next: resolve, reject, state })
+        callback({
+          self: element,
+          $util,
+          next: resolve,
+          reject,
+          $state,
+        })
       })
 
       return $
@@ -1145,7 +1178,12 @@ const $api = {
         const filtered = []
 
         map(element, (node, index) => {
-          const result = callback({ self: node, index, helpers, state })
+          const result = callback({
+            self: node,
+            index,
+            $util,
+            $state,
+          })
 
           if (result) {
             filtered.push(node)
@@ -1155,7 +1193,12 @@ const $api = {
         // Set all found parents as the new selected element
         element = filtered
       } else {
-        const result = callback({ self: element, helpers, state, index: 0 })
+        const result = callback({
+          self: element,
+          $util,
+          $state,
+          index: 0,
+        })
 
         if (!result) element = undefined
       }
@@ -1167,56 +1210,88 @@ const $api = {
      * Applies animation to selected element(s) with provided CSS property object
      *
      * @param {Object} properties
-     * @param {Object} Options
+     * @param {Object} options
      * @returns
      */
 
-    $.animate = (
-      properties,
-      {
-        length = 500,
-        easing = "ease-in-out",
-        callback,
-        defaultUnit = "px",
-      } = {}
-    ) => {
+    $.animate = async (properties, options) => {
       if (!element || !properties) return $
 
-      const applyAnimation = (el) => {
-        const inSeconds = length / 1000
-        const prevTransition = el.style.transition
-
-        el.style.transition = `${inSeconds}s all ${easing} `
-
-        new Promise((resolve) => {
-          // Apply styling
-          Object.entries(properties).map(([index, value]) => {
-            const property = index
-
-            // Assign default unit
-            if (typeof value === "number") {
-              value = value + defaultUnit
-            }
-
-            el.style[property] = value
-          })
-
-          setTimeout(() => resolve(), length)
-        }).then(() => {
-          // Reapply previous transition property
-          el.style.transition = prevTransition
-
-          if (callback) callback({ self: el, helpers, state })
-        })
+      const formatOptions = (options = {}) => {
+        return {
+          length: undef(options.length, 500),
+          easing: undef(options.easing, "ease-in-out"),
+          callback: options.callback,
+          defaultUnit: undef(options.defaultUnit, "px"),
+        }
       }
 
-      if (isNodeMap(element)) {
-        map(element, (node) => applyAnimation(node))
+      options = formatOptions(options)
+
+      if (typeof properties === "function") {
+        // Using the function callback
+        const execute = properties
+
+        async function start(properties, options) {
+          options = formatOptions(options)
+
+          if (isNodeMap(element)) {
+            const promises = []
+
+            for (const el of element) {
+              promises.push(applyAnimation(el, properties, options))
+            }
+
+            return Promise.all(promises)
+          } else {
+            return applyAnimation(element, properties, options)
+          }
+        }
+
+        await execute({ self: element, $util, start, $state })
       } else {
-        applyAnimation(element)
+        // Properties is an object
+        if (isNodeMap(element)) {
+          map(element, (node) => applyAnimation(node, properties, options))
+        } else {
+          applyAnimation(element, properties, options)
+        }
       }
 
       return $
+    }
+
+    const applyAnimation = async (el, properties, options) => {
+      const { length, easing, callback, defaultUnit } = options
+      const prevTransition = el.style.transition
+      let duration = length
+
+      if (typeof length === "string" && length.endsWith("s")) {
+        duration = parseFloat(length.slice(0, -1)) * 1000
+      }
+
+      el.style.transition = `${duration / 1000}s all ${easing}`
+
+      return new Promise((resolve) => {
+        // Apply styling for each property
+        Object.entries(properties).map(([index, value]) => {
+          const property = index
+
+          // Assign default unit
+          if (typeof value === "number") {
+            value = value + defaultUnit
+          }
+
+          el.style[property] = value
+        })
+
+        setTimeout(() => resolve(), duration)
+      }).then(() => {
+        // Reapply previous transition property
+        el.style.transition = prevTransition
+
+        if (callback) callback({ self: el, $util, $state })
+      })
     }
 
     return $

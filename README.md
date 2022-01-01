@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.1.3-beta
+# jCurry (curry.js) 0.2.0-beta
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -18,7 +18,7 @@ This is a hobby project but I am a perfectionist so I am aiming to develop this 
 
 ### API Documentation
 
-Currently implemented functions as of 31.12.2021 02:28
+Currently implemented functions as of 1.1.2022
 
 - [`$(selector)`](#base-selector)
 - [`$.get(property)`](#base-selector)
@@ -57,21 +57,23 @@ Currently implemented functions as of 31.12.2021 02:28
 - [`$.exe(callback)`](#code-execution)
 - [`$.asyncExe(callback)`](#code-execution)
 
+- [`$.animate(properties, options)`](#element-animation)
+
 ### State
 
-Each callback exposes a `state` property which is a simple way of sharing data in a function chain or even between multiple different chains.
+Each callback exposes a `$state` property which is a simple way of sharing data in a function chain or even between multiple different chains.
 
 ```js
 // Selects all list items and saves their text content to an array
 $("ul")
   .children()
-  .each(({ self, state }) => {
-    if (!state.names) state.names = []
-    state.names.push(self.textContent)
+  .each(({ self, $state }) => {
+    if (!$state.names) $state.names = []
+    $state.names.push(self.textContent)
   })
 
-// When <ul> is clicked, read the state
-$("ul").on("click", ({ state }) => console.log(state.names))
+// When <ul> is clicked, read the $state
+$("ul").on("click", ({ $state }) => console.log($state.names))
 
 // ['first', 'second', 'third']
 ```
@@ -157,7 +159,7 @@ Optional callback exposes:
 - `self` the newly selected sibling
 - `index` index of the newly selected sibling
 - `prev` the previous siblings
-- `helpers`
+- `$util`
 
 ```js
 $("li").on("click", ({ self }) => {
@@ -186,7 +188,7 @@ Optional callback exposes:
 
 - `self` the selected parent
 - `child` parent's child (the original selector)
-- `helpers`
+- `$util`
 
 ```js
 // If any list-item is clicked, the class .ul-clicked gets added to its parent
@@ -205,7 +207,7 @@ Optional callback exposes:
 
 - `self` the selector
 - `children` elements's children
-- `helpers`
+- `$util`
 
 ```js
 $("#list")
@@ -255,10 +257,10 @@ You can also input a template string instead. Either as the only parameter or as
 
 ```js
 // Select every '.list-wrap' element
-$(".list-wrap").append(({ helpers }) => {
+$(".list-wrap").append(({ $util }) => {
   // from creates an array of n items at i index
   // render function is the equivalent of h in vue
-  const { from, render } = helpers
+  const { from, render } = $util
 
   // Generate an array of 5 items starting at index 1
   const items = from(5, 1).map((item) => {
@@ -329,7 +331,7 @@ $("p").text("I am the text content now")
 
 Attaches an event listener to the selected element(s) and calls the callback function on every listener trigger.
 
-Exposed callback params: `self`, `event` or `e`, `helpers`, `state`
+Exposed callback params: `self`, `event` or `e`, `$util`, `$state`
 
 ```js
 // On click, write out the text within the button to the console
@@ -460,18 +462,18 @@ $(".show-paragraph").on("click", ({ self }) => {
 
 `$(selector).each(callback)`
 
-Exposed callback params: `self`, `prev`, `index`, `helpers`, `state`
+Exposed callback params: `self`, `prev`, `index`, `$util`, `$state`
 
 Used for iterating over each selected element and executing a function on each iteration. Also provides the previous selected element.
 
 ```js
 // Loops over each button and doubles each button's font size
 
-$("button").each(({ self, prev, index, helpers }) => {
+$("button").each(({ self, prev, index, $util }) => {
   // Get previous element's font-size
   // If previous element is undefined, use self
   // WARNING: When using getStylePropery, set properties in kebab-case, not camelCase
-  const font = helpers.getStyleProperty(prev ?? self, "font-size")
+  const font = $util.getStyleProperty(prev ?? self, "font-size")
 
   // Computed style properties can return a float in some cases
   self.style.fontSize = parseFloat(font) * (index + 1) + "px"
@@ -482,7 +484,7 @@ $("button").each(({ self, prev, index, helpers }) => {
 
 `$(selector).asyncEach(callback)`
 
-Exposed callback params: `self`, `prev`, `index`, `helpers`, `next`, `state`
+Exposed callback params: `self`, `prev`, `index`, `$util`, `next`, `$state`
 
 Iterates over selected element(s) in the same fashion as `.each()` except to continue in the loop, we must call the `next()` function on each iteration. This allows us to work with promises or any async/await actions which should not happen synchonously but in order.
 
@@ -507,7 +509,7 @@ $(".post").asyncEach(({ self, next }) => {
 
 Iterates over provided HTMLCollection and removes items which do not fit the provided codition. This function works similarly to how `Array.prtotype.filter()` works, but it only accepts 1 parameter which is a callback function.
 
-Callback exposes: `self`, `index`, `helpers`, `state`
+Callback exposes: `self`, `index`, `$util`, `$state`
 
 ```js
 // Selects all child nodes of .rows element
@@ -530,14 +532,113 @@ $(".rows")
 
 ---
 
-### Code execution
+### Animation
+
+#### Element animation
+
+`$(selector).animate(properties, options)`
+
+`$(selector).animate(callback)`
+
+The animate function let's you animate selected element(s) to the style properties provided. It also equips a handful of options to customize the animation.
+
+There are two ways of working with `$.animate()`. If you are familiar with vue3, it's similar to options vs composition api. The more traditional (jQuery) object approach uses these parameters:
+
+- `properties` A CSS object, exactly the same syntax as `$.css()` uses
+- `options`:
+  - `length` - Duration of the animation
+  - `easing` - Easing of the animation
+  - `defaultUnit` - If no unit is provided, assigns the defaultUnit, by default set to "px"
+  - `callback` - Function to execute when animation is complete
+
+```js
+// Traditional Approach
+$("button").click(({ $util }) => {
+  // When button is clicked, every h1 element will be selected
+  $("h1").animate(
+    {
+      // If you input a number, the _defaultUnit_ option will assign a unit
+      // in our case it would be "px"
+      marginLeft: 200,
+      backgroundColor: "red",
+    },
+    {
+      length: "1s",
+      // Shorthand for inputing "cubic-bezier(0.85, 0, 0.15, 1)"
+      // Supports all CSS easings
+      easing: $util.bez(0.85, 0, 0.15, 1),
+      callback: ({ self }) => {
+        // In callback we can infinitely execute more animations if needed
+        $(self).animate(
+          {
+            marginLeft: "0px",
+            backgroundColor: "white",
+          },
+          { length: 500 }
+        )
+      },
+    }
+  )
+})
+```
+
+The second approach to animation approaches it from a bit different way. Say you want to use the animated element's width to more accurately move it. With the "options" approach you'd have to use the parent selector and manually access it through its children.
+
+When using the callback, the animated element(s) are available to you. The only drawback is that if you want to access the element's properties, you must wrap the function in `$.each` as you cannot get specific properties out of a HTMLCollection.
+
+Callback exposes: `self`, `$util`, `$state` & `start`
+
+The start function is the equivalent of using `$.animate()` and takes in `properties` and `options`. You can se the same options syntax then.
+
+The difference is that now you control when the animation triggers. The next example does exactly the same as the previous one. Just with different syntax.
+
+```js
+$("button").click(({ $util }) => {
+  $("h1").animate(async ({ self, $util, start }) => {
+    // Execute code before animation begins
+    // Thanks to the callback function, this exposes the currently animated object (if we arent selecting multiple)
+    // from which we can gain properties to use in the animation
+
+    // For example, I can get the element's width and use that
+    // NOTE: This won't work if we have multiple elements selected, you can use $.each to iterate first, before animating
+    // const marginLeft = $util.getStyleProperty(self, "width")
+
+    // To actually start the animation we use the start() function
+    // which also returns a promise which resolves when animation completes
+    await start(
+      {
+        marginLeft: "200px",
+        backgroundColor: "red",
+      },
+      {
+        length: 1000,
+        easing: $util.bez(0.85, 0, 0.15, 1),
+        // We can still attach a callaback here
+        // but using .then() is more cleaner
+      }
+    )
+
+    // This also allows for animation chaining without having to use the options callback! Clean code!!
+    await start(
+      {
+        marginLeft: 0,
+        backgroundColor: "white",
+      },
+      { length: "0.5s" }
+    ).then(() => {
+      // This executes when all animations are complete
+    })
+  })
+})
+```
+
+---
+
+### Code execution (experimental)
 
 Utility selector to execute code during chaining. This should be used rarely as most functions have their own callbacks. Callback is executed only once no matter how many selected elements. For execution per element, use the `$.each()` or `$.asyncEach()` iteration functions.
 
-Callback exposes:
-
-- `self` selected element(s)
-- `helpers`
+Callback exposes: `self`, `$util`, `$state`
 
 `$(selector).exe(callback)`
 

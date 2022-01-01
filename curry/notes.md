@@ -6,7 +6,7 @@
 - [ ] Check how $.parent is written and consider every non-iterable selector to actually be iterable
 
 - [ ] Figure out how to delay / pause the chain
-- [ ] If chain contains async function, should probably continue once it resolves
+- [ ] If chain contains async function, should probably continue once it resolves (how???)
 
 ---
 
@@ -23,13 +23,6 @@ Shorthand for adding onmouseenter & onmouseleave event listener
 Might need to implement add global map, in which to store the pre-hover styling
 
 --- ANIMATIONS (version number + 0.1.0)
-
-### .animate
-
-[ ] Implement
-[ ] Document
-
-Animates transition from the default to the input css style
 
 ### .slideDown
 
