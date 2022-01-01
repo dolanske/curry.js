@@ -1163,6 +1163,62 @@ const $api = {
       return $
     }
 
+    /**
+     * Applies animation to selected element(s) with provided CSS property object
+     *
+     * @param {Object} properties
+     * @param {Object} Options
+     * @returns
+     */
+
+    $.animate = (
+      properties,
+      {
+        length = 500,
+        easing = "ease-in-out",
+        callback,
+        defaultUnit = "px",
+      } = {}
+    ) => {
+      if (!element || !properties) return $
+
+      const applyAnimation = (el) => {
+        const inSeconds = length / 1000
+        const prevTransition = el.style.transition
+
+        el.style.transition = `${inSeconds}s all ${easing} `
+
+        new Promise((resolve) => {
+          // Apply styling
+          Object.entries(properties).map(([index, value]) => {
+            const property = index
+
+            // Assign default unit
+            if (typeof value === "number") {
+              value = value + defaultUnit
+            }
+
+            el.style[property] = value
+          })
+
+          setTimeout(() => resolve(), length)
+        }).then(() => {
+          // Reapply previous transition property
+          el.style.transition = prevTransition
+
+          if (callback) callback({ self: el, helpers, state })
+        })
+      }
+
+      if (isNodeMap(element)) {
+        map(element, (node) => applyAnimation(node))
+      } else {
+        applyAnimation(element)
+      }
+
+      return $
+    }
+
     return $
   }
 

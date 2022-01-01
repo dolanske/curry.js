@@ -3,19 +3,10 @@
 - [ ] Add better example code in $.parent in documentation
 - [ ] Add example to $.exe and $.asyncExe
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
-- [x] Reorganize the API documentaiton function list
-
 - [ ] Check how $.parent is written and consider every non-iterable selector to actually be iterable
 
-## Attribute selector (version number + 0.1.0)
-
-- [ ] Add support for selecting attribnutes
-  - [ ] Basic implementation
-  - [ ] Value matching attr=val
-  - [ ] Not equals matching attr!=val
-  - [ ] Includes in attribute value attr\*val
-  - [ ] Starts with attr<val
-  - [ ] Ends with attr>val
+- [ ] Figure out how to delay / pause the chain
+- [ ] If chain contains async function, should probably continue once it resolves
 
 ---
 
