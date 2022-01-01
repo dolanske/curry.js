@@ -28,11 +28,7 @@ You can access the `$util` helper object in any callback with destructuring. Sai
 
 <table>
   <tr>
-    <td>
-      `$util.getStyleProperty(element, property)`
-    <td />
-    <td>
-      Returns element's applied style, property must be accessed in kebab-case just like in CSS
-    <td />
+    <td>`$util.getStyleProperty(element, property)`<td />
+    <td>Returns element's applied style, property must be accessed in kebab-case just like in CSS<td />
   <tr />
 </table>
