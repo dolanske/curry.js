@@ -23,24 +23,23 @@
       vertical-align: baseline;
     }
 
-    div {
-      display: block;
-      margin: 32px 0;
-    }
-
-    h1 {
-      display:inline-block;
-      background-color: white;
+    .hidden {
+      /* display: none; */
+      background-color: violet;
       color: black;
+      padding: 32px;
     }
  </style>
 </head>
   <body>
+    <button>Content</button>
+    <div class="wrap">
 
-    <button>MOVE!</button>
-
-    <h1 id="heading">I am being moved</h1>
-    <h1>Henlo</h1>
+      <div class="hidden">
+        <h3>Hello now I am visible</h3>
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam blanditiis vel, eveniet non consequuntur optio asperiores dolorem voluptatibus! Magnam nisi debitis aspernatur at optio. Minus fuga illum soluta eaque dicta?</p>
+      </div>
+    </div>
   </body>
 
   <script type="text/javascript" src="examples.js"></script>

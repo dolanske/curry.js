@@ -1,35 +1,27 @@
-$("button").click(({ $util }) => {
-  $("h1").animate(async ({ $util, start }) => {
-    // Execute code before animation begins
-    // Thanks to the callback function, this exposes the currently animated object (if we arent selecting multiple)
-    // from which we can gain properties to use in the animation
+// Library object
+const V = {
+  one: async () =>
+    new Promise((resolve, reject) => {
+      // Do async stuff
+      console.log("ONE")
 
-    // For example, I can get the element's width and use that
-    // NOTE: This won't work if we have multiple elements selected, you can use $.each to iterate first, before animating
-    // const marginLeft = $util.getStyleProperty(self, "width")
+      // In case we want to stop the execution chain
+      // reject('Error, shit my pants')
 
-    // To actually start the animation we use the start() function
-    // which also returns a promise which resolves when animation completes
-    console.log($util)
+      setTimeout(() => {
+        // Resolve and continue the chain
+        resolve(V)
+      }, 1000)
+    }),
+  two: async () => {
+    console.log("TWO")
 
-    await start(
-      {
-        marginLeft: "200px",
-        backgroundColor: "red",
-      },
-      {
-        length: 1000,
-        // easing: $util.bez(0.85, 0, 0.15, 1),
-        easing: $util.bez("easeInOutQuad"),
-      }
-    )
+    return V
+  },
+}
 
-    await start(
-      {
-        marginLeft: 0,
-        backgroundColor: "white",
-      },
-      { length: "0.5s" }
-    )
-  })
-})
+// This works, but each async function introduces another nesting
+V.one().then((V) => V.two())
+
+// Is there a way to shorten it to this?
+V.one().two()

@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.2.0-beta
+# jCurry (curry.js) 0.2.1-beta
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -58,6 +58,7 @@ Currently implemented functions as of 1.2.2022
 - [`$.asyncExe(callback)`](#code-execution)
 
 - [`$.animate(properties, options)`](#element-animation)
+- [`$.slideX(duration, easing)`](#animation-shorthands)
 
 ### Helpers
 
@@ -356,8 +357,6 @@ The parameter is an object with 2 required parameters.
 
 Each callback exposes the same destructured parameters as the `$.on()` function.
 
-Planned feature: if leave function is ommited, return element to it's original state.
-
 ```js
 // When any button is hovered, change its color to red
 // When mouse leaves the button, change its color to blue
@@ -633,6 +632,24 @@ $("button").click(({ $util }) => {
       // This executes when all animations are complete
     })
   })
+})
+```
+
+#### Animation shorthands
+
+`$(selector).slideUp(duration, easing)`
+
+`$(selector).slideDown(duration, easing)`
+
+`$(selector).slideUp(duration, easing)`
+
+Apply simple rolling up / down animation to selected element(s). You can set the duration and and easing. Since these function don't offer a callback, if you want to use the built-in bezoars, you must use the magic selector.
+
+**Caveats**: For now, using padding or margin on elements with slide animations, it is recommended to wrap them in a container which doesn't have any padding or margin applied as it can cause stutters in the animation.
+
+```js
+$("button").click(() => {
+  $(".container").slideToggle(300, $("$util").bez("easeInOutQuad"))
 })
 ```
 

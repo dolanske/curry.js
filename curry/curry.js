@@ -10,8 +10,6 @@ function getStyleProperty(el, property) {
   return window.getComputedStyle(el, null).getPropertyValue(property)
 }
 
-function noop(a, b, c) { /* NO OPERATION */ } // prettier-ignore
-
 function isObject(value) {
   let type = typeof value
   return value != null && (type == "object" || type == "function")
@@ -223,31 +221,6 @@ const $util = {
   bez,
 }
 
-const validDisplayValues = [
-  "inline",
-  "block",
-  "contents",
-  "flex",
-  "grid",
-  "inline-block",
-  "inline-flex",
-  "inline-grid",
-  "inline-table",
-  "list-item",
-  "run-in",
-  "table",
-  "table-caption",
-  "table-column-group",
-  "table-header-group",
-  "table-footer-group",
-  "table-row-group",
-  "table-cell",
-  "table-column",
-  "table-row",
-  "initial",
-  "inherit",
-]
-
 function queryElement(selector) {
   if (isObject(selector) || selector.nodeType) return selector
 
@@ -258,29 +231,13 @@ function queryElement(selector) {
   return el
 }
 
-/*----------  ----------*/
-
-/**
- *
- * fetch API $util
- *
- */
-
-const $api = {
-  get: () => {},
-  post: () => {},
-  put: () => {},
-  del: () => {},
-}
-
-/*----------  ----------*/
+/*------------------------------------------*/
 
 /**
  *
  * C U R R Y .js
  *
  */
-
 ;(function (global, factory) {
   typeof exports === "object" && typeof module !== "undefined"
     ? (module.exports = factory())
@@ -302,7 +259,7 @@ const $api = {
    */
 
   const $ = (selector) => {
-    if (!selector) throw Error("Selector must contain a string.")
+    if (!selector) throw Error("Selector cannot be empty.")
 
     if (typeof selector === "string" && selector.startsWith("$")) {
       // Special selectors start with $
@@ -314,7 +271,8 @@ const $api = {
           return $util
         }
         default:
-          console.warn("Unsupported magic selector.")
+          // console.warn("Unsupported magic selector.")
+          throw Error("Unsupported magic selector.")
           return
       }
     }
@@ -974,15 +932,6 @@ const $api = {
     $.show = (display = "block") => {
       if (!element) return $
 
-      if (!validDisplayValues.includes(display)) {
-        console.warn(
-          `Function $.show(displayValue) doesn't accept parameter "${display}" as a valid argument.`,
-          "Please use the correct css property value."
-        )
-
-        return $
-      }
-
       if (isNodeMap(element)) {
         for (const el of element) {
           el.style.display = display
@@ -1010,15 +959,6 @@ const $api = {
 
     $.toggle = (onActive = "block") => {
       if (!element) return $
-
-      if (!validDisplayValues.includes(onActive)) {
-        console.warn(
-          `Function $.toggle(onActive) doesn't accept parameter "${onActive}" as a valid argument.`,
-          "Please use the correct css property value."
-        )
-
-        return $
-      }
 
       const isActive =
         getStyleProperty(
@@ -1064,7 +1004,9 @@ const $api = {
       const { enter, leave, options } = functions
 
       if (!enter || !leave)
-        throw Error("Function $.hover({enter, leave}) is missing a parameter.")
+        throw Error(
+          "Function $.hover({ enter, leave }) requires both parameters."
+        )
 
       if (isNodeMap(element)) {
         for (const el of element) {
@@ -1202,7 +1144,9 @@ const $api = {
      * Iterates over a HTMLCollection and removes those which do not fit the condition
      *
      * @param {*} callback
+     * @returns Instance of curry for function chaining
      */
+
     $.filter = (callback) => {
       if (!element) return $
 
@@ -1249,7 +1193,7 @@ const $api = {
      *
      * @param {Object} properties
      * @param {Object} options
-     * @returns
+     * @returns Instance of curry for function chaining
      */
 
     $.animate = async (properties, options) => {
@@ -1330,6 +1274,114 @@ const $api = {
 
         if (callback) callback({ self: el, $util, $state })
       })
+    }
+
+    /**
+     * Takes a hidden element and applies a roll-down animation
+     *
+     * @param {String | Number} duration
+     * @param {String} easing
+     * @returns Instance of curry for function chaining
+     */
+
+    $.slideDown = (duration = 500, easing = "ease-in-out") => {
+      if (!element) return $
+
+      const sd = (el) => {
+        // Set default pre-style values
+        el.style.display = "block"
+        el.style.overflow = "hidden"
+        el.style.height = 0
+
+        // Save transition and height
+        const height = el.scrollHeight
+
+        $(el).animate(
+          { height },
+          {
+            duration,
+            easing,
+            callback: ({ self }) => {
+              self.style.overflow = "inherit"
+              self.style.height = "inherit"
+            },
+          }
+        )
+      }
+
+      if (isNodeMap(element)) {
+        map(element, (node) => sd(node))
+      } else {
+        sd(element)
+      }
+
+      return $
+    }
+
+    /**
+     * Rolls element up and hiding it
+     *
+     * @param {String | Number} duration
+     * @param {String} easing
+     * @returns Instance of curry for function chaining
+     */
+
+    $.slideUp = (duration = 500, easing = "ease-in-out") => {
+      if (!element) return $
+
+      const su = (el) => {
+        el.style.overflow = "hidden"
+        el.style.height = el.scrollHeight
+
+        setTimeout(() => {
+          $(el).animate(
+            { height: 0 },
+            {
+              duration,
+              easing,
+              callback: ({ self }) => {
+                self.style.display = "none"
+              },
+            }
+          )
+        }, 1)
+      }
+
+      if (isNodeMap(element)) {
+        map(element, (node) => su(node))
+      } else {
+        su(element)
+      }
+
+      return $
+    }
+
+    /**
+     * Toggles between slideDown() & slideUp()
+     *
+     * @param {String | Number} duration
+     * @param {String} easing
+     * @returns Instance of curry for function chaining
+     */
+
+    $.slideToggle = (duration = 500, easing = "ease-in-out") => {
+      if (!element) return $
+
+      const st = (el) => {
+        if (el.style.display === "none") {
+          $(el).slideDown(duration, easing)
+        } else {
+          $(el).slideUp(duration, easing)
+        }
+      }
+
+      if (isNodeMap(element)) {
+        map(element, (node) => st(node))
+      } else {
+        st(element)
+      }
+
+      return $
     }
 
     return $
