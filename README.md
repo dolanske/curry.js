@@ -55,7 +55,6 @@ Currently implemented functions as of 1.2.2022
 - [`$.text(text, location)`](#text-content)
 
 - [`$.exe(callback)`](#code-execution)
-- [`$.asyncExe(callback)`](#code-execution)
 
 - [`$.animate(properties, options)`](#element-animation)
 - [`$.slideX(duration, easing)`](#animation-shorthands)
@@ -663,6 +662,6 @@ Callback exposes: `self`, `$util`, `$state`
 
 `$(selector).exe(callback)`
 
-Executes an async function in the chain. Callback exposes the `next()`. Without calling it the chain won't continue.
+<!-- Executes an async function in the chain. Callback exposes the `next()`. Without calling it the chain won't continue.
 
-`$(selector).asyncExe(callback)`
+`$(selector).asyncExe(callback)` -->

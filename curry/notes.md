@@ -5,10 +5,17 @@
 - [ ] Add documentation for helper functions (probably different page (figure how github does taht))
 - [ ] Check how $.parent is written and consider every non-iterable selector to actually be iterable
 
-If I can figure out these two, it's an instant official release 1.0.0
+- [ ] Potentially resetAnimationFrame or something, look up google (animation example problem)
 
-- [ ] Figure out how to delay / pause the chain
-- [ ] If chain contains async function, should probably continue once it resolves (how???)
+## A
+
+- [ ] A chained functions which _MUST_ be async, or are meant to be used as async, must ALWAYS use .then((v))
+  - $.asyncEach
+  - $.asyncExe
+
+## B
+
+- fuck async shit, Maybe async stuff should be handled OUTSIDE of query
 
 ### $() API
 

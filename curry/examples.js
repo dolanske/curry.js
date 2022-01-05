@@ -1,27 +1,44 @@
-// Library object
-const V = {
-  one: async () =>
-    new Promise((resolve, reject) => {
-      // Do async stuff
-      console.log("ONE")
+$("button").click(({ self }) => {
+  $(self)
+    .append(({ $util }) => {
+      const { from, render } = $util
 
-      // In case we want to stop the execution chain
-      // reject('Error, shit my pants')
+      return render(
+        "ul",
+        { name: Date.now() },
+        from(5, 1).map((item) =>
+          render("li", { class: "list-item" }, `${item}. TEST`)
+        )
+      )
+    })
+    .next()
+    .children()
+    .each(({ index, self }) => {
+      if (index % 2 === 0) {
+        $(self).css("color", "red")
+      }
 
       setTimeout(() => {
-        // Resolve and continue the chain
-        resolve(V)
-      }, 1000)
-    }),
-  two: async () => {
-    console.log("TWO")
+        $(self).animate(async ({ start, $util }) => {
+          const { bez } = $util
 
-    return V
-  },
-}
-
-// This works, but each async function introduces another nesting
-V.one().then((V) => V.two())
-
-// Is there a way to shorten it to this?
-V.one().two()
+          if (index % 2 !== 0) {
+            await start(
+              {
+                color: "blue",
+                backgroundColor: "yellow",
+              },
+              {
+                length: index * 1000,
+                easing: bez("easeInOutCirc"),
+              }
+            ).then(() => {
+              if (index === 9) {
+                $(self).parent().prepend(`<strong>F I N I S H E D</strong>`)
+              }
+            })
+          }
+        })
+      }, 1)
+    })
+})

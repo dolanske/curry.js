@@ -248,7 +248,7 @@ function queryElement(selector) {
   "use strict"
 
   // Define global variables
-  let element
+  // let element
   const $state = {}
 
   /**
@@ -259,6 +259,7 @@ function queryElement(selector) {
    */
 
   const $ = (selector) => {
+    let element
     if (!selector) throw Error("Selector cannot be empty.")
 
     if (typeof selector === "string" && selector.startsWith("$")) {
@@ -1125,6 +1126,8 @@ function queryElement(selector) {
     }
 
     $.asyncExe = async (callback) => {
+      throw Error("$.asyncExe is currently not a supported function.")
+
       if (!element || !callback) return $
 
       await new Promise((resolve, reject) => {
@@ -1137,7 +1140,7 @@ function queryElement(selector) {
         })
       })
 
-      return $
+      // return $
     }
 
     /**
