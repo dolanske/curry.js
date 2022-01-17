@@ -274,7 +274,6 @@ function queryElement(selector) {
         default:
           // console.warn("Unsupported magic selector.")
           throw Error("Unsupported magic selector.")
-          return
       }
     }
 
@@ -502,9 +501,6 @@ function queryElement(selector) {
      * @param {Function} callback Function which executes on each iteration
      * @returns Instance of curry for function chaining
      */
-
-    // TODO: Should be wrapped in Promise.all and return curry instance
-    // upon fully resolving
 
     $.asyncEach = async (callback) => {
       if (!element) return $
@@ -1125,24 +1121,6 @@ function queryElement(selector) {
       return $
     }
 
-    $.asyncExe = async (callback) => {
-      throw Error("$.asyncExe is currently not a supported function.")
-
-      if (!element || !callback) return $
-
-      await new Promise((resolve, reject) => {
-        callback({
-          self: element,
-          $util,
-          next: resolve,
-          reject,
-          $state,
-        })
-      })
-
-      // return $
-    }
-
     /**
      * Iterates over a HTMLCollection and removes those which do not fit the condition
      *
@@ -1386,6 +1364,8 @@ function queryElement(selector) {
 
       return $
     }
+
+    // $.is = (what, callback) => {}
 
     return $
   }

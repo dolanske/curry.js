@@ -1,4 +1,4 @@
-# jCurry (curry.js) 0.2.1-beta
+# jCurry (curry.js) 1.0.0
 
 We've all heard it, "If you add jQuery to your resume, don't expect an interview". I'm here to change that, adding jCurry, no matter the job application, guarantees you the CEO position.
 
@@ -654,14 +654,10 @@ $("button").click(() => {
 
 ---
 
-### Code execution (experimental)
+### Code execution
 
 Utility selector to execute code during chaining. This should be used rarely as most functions have their own callbacks. Callback is executed only once no matter how many selected elements. For execution per element, use the `$.each()` or `$.asyncEach()` iteration functions.
 
 Callback exposes: `self`, `$util`, `$state`
 
 `$(selector).exe(callback)`
-
-<!-- Executes an async function in the chain. Callback exposes the `next()`. Without calling it the chain won't continue.
-
-`$(selector).asyncExe(callback)` -->
