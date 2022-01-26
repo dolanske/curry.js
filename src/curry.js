@@ -606,7 +606,7 @@ function queryElement(selector) {
       })
 
       children.map((child) => {
-        callback({ self: child, $util, $state })
+        if (callback) callback({ self: child, $util, $state })
       })
 
       // if (callback) callback({ self: element, $util, $state })
