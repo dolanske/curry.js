@@ -103,7 +103,11 @@ function bindListener(el, name, callback, $state, options) {
 function map(elements, callback) {
   if (isNodeMap(elements)) {
     for (let i = 0; i < elements.length; i++) {
-      callback(elements[i], i)
+      const shouldBreak = callback(elements[i], i)
+
+      if (shouldBreak) {
+        break
+      }
     }
   }
 }
@@ -222,13 +226,9 @@ const $util = {
 }
 
 function queryElement(selector) {
-  if (isObject(selector) || selector.nodeType) return selector
+  if (isObject(selector) || selector.nodeType) return [selector]
 
-  let el = document.querySelectorAll(selector)
-
-  if (el && el.length === 1) el = el[0]
-
-  return el
+  return document.querySelectorAll(selector)
 }
 
 /*------------------------------------------*/
@@ -313,11 +313,7 @@ function queryElement(selector) {
     $.del = () => {
       if (!element) return
 
-      if (isNodeMap(element)) {
-        map(element, (node) => node.remove())
-      } else {
-        element.remove()
-      }
+      map(element, (node) => node.remove())
     }
 
     /**
@@ -330,16 +326,11 @@ function queryElement(selector) {
      */
 
     $.on = (event, callback, options) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
-      // Is HTML collection
-      if (isNodeMap(element)) {
-        for (const item of element) {
-          bindListener(item, event, callback, $state, options)
-        }
-      } else {
-        bindListener(element, event, callback, $state, options)
-      }
+      map(element, (node) => {
+        bindListener(node, event, callback, $state, options)
+      })
 
       return $
     }
@@ -353,7 +344,7 @@ function queryElement(selector) {
      */
 
     $.css = (property, style) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (!property) {
         console.warn("No style entered")
@@ -362,14 +353,13 @@ function queryElement(selector) {
 
       // If property && style are a string, it's a singular style addition
       if (typeof property === "string" && typeof style === "string") {
-        element.style[property] = style
+        map(element, (node) => (node.style[property] = style))
         return true
       }
-
       // If property is an object and style is undefined, we assign inline style
-      if (isObject(property)) {
+      else if (isObject(property)) {
         Object.entries(property).map(([key, value]) => {
-          element.style[key] = value
+          map(element, (node) => (node.style[key] = value))
         })
         return true
       }
@@ -383,7 +373,7 @@ function queryElement(selector) {
      */
 
     $.addClass = (classNames) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (!classNames || classNames.length === 0) {
         console.warn("No class name(s) entered")
@@ -391,13 +381,18 @@ function queryElement(selector) {
       }
 
       if (isArray(classNames)) {
-        classNames.map((item) => element.classList.add(item))
-        return true
+        map(element, (node) => {
+          classNames.map((item) => node.classList.add(item))
+        })
+        return $
       }
 
       if (typeof classNames === "string") {
-        element.classList.add(classNames)
-        return true
+        map(element, (node) => {
+          node.classList.add(classNames)
+        })
+
+        return $
       }
     }
 
@@ -412,7 +407,7 @@ function queryElement(selector) {
      */
 
     $.delClass = (classNames) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (!classNames || classNames.length === 0) {
         console.warn("No class name(s) entered")
@@ -420,13 +415,18 @@ function queryElement(selector) {
       }
 
       if (isArray(classNames)) {
-        classNames.map((item) => element.classList.remove(item))
-        return true
+        map(element, (node) => {
+          classNames.map((item) => node.classList.remove(item))
+        })
+        return $
       }
 
       if (typeof classNames === "string") {
-        element.classList.remove(classNames)
-        return true
+        map(element, (node) => {
+          node.classList.remove(classNames)
+        })
+
+        return $
       }
     }
 
@@ -438,27 +438,32 @@ function queryElement(selector) {
      */
 
     $.toggleClass = (classNames) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (!classNames || classNames.length === 0) {
         console.warn("No class name(s) entered")
         return false
       }
 
-      const toggle = (cls) => {
-        if (element.classList.contains(cls)) {
-          element.classList.remove(cls)
+      const toggle = (cls, el) => {
+        if (el.classList.contains(cls)) {
+          el.classList.remove(cls)
         } else {
-          element.classList.add(cls)
+          el.classList.add(cls)
         }
       }
 
       if (isArray(classNames)) {
-        classNames.map((item) => toggle(item))
+        map(element, (node) => {
+          classNames.map((cls) => toggle(cls, node))
+        })
+        return $
       }
 
       if (typeof classNames === "string") {
-        toggle(classNames)
+        map(element, (node) => {
+          toggle(classNames, node)
+        })
       }
     }
 
@@ -470,23 +475,16 @@ function queryElement(selector) {
      */
 
     $.each = (callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (!callback) throw Error("Callback must be a function")
 
-      // Selector picked just 1 item and it is not a HTMl collection
-      if (element.length === undefined) {
-        callback({ self: element, $util, index: 0, $state })
-      } else {
-        let prev = null
-        let index = 0
+      let prev = null
 
-        for (const el of element) {
-          callback({ self: el, prev, $util, index, $state })
-          prev = el
-          index += 1
-        }
-      }
+      map(element, (node, index) => {
+        callback({ self: node, prev, $util, index, $state })
+        prev = node
+      })
 
       return $
     }
@@ -503,32 +501,27 @@ function queryElement(selector) {
      */
 
     $.asyncEach = async (callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (!callback) throw Error("Callback must be a function")
 
-      // Selector picked just 1 item and it is not a HTMl collection
-      if (element.length === undefined) {
-        callback({ self: element, $util, index: 0, $state })
-      } else {
-        let prev = null
-        let index = 0
+      let prev = null
+      let index = 0
 
-        for (const el of element) {
-          await new Promise((resolve) =>
-            callback({
-              self: el,
-              prev,
-              $util,
-              index,
-              next: resolve,
-              $state,
-            })
-          )
+      for (const el of element) {
+        await new Promise((resolve) =>
+          callback({
+            self: el,
+            prev,
+            $util,
+            index,
+            next: resolve,
+            $state,
+          })
+        )
 
-          prev = el
-          index += 1
-        }
+        prev = el
+        index += 1
       }
 
       return $
@@ -543,33 +536,32 @@ function queryElement(selector) {
      */
 
     $.nth = (index, callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
-      // If element doesn't have length, we assume there is just
-      // one element and the index function gets ignored
-      if (isNodeMap(element)) {
-        // If index exceeds the element list length,
-        // automatically clear selection and break the chain
-        if (index > element.length) {
-          // element = undefined
-          // return $
-          return undefined
-        }
+      // If index exceeds the element list length,
+      // automatically clear selection and break the chain
+      if (index > element.length) {
+        console.warn(
+          `[Warning] Did not find element at specified index (${n}).`
+        )
+        return $
+      }
 
-        if (!index || index === 1) {
-          // If index is not set or is 0, return first element
-          element = element[0]
-        } else {
-          for (let i = 0; i <= element.length; i++) {
-            if (index - 1 === i) {
-              element = element[i]
-              break
-            }
+      if (!index || index === 1) {
+        // If index is not set or is 0, return first element
+        element = [element[0]]
+      } else {
+        for (let i = 0; i <= element.length; i++) {
+          if (index - 1 === i) {
+            element = [element[i]]
+            break
           }
         }
       }
 
-      if (callback) callback({ self: element, $util, index, $state })
+      if (callback) {
+        callback({ self: element[0], $util, index, $state })
+      }
 
       return $
     }
@@ -583,37 +575,41 @@ function queryElement(selector) {
      */
 
     $.nthChild = (n, callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
-      if (isNodeMap(element)) {
-        if (element.length === 1) {
-          element = element[0]
-        } else {
-          throw Error(
-            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in the $.each() iterator."
+      // Save each child and execute callback on it
+      const children = []
+
+      console.log(element)
+
+      // Loop over selected elements
+      map(element, (node) => {
+        // Index exceeds the children length
+        if (n > node.children.length) {
+          console.warn(
+            `[Warning] Did not find element's child at specified index (${n}).`
           )
+          return true // break;
         }
-      }
 
-      if (n > element.children.length) {
-        // throw Error(`No child found for index '${n}'`)
-        return undefined
-      }
-
-      if (!n || n === 1) {
         // Select the first child
-        element = element.firstElementChild
-      }
+        if (!n || n === 1) {
+          children.push(node.firstElementChild)
+        } else {
+          // Loop over each element's child
+          map(node.children, (child, index) => {
+            if (n - 1 === index) {
+              children.push(child)
+            }
+          })
+        }
+      })
 
-      if (element.children && n > 1) {
-        map(element.children, (child, index) => {
-          if (n - 1 === index) {
-            element = child
-          }
-        })
-      }
+      children.map((child) => {
+        callback({ self: child, $util, $state })
+      })
 
-      if (callback) callback({ self: element, $util, index: n, $state })
+      // if (callback) callback({ self: element, $util, $state })
 
       return $
     }
@@ -668,7 +664,7 @@ function queryElement(selector) {
     }
 
     const selectNTHSibling = (selectType, index, callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const type =
         selectType === "next" ? "nextElementSibling" : "previousElementSibling"
@@ -741,7 +737,7 @@ function queryElement(selector) {
      */
 
     $.first = (callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (isNodeMap(element)) {
         element = element[0]
@@ -753,7 +749,7 @@ function queryElement(selector) {
     }
 
     $.last = (callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       let index = 0
 
@@ -775,7 +771,7 @@ function queryElement(selector) {
      */
 
     $.append = (callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const vdom =
         typeof callback === "function"
@@ -810,7 +806,7 @@ function queryElement(selector) {
      */
 
     $.prepend = (callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const vdom =
         typeof callback === "function"
@@ -846,7 +842,7 @@ function queryElement(selector) {
      */
 
     $.addChild = (callback, append = true) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const vdom =
         typeof callback === "function"
@@ -883,7 +879,7 @@ function queryElement(selector) {
      */
 
     $.text = (text, location = "replace") => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       // Invalid location argument
       if (!["replace", "prepend", "append"].includes(location)) {
@@ -927,7 +923,7 @@ function queryElement(selector) {
      */
 
     $.show = (display = "block") => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (isNodeMap(element)) {
         for (const el of element) {
@@ -941,7 +937,7 @@ function queryElement(selector) {
     }
 
     $.hide = () => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (isNodeMap(element)) {
         for (const el of element) {
@@ -955,7 +951,7 @@ function queryElement(selector) {
     }
 
     $.toggle = (onActive = "block") => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const isActive =
         getStyleProperty(
@@ -996,7 +992,7 @@ function queryElement(selector) {
     // let previousState
 
     $.hover = (functions) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const { enter, leave, options } = functions
 
@@ -1107,21 +1103,6 @@ function queryElement(selector) {
     }
 
     /**
-     * Executes a callback function only once even if element is a HTMLCollection
-     *
-     * @param {Function} callback
-     * @returns Instance of curry for function chaining
-     */
-
-    $.exe = (callback) => {
-      if (!element || !callback) return $
-
-      callback({ self: element, $util, $state })
-
-      return $
-    }
-
-    /**
      * Iterates over a HTMLCollection and removes those which do not fit the condition
      *
      * @param {*} callback
@@ -1129,7 +1110,7 @@ function queryElement(selector) {
      */
 
     $.filter = (callback) => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       if (!callback)
         console.warn(
@@ -1266,7 +1247,7 @@ function queryElement(selector) {
      */
 
     $.slideDown = (duration = 500, easing = "ease-in-out") => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const sd = (el) => {
         // Set default pre-style values
@@ -1308,7 +1289,7 @@ function queryElement(selector) {
      */
 
     $.slideUp = (duration = 500, easing = "ease-in-out") => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const su = (el) => {
         el.style.overflow = "hidden"
@@ -1346,7 +1327,7 @@ function queryElement(selector) {
      */
 
     $.slideToggle = (duration = 500, easing = "ease-in-out") => {
-      if (!element) return $
+      if (!element || element.length === 0) return $
 
       const st = (el) => {
         if (el.style.display === "none") {
