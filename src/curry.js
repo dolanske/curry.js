@@ -580,8 +580,6 @@ function queryElement(selector) {
       // Save each child and execute callback on it
       const children = []
 
-      console.log(element)
-
       // Loop over selected elements
       map(element, (node) => {
         // Index exceeds the children length
@@ -609,7 +607,7 @@ function queryElement(selector) {
         if (callback) callback({ self: child, $util, $state })
       })
 
-      // if (callback) callback({ self: element, $util, $state })
+      element = children
 
       return $
     }
