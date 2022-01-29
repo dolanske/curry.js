@@ -56,7 +56,7 @@ Currently implemented functions as of 1.2.2022
 
 - [`$.exe(callback)`](#code-execution)
 
-- [`$.animate(properties, options)`](#element-animation)
+- [`$.transfer(properties, options)`](#element-animation)
 - [`$.slideX(duration, easing)`](#animation-shorthands)
 
 ### Helpers
@@ -538,13 +538,13 @@ $(".rows")
 
 #### Element animation
 
-`$(selector).animate(properties, options)`
+`$(selector).transfer(properties, options)`
 
-`$(selector).animate(callback)`
+`$(selector).transfer(callback)`
 
 The animate function let's you animate selected element(s) to the style properties provided. It also equips a handful of options to customize the animation.
 
-There are two ways of working with `$.animate()`. If you are familiar with vue3, it's similar to options vs composition api. The more traditional (jQuery) object approach uses these parameters:
+There are two ways of working with `$.transfer()`. If you are familiar with vue3, it's similar to options vs composition api. The more traditional (jQuery) object approach uses these parameters:
 
 - `properties` A CSS object, exactly the same syntax as `$.css()` uses
 - `options`:
@@ -557,7 +557,7 @@ There are two ways of working with `$.animate()`. If you are familiar with vue3,
 // Traditional Approach
 $("button").click(({ $util }) => {
   // When button is clicked, every h1 element will be selected
-  $("h1").animate(
+  $("h1").transfer(
     {
       // If you input a number, the _defaultUnit_ option will assign a unit
       // in our case it would be "px"
@@ -571,7 +571,7 @@ $("button").click(({ $util }) => {
       easing: $util.bez(0.85, 0, 0.15, 1),
       callback: ({ self }) => {
         // In callback we can infinitely execute more animations if needed
-        $(self).animate(
+        $(self).transfer(
           {
             marginLeft: "0px",
             backgroundColor: "white",
@@ -590,13 +590,13 @@ When using the callback, the animated element(s) are available to you. The only 
 
 Callback exposes: `self`, `$util`, `$state` & `start`
 
-The start function is the equivalent of using `$.animate()` and takes in `properties` and `options`. You can se the same options syntax then.
+The start function is the equivalent of using `$.transfer()` and takes in `properties` and `options`. You can se the same options syntax then.
 
 The difference is that now you control when the animation triggers. The next example does exactly the same as the previous one. Just with different syntax.
 
 ```js
 $("button").click(({ $util }) => {
-  $("h1").animate(async ({ self, $util, start }) => {
+  $("h1").transfer(async ({ self, $util, start }) => {
     // Execute code before animation begins
     // Thanks to the callback function, this exposes the currently animated object (if we arent selecting multiple)
     // from which we can gain properties to use in the animation

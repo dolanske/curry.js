@@ -6,6 +6,8 @@
  *
  */
 
+function noop() {}
+
 function getStyleProperty(el, property) {
   return window.getComputedStyle(el, null).getPropertyValue(property)
 }
@@ -33,6 +35,10 @@ function isNodeMap(list) {
 
 function undef(property, def) {
   return isNil(property) ? def : property
+}
+
+function isFunction(func) {
+  return Object.prototype.toString.call(func) == "[object Function]"
 }
 
 function bez(...args) {
@@ -216,6 +222,7 @@ const $util = {
   isObject,
   isArray,
   isNil,
+  isFunction,
   from,
   render,
   isElements: isNodeMap,
@@ -313,7 +320,9 @@ function queryElement(selector) {
     $.del = () => {
       if (!element) return
 
-      map(element, (node) => node.remove())
+      map(element, (node) => {
+        node.remove()
+      })
     }
 
     /**
@@ -347,19 +356,25 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       if (!property) {
-        console.warn("No style entered")
-        return false
+        console.warn(
+          "[Warning] No style entered, this chain node will be skipped."
+        )
+        return $
       }
 
       // If property && style are a string, it's a singular style addition
       if (typeof property === "string" && typeof style === "string") {
-        map(element, (node) => (node.style[property] = style))
+        map(element, (node) => {
+          node.style[property] = style
+        })
         return true
       }
       // If property is an object and style is undefined, we assign inline style
       else if (isObject(property)) {
         Object.entries(property).map(([key, value]) => {
-          map(element, (node) => (node.style[key] = value))
+          map(element, (node) => {
+            node.style[key] = value
+          })
         })
         return true
       }
@@ -376,8 +391,10 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       if (!classNames || classNames.length === 0) {
-        console.warn("No class name(s) entered")
-        return false
+        console.warn(
+          "[Warning] No class name(s) entered, this chain node will be skipped."
+        )
+        return $
       }
 
       if (isArray(classNames)) {
@@ -410,8 +427,10 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       if (!classNames || classNames.length === 0) {
-        console.warn("No class name(s) entered")
-        return false
+        console.warn(
+          "[Warning] No class name(s) entered, this chain node will be skipped."
+        )
+        return $
       }
 
       if (isArray(classNames)) {
@@ -441,8 +460,10 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       if (!classNames || classNames.length === 0) {
-        console.warn("No class name(s) entered")
-        return false
+        console.warn(
+          "[Warning] No class name(s) entered, this chain node will be skipped."
+        )
+        return $
       }
 
       const toggle = (cls, el) => {
@@ -620,26 +641,19 @@ function queryElement(selector) {
      */
 
     $.children = (callback) => {
-      if (!element) return undefined
+      if (!element || element.length === 0) return $
 
-      if (isNodeMap(element)) {
-        if (element.length === 1) {
-          element = element[0]
-        } else {
-          throw Error(
-            "Cannot use function $.children() on a HTMLCollection. Wrap your functionality in the $.each() iterator."
-          )
+      const children = []
+
+      map(element, (node) => {
+        children.push(...node.children)
+
+        if (callback) {
+          callback({ self: node, children: node.children, $util, $state })
         }
-      }
+      })
 
-      if (element.children.length === 0) return undefined
-
-      // Save current element before its overriden by the selected children
-      const self = element
-      element = element.children
-
-      if (callback)
-        callback({ self, children: element.children, $util, $state })
+      element = children
 
       return $
     }
@@ -664,18 +678,8 @@ function queryElement(selector) {
     const selectNTHSibling = (selectType, index, callback) => {
       if (!element || element.length === 0) return $
 
-      const type =
+      const siblingPlace =
         selectType === "next" ? "nextElementSibling" : "previousElementSibling"
-
-      if (isNodeMap(element)) {
-        if (element.length === 1) {
-          element = element[0]
-        } else {
-          throw Error(
-            "Cannot use function $.next() on a HTMLCollection. Wrap your functionality in the $.each() iterator."
-          )
-        }
-      }
 
       // If callback has been provided but index hasn't
       if (typeof index !== "number") {
@@ -683,46 +687,37 @@ function queryElement(selector) {
         index = null
       }
 
-      if (element[type]) {
-        // If index is provided
-        if (index) {
-          const prev = element
-          // Loop over next children and find element at index
-          for (let i = 0; i < index; i++) {
-            if (element[type]) {
-              element = element[type]
+      const matches = []
+
+      map(element, (node) => {
+        if (node[siblingPlace]) {
+          // If index is provided
+          if (index) {
+            const prev = node
+            // Loop over next children and find element at index
+            for (let i = 0; i < index; i++) {
+              if (node[siblingPlace]) {
+                matches.push(node[siblingPlace])
+                break
+              }
             }
-          }
 
-          // Callback
-          if (callback) {
-            callback({
-              self: element,
-              prev,
-              index: getSiblingIndex(element),
-              $util,
-              $state,
-            })
-          }
-        } else {
-          // otherwise just select the next item
-          if (callback) {
-            callback({
-              self: element[type],
-              prev: element,
-              index: getSiblingIndex(element[type]),
-              $util,
-              $state,
-            })
-          }
+            // Callback
+            if (callback) {
+              callback({ self: node, prev, index: getSiblingIndex(node), $util, $state, }) //prettier-ignore
+            }
+          } else {
+            // otherwise just select the next item
+            if (callback) {
+              callback({ self: node[siblingPlace], prev: node, index: getSiblingIndex(node[siblingPlace]), $util, $state, }) //prettier-ignore
+            }
 
-          element = element[type]
+            matches.push(node[siblingPlace])
+          }
         }
-      } else {
-        element = undefined
+      })
 
-        return $
-      }
+      element = matches
 
       return $
     }
@@ -737,9 +732,7 @@ function queryElement(selector) {
     $.first = (callback) => {
       if (!element || element.length === 0) return $
 
-      if (isNodeMap(element)) {
-        element = element[0]
-      }
+      element = [element[0]]
 
       if (callback) callback({ self: element, $util, $state })
 
@@ -749,12 +742,8 @@ function queryElement(selector) {
     $.last = (callback) => {
       if (!element || element.length === 0) return $
 
-      let index = 0
-
-      if (isNodeMap(element)) {
-        index = element.length - 1
-        element = element[index]
-      }
+      const index = element.length - 1
+      element = [element[index]]
 
       if (callback) callback({ self: element, $util, index, $state })
 
@@ -771,27 +760,18 @@ function queryElement(selector) {
     $.append = (callback) => {
       if (!element || element.length === 0) return $
 
-      const vdom =
-        typeof callback === "function"
-          ? callback({ self: element, render, $util, $state })
-          : callback
+      map(element, (node) => {
+        const vdom =
+          typeof callback === "function"
+            ? callback({ self: node, render, $util, $state })
+            : callback
 
-      // If callback is a string, we just render a new html template
-      if (typeof vdom === "string") {
-        if (isNodeMap(element)) {
-          for (const el of element) {
-            el.insertAdjacentHTML("afterend", vdom)
-          }
-        } else {
-          element.insertAdjacentHTML("afterend", vdom)
+        if (typeof vdom === "string") {
+          node.insertAdjacentHTML("afterend", vdom)
+        } else if (!isNil(vdom)) {
+          createElement(vdom, node, "append")
         }
-      } else if (!isNil(vdom)) {
-        if (isNodeMap(element)) {
-          map(element, (node) => createElement(vdom, node, "append"))
-        } else {
-          createElement(vdom, element, "append")
-        }
-      }
+      })
 
       return $
     }
@@ -806,27 +786,18 @@ function queryElement(selector) {
     $.prepend = (callback) => {
       if (!element || element.length === 0) return $
 
-      const vdom =
-        typeof callback === "function"
-          ? callback({ self: element, render, $util, $state })
-          : callback
+      map(element, (node) => {
+        const vdom =
+          typeof callback === "function"
+            ? callback({ self: node, render, $util, $state })
+            : callback
 
-      // If callback is a string, we just render a new html template
-      if (typeof vdom === "string") {
-        if (isNodeMap(element)) {
-          for (const el of element) {
-            el.insertAdjacentHTML("beforebegin", vdom)
-          }
-        } else {
-          element.insertAdjacentHTML("beforebegin", vdom)
+        if (typeof vdom === "string") {
+          node.insertAdjacentHTML("beforebegin", vdom)
+        } else if (!isNil(vdom)) {
+          createElement(vdom, node, "prepend")
         }
-      } else if (!isNil(vdom)) {
-        if (isNodeMap(element)) {
-          map(element, (node) => createElement(vdom, node, "prepend"))
-        } else {
-          createElement(vdom, element, "prepend")
-        }
-      }
+      })
 
       return $
     }
@@ -842,28 +813,18 @@ function queryElement(selector) {
     $.addChild = (callback, append = true) => {
       if (!element || element.length === 0) return $
 
-      const vdom =
-        typeof callback === "function"
-          ? callback({ self: element, render, $util, $state })
-          : callback
+      map(element, (node) => {
+        const vdom =
+          typeof callback === "function"
+            ? callback({ self: element, render, $util, $state })
+            : callback
 
-      if (typeof vdom === "string") {
-        if (isNodeMap(element)) {
-          map(element, (node) =>
-            node.insertAdjacentHTML(append ? "beforeend" : "afterbegin", vdom)
-          )
-        } else {
-          element.insertAdjacentHTML(append ? "beforeend" : "afterbegin", vdom)
+        if (typeof vdom === "string") {
+          node.insertAdjacentHTML(append ? "beforeend" : "afterbegin", vdom)
+        } else if (!isNil(vdom)) {
+          createElement(vdom, node, append ? "appendchild" : "prependchild")
         }
-      } else if (!isNil(vdom)) {
-        if (isNodeMap(element)) {
-          map(element, (node) => {
-            createElement(vdom, node, append ? "appendchild" : "prependchild")
-          })
-        } else {
-          createElement(vdom, element, append ? "appendchild" : "prependchild")
-        }
-      }
+      })
 
       return $
     }
@@ -880,10 +841,12 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       // Invalid location argument
-      if (!["replace", "prepend", "append"].includes(location)) {
+      if (
+        !["replace", "prepend", "append", "before", "after"].includes(location)
+      ) {
         console.warn(
           `Function $.text(text, location) doesn't accept parameter "${location}" as a valid argument.`,
-          "Please use 'replace', 'prepend' or 'append'"
+          "Please use 'replace', 'prepend' or 'append'. This chain node will be skipped."
         )
 
         return $
@@ -891,10 +854,12 @@ function queryElement(selector) {
 
       const setText = (el, text, location) => {
         switch (location) {
+          case "before":
           case "prepend": {
             el.insertAdjacentText("afterbegin", text)
             break
           }
+          case "after":
           case "append": {
             el.insertAdjacentText("beforeend", text)
             break
@@ -907,11 +872,9 @@ function queryElement(selector) {
         }
       }
 
-      if (isNodeMap(element)) {
-        map(element, (node) => setText(node, text, location))
-      } else {
-        setText(element, text, location)
-      }
+      map(element, (node) => {
+        setText(node, text, location)
+      })
 
       return $
     }
@@ -923,13 +886,9 @@ function queryElement(selector) {
     $.show = (display = "block") => {
       if (!element || element.length === 0) return $
 
-      if (isNodeMap(element)) {
-        for (const el of element) {
-          el.style.display = display
-        }
-      } else {
-        element.style.display = display
-      }
+      map(element, (node) => {
+        node.style.display = display
+      })
 
       return $
     }
@@ -937,13 +896,9 @@ function queryElement(selector) {
     $.hide = () => {
       if (!element || element.length === 0) return $
 
-      if (isNodeMap(element)) {
-        for (const el of element) {
-          el.style.display = "none"
-        }
-      } else {
-        element.style.display = "none"
-      }
+      map(element, (node) => {
+        node.style.display = "none"
+      })
 
       return $
     }
@@ -951,29 +906,20 @@ function queryElement(selector) {
     $.toggle = (onActive = "block") => {
       if (!element || element.length === 0) return $
 
-      const isActive =
-        getStyleProperty(
-          isNodeMap(element) ? element[0] : element,
-          "display"
-        ) === "none"
-          ? false
-          : true
-
-      const toggleSelf = (active, element, onActive) => {
+      const toggleSelf = (active, el, onActive) => {
         if (active) {
-          $(element).hide()
+          $(el).hide()
         } else {
-          $(element).show(onActive)
+          $(el).show(onActive)
         }
       }
 
-      if (isNodeMap(element)) {
-        for (const el of element) {
-          toggleSelf(isActive, el, onActive)
-        }
-      } else {
-        toggleSelf(isActive, element, onActive)
-      }
+      map(element, (node) => {
+        const isActive =
+          getStyleProperty(node, "display") === "none" ? false : true
+
+        toggleSelf(isActive, node, onActive)
+      })
 
       return $
     }
@@ -984,7 +930,6 @@ function queryElement(selector) {
      * Takes in an object with enter and leave functions, if leave function is not present,
      * it resets the element to the previous state
      *
-     * TODO: If leave function is ommited, figure out how to restore it to its pre enter() value
      */
 
     // let previousState
@@ -992,36 +937,44 @@ function queryElement(selector) {
     $.hover = (functions) => {
       if (!element || element.length === 0) return $
 
-      const { enter, leave, options } = functions
+      if (isObject(functions) && !isFunction(functions)) {
+        const { enter, leave, options } = functions
 
-      if (!enter || !leave)
-        throw Error(
-          "Function $.hover({ enter, leave }) requires both parameters."
-        )
-
-      if (isNodeMap(element)) {
-        for (const el of element) {
-          $(el).on("mouseenter", (args) => enter({ ...args }), options)
-          $(el).on("mouseleave", (args) => leave({ ...args }), options)
+        if (enter && leave) {
+          map(element, (node) => {
+            $(node).on("mouseenter", (args) => enter({ ...args }), options)
+            $(node).on("mouseleave", (args) => leave({ ...args }), options)
+          })
+        } else {
+          console.warn(
+            "[Warning] Function $.hover({ enter, leave }) requires both parameters. This chain node will be skipped."
+          )
         }
+      } else if (isFunction(functions)) {
+        // Stores "clean" elements before any on-hover is applied
+        const cloned = []
+
+        map(element, (node, index) => {
+          cloned.push(node.cloneNode(true))
+          // Apply styles like normal
+          $(node).on("mouseenter", (args) => functions({ ...args }))
+
+          // Reset node
+          $(node).on("mouseleave", () => {
+            // Reset node
+            // TODO: Figure out attributes to reset
+            // TODO: replace attributes with clone
+            const clone = cloned[index]
+            node.removeAttribute("style")
+            node.classList = clone.classList
+            node.innerHTML = clone.innerHTML
+          })
+        })
       } else {
-        $(element).on("mouseenter", (args) => enter({ ...args }), options)
-        $(element).on("mouseleave", (args) => leave({ ...args }), options)
-        // $(element).on("mouseenter", (args) => {
-        //   previousState = element.cloneNode(true)
-        //   enter({ ...args })
-        // })
-
-        // $(element).on("mouseleave", (args) => {
-        //   if (leave) {
-        //     leave({ ...args })
-        //   } else {
-        //     element.replaceNode(previousState)
-
-        //     console.log("h")
-        //     $(element).hover(callback)
-        //   }
-        // })
+        console.warn(
+          "[Warning] Did no provide callback. This chain node will be skipped."
+        )
+        return $
       }
 
       return $
@@ -1037,13 +990,9 @@ function queryElement(selector) {
     $.click = (callback, options) => {
       if (!element || !callback) return $
 
-      if (isNodeMap(element)) {
-        map(element, (node) => {
-          $(node).on("click", (args) => callback({ ...args }), options)
-        })
-      } else {
-        $(element).on("click", (args) => callback({ ...args }), options)
-      }
+      map(element, (node) => {
+        $(node).on("click", (args) => callback({ ...args }), options)
+      })
 
       return $
     }
@@ -1056,46 +1005,30 @@ function queryElement(selector) {
      */
 
     $.parent = (callback) => {
-      if (!element) return
+      if (!element || element.length === 0) return
 
-      if (isNodeMap(element)) {
-        // Create a new HTMLCollection
-        const fragment = document.createDocumentFragment()
+      // Create a new HTMLCollection
+      const children = []
 
-        map(element, (node) => {
-          if (node && node.parentNode) {
-            const parent = node.parentNode
+      map(element, (node) => {
+        if (node.parentNode) {
+          const parent = node.parentNode
 
-            if (callback)
-              callback({
-                self: parent,
-                child: node,
-                $util,
-                $state,
-              })
-
-            // Clone parent node to the HTMLCollection
-            fragment.appendChild(parent.cloneNode(true))
-          }
-        })
-
-        // Set all found parents as the new selected element
-        element = fragment.children
-      } else {
-        if (element && element.parentNode) {
-          const parent = element.parentNode
-
-          if (callback)
+          if (callback) {
             callback({
               self: parent,
-              child: element,
+              child: node,
               $util,
               $state,
             })
+          }
 
-          element = parent
+          children.push(parent)
         }
-      }
+      })
+
+      // Set all found parents as the new selected element
+      element = children
 
       return $
     }
@@ -1110,53 +1043,46 @@ function queryElement(selector) {
     $.filter = (callback) => {
       if (!element || element.length === 0) return $
 
-      if (!callback)
+      if (!callback) {
         console.warn(
-          "No condition to iterate on, this chain node will be skipped."
+          "[Warning] No condition to iterate on, this chain node will be skipped."
         )
 
-      if (isNodeMap(element)) {
-        // Create a new HTMLCollection
-        const filtered = []
+        return $
+      }
 
-        map(element, (node, index) => {
-          const result = callback({
-            self: node,
-            index,
-            $util,
-            $state,
-          })
+      // Create a new HTMLCollection
+      const filtered = []
 
-          if (result) {
-            filtered.push(node)
-          }
-        })
-
-        // Set all found parents as the new selected element
-        element = filtered
-      } else {
+      map(element, (node, index) => {
         const result = callback({
-          self: element,
+          self: node,
+          index,
           $util,
           $state,
-          index: 0,
         })
 
-        if (!result) element = undefined
-      }
+        if (result) {
+          filtered.push(node)
+        }
+      })
+
+      // Set all found parents as the new selected element
+      element = filtered
 
       return $
     }
 
     /**
-     * Applies animation to selected element(s) with provided CSS property object
+     * Applies animation to selected element(s) with provided CSS property object.
+     * Used to transfer from state A to state B
      *
      * @param {Object} properties
      * @param {Object} options
      * @returns Instance of curry for function chaining
      */
 
-    $.animate = async (properties, options) => {
+    $.transfer = async (properties, options) => {
       if (!element || !properties) return $
 
       const formatOptions = (options = {}) => {
@@ -1170,34 +1096,28 @@ function queryElement(selector) {
 
       options = formatOptions(options)
 
-      if (typeof properties === "function") {
+      if (isFunction(properties)) {
         // Using the function callback
         const execute = properties
 
         async function start(properties, options) {
           options = formatOptions(options)
 
-          if (isNodeMap(element)) {
-            const promises = []
+          const promises = []
 
-            for (const el of element) {
-              promises.push(applyAnimation(el, properties, options))
-            }
+          map(element, (node) => {
+            promises.push(applyAnimation(node, properties, options))
+          })
 
-            return Promise.all(promises)
-          } else {
-            return applyAnimation(element, properties, options)
-          }
+          return Promise.all(promises)
         }
 
         await execute({ self: element, $util, start, $state })
       } else {
         // Properties is an object
-        if (isNodeMap(element)) {
-          map(element, (node) => applyAnimation(node, properties, options))
-        } else {
-          applyAnimation(element, properties, options)
-        }
+        map(element, (node) => {
+          applyAnimation(node, properties, options)
+        })
       }
 
       return $
@@ -1256,7 +1176,7 @@ function queryElement(selector) {
         // Save transition and height
         const height = el.scrollHeight
 
-        $(el).animate(
+        $(el).transfer(
           { height },
           {
             duration,
@@ -1269,11 +1189,9 @@ function queryElement(selector) {
         )
       }
 
-      if (isNodeMap(element)) {
-        map(element, (node) => sd(node))
-      } else {
-        sd(element)
-      }
+      map(element, (node) => {
+        sd(node)
+      })
 
       return $
     }
@@ -1294,7 +1212,7 @@ function queryElement(selector) {
         el.style.height = el.scrollHeight
 
         setTimeout(() => {
-          $(el).animate(
+          $(el).transfer(
             { height: 0 },
             {
               duration,
@@ -1307,11 +1225,9 @@ function queryElement(selector) {
         }, 1)
       }
 
-      if (isNodeMap(element)) {
-        map(element, (node) => su(node))
-      } else {
-        su(element)
-      }
+      map(element, (node) => {
+        su(node)
+      })
 
       return $
     }
@@ -1335,11 +1251,9 @@ function queryElement(selector) {
         }
       }
 
-      if (isNodeMap(element)) {
-        map(element, (node) => st(node))
-      } else {
-        st(element)
-      }
+      map(element, (node) => {
+        st(node)
+      })
 
       return $
     }
