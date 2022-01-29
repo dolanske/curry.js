@@ -215,6 +215,15 @@ function createElement(vnode, container, where) {
   return el
 }
 
+const formatAnimationOptions = (options = {}) => {
+  return {
+    length: undef(options.length, 500),
+    easing: undef(options.easing, "ease-in-out"),
+    callback: options.callback,
+    // defaultUnit: undef(options.defaultUnit, "px"),
+  }
+}
+
 // Helpers object that gets exposed in callback functions
 
 const $util = {
@@ -298,17 +307,15 @@ function queryElement(selector) {
       if (property) {
         if (isNodeMap(element)) {
           const params = []
-          map(element, (el) => {
-            if (el[property]) params.push(el[property])
+          map(element, (node) => {
+            if (node[property]) params.push(node[property])
           })
 
           return params
-        } else {
-          if (element[property]) return [element[property]]
         }
       }
 
-      if (element.length === 1) return element[0]
+      if (element.length === 1) return element
 
       return element
     }
@@ -357,7 +364,7 @@ function queryElement(selector) {
 
       if (!property) {
         console.warn(
-          "[Warning] No style entered, this chain node will be skipped."
+          "[$.css] No style entered, this chain node will be skipped."
         )
         return $
       }
@@ -392,7 +399,7 @@ function queryElement(selector) {
 
       if (!classNames || classNames.length === 0) {
         console.warn(
-          "[Warning] No class name(s) entered, this chain node will be skipped."
+          "[$.addClass] No class name(s) entered, this chain node will be skipped."
         )
         return $
       }
@@ -428,7 +435,7 @@ function queryElement(selector) {
 
       if (!classNames || classNames.length === 0) {
         console.warn(
-          "[Warning] No class name(s) entered, this chain node will be skipped."
+          "[$.delClass] No class name(s) entered, this chain node will be skipped."
         )
         return $
       }
@@ -461,7 +468,7 @@ function queryElement(selector) {
 
       if (!classNames || classNames.length === 0) {
         console.warn(
-          "[Warning] No class name(s) entered, this chain node will be skipped."
+          "[$.toggleClass] No class name(s) entered, this chain node will be skipped."
         )
         return $
       }
@@ -562,9 +569,7 @@ function queryElement(selector) {
       // If index exceeds the element list length,
       // automatically clear selection and break the chain
       if (index > element.length) {
-        console.warn(
-          `[Warning] Did not find element at specified index (${n}).`
-        )
+        console.warn(`[$.nth] Did not find element at specified index (${n}).`)
         return $
       }
 
@@ -606,7 +611,7 @@ function queryElement(selector) {
         // Index exceeds the children length
         if (n > node.children.length) {
           console.warn(
-            `[Warning] Did not find element's child at specified index (${n}).`
+            `[$.nthChild] Did not find element's child at specified index (${n}).`
           )
           return true // break;
         }
@@ -947,7 +952,7 @@ function queryElement(selector) {
           })
         } else {
           console.warn(
-            "[Warning] Function $.hover({ enter, leave }) requires both parameters. This chain node will be skipped."
+            "[$.hover] Function $.hover({ enter, leave }) requires both parameters. This chain node will be skipped."
           )
         }
       } else if (isFunction(functions)) {
@@ -972,7 +977,7 @@ function queryElement(selector) {
         })
       } else {
         console.warn(
-          "[Warning] Did no provide callback. This chain node will be skipped."
+          "[$.hover] Did no provide callback. This chain node will be skipped."
         )
         return $
       }
@@ -1045,7 +1050,7 @@ function queryElement(selector) {
 
       if (!callback) {
         console.warn(
-          "[Warning] No condition to iterate on, this chain node will be skipped."
+          "[$.filter] No condition to iterate on, this chain node will be skipped."
         )
 
         return $
@@ -1082,26 +1087,17 @@ function queryElement(selector) {
      * @returns Instance of curry for function chaining
      */
 
-    $.transfer = async (properties, options) => {
+    $.animate = async (properties, options) => {
       if (!element || !properties) return $
 
-      const formatOptions = (options = {}) => {
-        return {
-          length: undef(options.length, 500),
-          easing: undef(options.easing, "ease-in-out"),
-          callback: options.callback,
-          defaultUnit: undef(options.defaultUnit, "px"),
-        }
-      }
-
-      options = formatOptions(options)
+      options = formatAnimationOptions(options)
 
       if (isFunction(properties)) {
         // Using the function callback
         const execute = properties
 
         async function start(properties, options) {
-          options = formatOptions(options)
+          options = formatAnimationOptions(options)
 
           const promises = []
 
@@ -1124,7 +1120,7 @@ function queryElement(selector) {
     }
 
     const applyAnimation = async (el, properties, options) => {
-      const { length, easing, callback, defaultUnit } = options
+      const { length, easing, callback } = options
       const prevTransition = el.style.transition
       let duration = length
 
@@ -1138,11 +1134,6 @@ function queryElement(selector) {
         // Apply styling for each property
         Object.entries(properties).map(([index, value]) => {
           const property = index
-
-          // Assign default unit
-          if (typeof value === "number") {
-            value = value + defaultUnit
-          }
 
           el.style[property] = value
         })
@@ -1176,7 +1167,7 @@ function queryElement(selector) {
         // Save transition and height
         const height = el.scrollHeight
 
-        $(el).transfer(
+        $(el).animate(
           { height },
           {
             duration,
@@ -1212,7 +1203,7 @@ function queryElement(selector) {
         el.style.height = el.scrollHeight
 
         setTimeout(() => {
-          $(el).transfer(
+          $(el).animate(
             { height: 0 },
             {
               duration,
@@ -1244,7 +1235,9 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       const st = (el) => {
-        if (el.style.display === "none") {
+        const display = getStyleProperty(el, "display")
+
+        if (display === "none") {
           $(el).slideDown(duration, easing)
         } else {
           $(el).slideUp(duration, easing)
@@ -1258,7 +1251,188 @@ function queryElement(selector) {
       return $
     }
 
-    // $.is = (what, callback) => {}
+    /**
+     * Iterates over elements and if one passes the check (same as using querySelectorAll)
+     * it returns true. Otherwise returns false
+     *
+     * @param {String} condition
+     * @returns If condition matches or not
+     */
+
+    $.is = (condition) => {
+      if (!element || element.length === 0) return false
+
+      const matches = (el, selector) =>
+        (
+          el.matches ||
+          el.matchesSelector ||
+          el.msMatchesSelector ||
+          el.mozMatchesSelector ||
+          el.webkitMatchesSelector ||
+          el.oMatchesSelector
+        ).call(el, selector)
+
+      for (const node of element) {
+        if (matches(node, condition)) return true
+      }
+
+      return false
+    }
+
+    /**
+     * Applies opacity fade-in effect to an element. You can specify at what value it stops.
+     *
+     * @param {Float} to Number between 0 and 1. Default 1
+     * @param {Object} options Same as animation options object
+     * @returns Instance of curry for function chaining
+     */
+
+    $.fadeIn = (to = 1, options) => {
+      if (!element || element.length === 0) return $
+
+      if (to < 0) {
+        console.warn(
+          "[$.fadeIn] Supplied end value parameter of 0 or less. Please use $.fadeOut or $.fadeToggle for that. This chain node will be skipped."
+        )
+        return $
+      }
+
+      options = formatAnimationOptions(options)
+
+      map(element, (node) => {
+        $(node).animate(({ start }) => {
+          start({ opacity: to }, options)
+        })
+      })
+
+      return $
+    }
+
+    /**
+     * Applies opacity fade-out effect to an element
+     *
+     * @param {Float} to Number between 0 and 1. Default 0
+     * @param {Object} options Same as animation options object
+     * @returns Instance of curry for function chaining
+     */
+
+    $.fadeOut = (to = 0, options) => {
+      if (!element || element.length === 0) return $
+
+      if (to >= 1) {
+        console.warn(
+          "[$.fadeOut] Supplied end value parameter of 1 or greater. Please use $.fadeIn or $.fadeToggle for that. This chain node will be skipped."
+        )
+        return $
+      }
+
+      options = formatAnimationOptions(options)
+
+      map(element, (node) => {
+        $(node).animate(({ start }) => {
+          start({ opacity: to }, options)
+        })
+      })
+
+      return $
+    }
+
+    /**
+     * Toggles between fadeIn and fadeOut. Allows for specifying
+     * starting and ending values.
+     *
+     * @param {Float} from Starting amount of opacity. Defaults to 0
+     * @param {Float} to Ending amount of opacity. Defaults to 1
+     * @param {Object} options Same as animation options object
+     * @returns Instance of curry for function chaining
+     */
+
+    $.fadeToggle = (from = 0, to = 1, options) => {
+      if (!element || element.length === 0) return $
+
+      options = formatAnimationOptions(options)
+
+      map(element, (node) => {
+        const opacity = parseFloat(getStyleProperty(node, "opacity"))
+
+        if (opacity > from) {
+          $(node).fadeOut(from, options)
+        } else if (opacity < to) {
+          $(node).fadeIn(to, options)
+        }
+      })
+
+      return $
+    }
+
+    /**
+     * Get the value of an attribute for the first element in the set of
+     * matched elements or set one or more attributes for every matched element.
+     *
+     * @param {String | Array} property Optional attribute name(s) to ask or set to the selected elements
+     * @param {String | Array} value Optional value(s) to set to the selected elements
+     * @returns Attribute value or true/false if addition was succesful
+     */
+
+    $.attr = (property, value) => {
+      if (!element || element.length === 0) return $
+
+      if (!property) {
+        console.warn("[$.attr] Did not provide required property name(s).")
+        return false
+      }
+
+      // Returns the first matched element's property
+      if (!value) {
+        if (isArray(property)) {
+          return property.map((prop) => element[0].getAttribute(prop))
+        }
+
+        return element[0].getAttribute(property)
+      }
+
+      map(element, (node) => {
+        if (isArray(property)) {
+          if (isArray(value)) {
+            // Assign attribute value for property at index N to value at index N
+            // Example [title,desc], ['Hello','World]
+            // title=Hello, desc=World
+            property.map((prop, index) => node.setAttribute(prop, value[index]))
+          } else {
+            // For each property, set the value
+            // Example [title, desc], 'Hello',
+            // title=Hello, desc=Hello
+            property.map((prop) => node.setAttribute(prop, value))
+          }
+        } else {
+          if (isArray(value)) {
+            // Set every value to the attribute
+            console.warn(
+              "[$.attr] Cannot set array of values to a single property."
+            )
+          } else {
+            // Set attribute value
+            node.setAttribute(property, value)
+          }
+        }
+      })
+
+      // if (isArray(property)) {
+
+      // }
+    }
+
+    // TODO: Consider this for 1.2.0
+    // $.animation = (keyframes, options) => {
+    //   if (!element || element.length === 0) return $
+
+    //   map(element, async (node) => {
+    //     const keys = new KeyframeEffect(node, keyframes)
+    //     const animation = new Animation(keys, document.timeline)
+
+    //     node.animate(keyframes, options)
+    //   })
+    // }
 
     return $
   }
