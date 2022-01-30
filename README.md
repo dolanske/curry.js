@@ -13,7 +13,7 @@ If you prefer things your way, simply copy the minified code in the source folde
 
 ## Feature requests
 
-As stated, I will be absolutely delighted if someone has a feature requests and if it's in my powers to implement it. That being said, before you request a feature, check out the [Planned Features](/PlannedFeatures.md) document first.
+As stated, I will be absolutely delighted if someone has a feature requests and if it's in my powers to implement it. That being said, before you request a feature, check out the Projects tab if it isn't already being considered / in development.
 
 ---
 
