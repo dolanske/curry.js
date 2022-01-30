@@ -112,7 +112,7 @@ $("ul").on("click", ({ $state }) => console.log($state.listItems))
 
 ---
 
-#### Selector
+### Selector `$()`
 
 Selects an array of elements which match the selector. It offers extensive ways to query elements. For full documentation check it out on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector).
 
@@ -122,4 +122,19 @@ $(".my-button") // Selects every element with the 'my-button' class
 $("#my-id") // Selects the element with id set to 'my-id'
 $("[href]") // Selects every element with the 'href' attribute
 $("[title=hello]") // Selects every element with the 'title' attribute with value 'hello'
+
+// You can also retrieve the jCurry's $state and $utils
+
+const state = $("$state")
+const utilities = $("$util")
+```
+
+You can also attach the `.get()` function which returns the matched elements so you can manipulate them outside of the curry scope.
+
+```js
+// Returns a HTMLCollection of all button elements
+const buttons = $("button").get()
+
+// Returns an array of every input's value
+const values = $("input").get("value")
 ```
