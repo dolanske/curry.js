@@ -15,6 +15,15 @@ If you prefer things your way, simply copy the minified code in the source folde
 
 ## API
 
+You start a chain by using a selector and then chain functions as needed. For example:
+
+```js
+$(".list") // Get all elements with the class .list
+  .children() // Get its child elements
+  .first() // Select the first one
+  .text("First list item") // Set its text
+```
+
 ### Selectors
 
 | Method       | Parameters                                                         | Summary                                                                                                 |
@@ -81,3 +90,36 @@ If you prefer things your way, simply copy the minified code in the source folde
 | $.text()     | <ul><li>`text`</li><li>`location` (optional)</li></ul>                       | Replaces or adds text content to the matched elements. [Description](#text)                                                                                       |
 | $.attr()     | <ul><li>`property`</li><li>`value` (optional)</li></ul>                      | Get the value of an attribute for the first element in the set of matched elements or set one or more attributes for every matched element.. [Description](#attr) |
 | $.del()      | none                                                                         | Removes matching elements from the DOM. [Description](#del)                                                                                                       |
+
+---
+
+### Helpers
+
+Every callback exposes the `$util` object which contains numerous helper functions. You can find description of each function in this [documentation here](/HELPERS.md).
+
+### State
+
+Every callback exposes the `$state` property which is a simple way of sharing data in any and inbetween chains. This could be easily solved with a variable outside of your chains but this solution doesn't pollute your code.
+
+```js
+$("li").each(({ self, $state }) => {
+  if (!$state.listItems) $state.listItems = []
+  $state.listItems.push(self.textContent)
+})
+
+$("ul").on("click", ({ $state }) => console.log($state.listItems))
+```
+
+---
+
+#### Selector
+
+Selects an array of elements which match the selector. It offers extensive ways to query elements. For full documentation check it out on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector).
+
+```js
+$("button") // Selects every button
+$(".my-button") // Selects every element with the 'my-button' class
+$("#my-id") // Selects the element with id set to 'my-id'
+$("[href]") // Selects every element with the 'href' attribute
+$("[title=hello]") // Selects every element with the 'title' attribute with value 'hello'
+```

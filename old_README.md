@@ -61,7 +61,7 @@ Currently implemented functions as of 1.2.2022
 
 ### Helpers
 
-Each callback epxoses the `$util` object which contains a set of helpers functions for development. Documentation for each function can be found [here](/HELPERS.md).
+Each callback epxoses the `$util` object which contains a set of helpers functions for development. Documentation for each function can be found
 
 ### State
 
@@ -90,7 +90,7 @@ $("ul").on("click", ({ $state }) => console.log($state.names))
 
 `$(selector)`
 
-Selects matching html elements. It is implemented using the `document.querySelector`function. It offers some extensive ways to query elements. For full documentation check it out on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector)
+Selects matching html elements. It is implemented using the `document.querySelector`function.
 
 If the `.get(property)` function is attached, selector returns the selected elements. Otherwise it waits for chained function calls. If property is provided, it will check if such property exists in the selected element(s) and will return an array containing its findings.
 
