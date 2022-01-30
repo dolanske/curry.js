@@ -198,7 +198,7 @@ Selects the element at the provided index in matched elements. It is 1 indexed, 
 $("li").nth(2).text("I am last :(")
 ```
 
-### Prev and next
+### Prev and Next
 
 Parameters:
 
@@ -264,7 +264,7 @@ Selects each selected elements child nodes.
 const listItems = $("ul").children()
 ```
 
-### Nth child
+### Nth Child
 
 Parameters:
 
@@ -362,7 +362,7 @@ $("span").addClass("color-red background-blue")
 $("span").addClass(["color-red", "font-size-14"])
 ```
 
-### Delete class
+### Delete Class
 
 Parameters:
 
@@ -376,7 +376,7 @@ $("span").delClass("color-red background-blue")
 $("span").delClass(["color-red", "font-size-14"])
 ```
 
-### Toggle class
+### Toggle Class
 
 Parameters:
 
@@ -452,7 +452,7 @@ $("ul").css({
 })
 ```
 
-### Slide down
+### Slide Down
 
 Parameters:
 
@@ -482,7 +482,7 @@ $("button").click(() => {
 })
 ```
 
-### Slide toggle
+### Slide Toggle
 
 Parameters:
 
@@ -571,3 +571,27 @@ $("button").click(({ $util }) => {
   })
 })
 ```
+
+### Fade In
+
+### Fade Out
+
+### Fade Toggle
+
+### Each
+
+### Async Each
+
+### Filter
+
+### Append
+
+### Prepend
+
+### Add Child
+
+### Text
+
+### Attr
+
+### Del
