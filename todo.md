@@ -1,8 +1,9 @@
 ## Documentation
 
-- [ ] Rewrite
+- [x] Map
+- [ ] Examples
 - [ ] Update HELPERS
 
 ## QoL
 
-- mark all internal functions with \_ at the start
+- mark all internal functions with '\_' or '$' at the start

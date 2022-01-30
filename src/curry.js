@@ -315,8 +315,6 @@ function queryElement(selector) {
         }
       }
 
-      if (element.length === 1) return element
-
       return element
     }
 
@@ -936,8 +934,6 @@ function queryElement(selector) {
      * it resets the element to the previous state
      *
      */
-
-    // let previousState
 
     $.hover = (functions) => {
       if (!element || element.length === 0) return $
