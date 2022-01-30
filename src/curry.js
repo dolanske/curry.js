@@ -288,8 +288,8 @@ function queryElement(selector) {
           return $util
         }
         default:
-          // console.warn("Unsupported magic selector.")
-          throw Error("Unsupported magic selector.")
+          console.warn("[$()] Unsupported magic selector.")
+          return undefined
       }
     }
 

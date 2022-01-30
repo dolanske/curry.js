@@ -30,70 +30,70 @@ $(".list") // Get all elements with the class .list
 
 ### Selectors
 
-| Method       | Parameters                                                         | Summary                                                                                                     |
-| ------------ | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| $(selector)  | `selectors`                                                        | Uses `querySelectorAll` and accepts wide variety of parameters. [Description](#selector)                    |
-| $.get()      | `property` (optional)                                              | Returns either matched elements or array of selected property of matched elements. [Description](#selector) |
-| $.is()       | `condition`                                                        | Iterates over matched elements and if 1 passes the condition, returns true. [Description](#is)              |
-| $.first()    | `callback` (optional)                                              | Selects the first element from matched elements. [Description](#first)                                      |
-| $.last()     | `callback` (optional)                                              | Selects the last element from matched elements. [Description](#last)                                        |
-| $.nth()      | <ul><li>`index`</li><li>`callback` (optional)</li></ul>            | Selects element at `index` from matched elements. [Description](#nth)                                       |
-| $.prev()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects previous element or previous nth element. [Description](#prev-and-next)                             |
-| $.next()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects next element or next nth element. [Description](#prev-and-next)                                     |
-| $.parent()   | `callback` (optional)                                              | Selects the element's parent node. [Description](#parent)                                                   |
-| $.children() | `callback` (optional)                                              | Selects the element's child nodes. [Description](#children)                                                 |
-| $.nthChild() | <ul><li>`index` </li><li>`callback` (optional)</li></ul>           | Selects element's child node at `index`. [Description](#nth-child)                                          |
+| Method       | Parameters                                                         | Summary                                                                                                 |
+| ------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| $(selector)  | `selectors`                                                        | Uses `querySelectorAll` and accepts wide variety of parameters. [Example](#selector)                    |
+| $.get()      | `property` (optional)                                              | Returns either matched elements or array of selected property of matched elements. [Example](#selector) |
+| $.is()       | `condition`                                                        | Iterates over matched elements and if 1 passes the condition, returns true. [Example](#is)              |
+| $.first()    | `callback` (optional)                                              | Selects the first element from matched elements. [Example](#first)                                      |
+| $.last()     | `callback` (optional)                                              | Selects the last element from matched elements. [Example](#last)                                        |
+| $.nth()      | <ul><li>`index`</li><li>`callback` (optional)</li></ul>            | Selects element at `index` from matched elements. [Example](#nth)                                       |
+| $.prev()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects previous element or previous nth element. [Example](#prev-and-next)                             |
+| $.next()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects next element or next nth element. [Example](#prev-and-next)                                     |
+| $.parent()   | `callback` (optional)                                              | Selects the element's parent node. [Example](#parent)                                                   |
+| $.children() | `callback` (optional)                                              | Selects the element's child nodes. [Example](#children)                                                 |
+| $.nthChild() | <ul><li>`index` </li><li>`callback` (optional)</li></ul>           | Selects element's child node at `index`. [Example](#nth-child)                                          |
 
 ### Event binding
 
-| Method    | Parameters                                                                | Summary                                                                                                      |
-| --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| $.on()    | <ul><li>`event`</li><li>`callback`</li><li>`options` (optional)</li></ul> | Binds an event listener to the matched elements. [Description](#on)                                          |
-| $.click() | <ul><li>`callback`</li><li>`options` (optional)</li></ul>                 | Shorthand for attaching an `$.on('click')`. [Description](#click)                                            |
-| $.hover() | `states` or `function`                                                    | Powerful shorthand for `$(selecor).on('mouseenter')` and `$(selector).on('mouselave')` [Description](#hover) |
+| Method    | Parameters                                                                | Summary                                                                                                  |
+| --------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| $.on()    | <ul><li>`event`</li><li>`callback`</li><li>`options` (optional)</li></ul> | Binds an event listener to the matched elements. [Example](#on)                                          |
+| $.click() | <ul><li>`callback`</li><li>`options` (optional)</li></ul>                 | Shorthand for attaching an `$.on('click')`. [Example](#click)                                            |
+| $.hover() | `states` or `function`                                                    | Powerful shorthand for `$(selecor).on('mouseenter')` and `$(selector).on('mouselave')` [Example](#hover) |
 
 ### Style binding
 
-| Method          | Parameters                                                          | Summary                                                                                                    |
-| --------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| $.addClass()    | `classList`                                                         | Adds class name or list of class names to the matched elements. [Description](#add-class)                  |
-| $.delClass()    | `classList`                                                         | Removes class name or list of class names from the matched elements. [Description](#delete-class)          |
-| $.toggleClass() | `classList`                                                         | Toggles between class name or list of class names on the matched elements. [Description](#toggle-class)    |
-| $.show()        | `displayValue` (optional)                                           | Adds `display=block` or user selected `display=displayvalue` to the matched elements. [Description](#show) |
-| $.hide()        | none                                                                | Adds `display=none` to the matched elements. [Description](#hide)                                          |
-| $.toggle()      | `onActive` (optional)                                               | Toggles between `$.show()` and `$.hide()`. [Description](#toggle)                                          |
-| $.css()         | <ul><li>`property`</li><li>`value`</li></ul> or <br/> `styleObject` | Adds inline CSS to the matched elements. [Description](#css)                                               |
+| Method          | Parameters                                                          | Summary                                                                                                |
+| --------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| $.addClass()    | `classList`                                                         | Adds class name or list of class names to the matched elements. [Example](#add-class)                  |
+| $.delClass()    | `classList`                                                         | Removes class name or list of class names from the matched elements. [Example](#delete-class)          |
+| $.toggleClass() | `classList`                                                         | Toggles between class name or list of class names on the matched elements. [Example](#toggle-class)    |
+| $.show()        | `displayValue` (optional)                                           | Adds `display=block` or user selected `display=displayvalue` to the matched elements. [Example](#show) |
+| $.hide()        | none                                                                | Adds `display=none` to the matched elements. [Example](#hide)                                          |
+| $.toggle()      | `onActive` (optional)                                               | Toggles between `$.show()` and `$.hide()`. [Example](#toggle)                                          |
+| $.css()         | <ul><li>`property`</li><li>`value`</li></ul> or <br/> `styleObject` | Adds inline CSS to the matched elements. [Example](#css)                                               |
 
 ### Animations
 
-| Method          | Parameters                                                          | Summary                                                                         |
-| --------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| $.slideDown()   | <ul><li>`duration` (optional)</li><li>`easing` (optional)</li></ul> | Display the matched elements with a sliding motion. [Description](#slide-down)  |
-| $.slideUp()     | <ul><li>`duration` (optional)</li><li>`easing` (optional)</li></ul> | Hide the matched elements with a sliding motion. [Description](#slide-up)       |
-| $.slideToggle() | <ul><li>`duration` (optional)</li><li>`easing` (optional)</li></ul> | Toggles between `$.slideDown()` and `$.slideUp()`. [Description](#slide-toggle) |
-| $.animate()     | <ul><li>`properties`</li><li>`options`</li></ul>                    | Animate matched elements to the added properties. [Description](#animate)       |
-| $.fadeIn()      | <ul><li>`to`</li><li>`options`</li></ul>                            | Display the matched elements with a fading motion. [Description](#fade-in)      |
-| $.fadeOut()     | <ul><li>`to`</li><li>`options`</li></ul>                            | Hide the matched elements with a fading motion. [Description](#fade-out)        |
-| $.fadeToggle()  | <ul><li>`from`</li><li>`to`</li><li>`options`</li></ul>             | Toggles between `$.fadeIn()`and`$.fadeOut()`. [Description](#fade-toggle)       |
+| Method          | Parameters                                                          | Summary                                                                     |
+| --------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| $.slideDown()   | <ul><li>`duration` (optional)</li><li>`easing` (optional)</li></ul> | Display the matched elements with a sliding motion. [Example](#slide-down)  |
+| $.slideUp()     | <ul><li>`duration` (optional)</li><li>`easing` (optional)</li></ul> | Hide the matched elements with a sliding motion. [Example](#slide-up)       |
+| $.slideToggle() | <ul><li>`duration` (optional)</li><li>`easing` (optional)</li></ul> | Toggles between `$.slideDown()` and `$.slideUp()`. [Example](#slide-toggle) |
+| $.animate()     | <ul><li>`properties`</li><li>`options`</li></ul>                    | Animate matched elements to the added properties. [Example](#animate)       |
+| $.fadeIn()      | <ul><li>`to`</li><li>`options`</li></ul>                            | Display the matched elements with a fading motion. [Example](#fade-in)      |
+| $.fadeOut()     | <ul><li>`to`</li><li>`options`</li></ul>                            | Hide the matched elements with a fading motion. [Example](#fade-out)        |
+| $.fadeToggle()  | <ul><li>`from`</li><li>`to`</li><li>`options`</li></ul>             | Toggles between `$.fadeIn()`and`$.fadeOut()`. [Example](#fade-toggle)       |
 
 ### Iteration
 
-| Method        | Parameters | Summary                                                                                                |
-| ------------- | ---------- | ------------------------------------------------------------------------------------------------------ |
-| $.each()      | `callback` | Iterates over matched elements and executes callback on each iteration. [Description](#each)           |
-| $.asyncEach() | `callback` | Same as `$.each()` but each iteration requires calling the `next()` method. [Description](#async-each) |
-| $.filter()    | `callback` | Filters matched elements by the provided condition. [Description](#filter)                             |
+| Method        | Parameters | Summary                                                                                            |
+| ------------- | ---------- | -------------------------------------------------------------------------------------------------- |
+| $.each()      | `callback` | Iterates over matched elements and executes callback on each iteration. [Example](#each)           |
+| $.asyncEach() | `callback` | Same as `$.each()` but each iteration requires calling the `next()` method. [Example](#async-each) |
+| $.filter()    | `callback` | Filters matched elements by the provided condition. [Example](#filter)                             |
 
 ### DOM Manipulation
 
-| Method       | Parameters                                                                   | Summary                                                                                                                                                           |
-| ------------ | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| $.append()   | `callback` or `templateString`                                               | Appends a new element to the matched elements. [Description](#append)                                                                                             |
-| $.prepend()  | `callback` or `templateString`                                               | Prepends a new element to the matched elements. [Description](#prepend)                                                                                           |
-| $.addChild() | <ul><li>`callback` or `templateString`</li><li>`append` (optional)</li></ul> | Prepends a new child element to the matched elements children. [Description](#addChild)                                                                           |
-| $.text()     | <ul><li>`text`</li><li>`location` (optional)</li></ul>                       | Replaces or adds text content to the matched elements. [Description](#text)                                                                                       |
-| $.attr()     | <ul><li>`property`</li><li>`value` (optional)</li></ul>                      | Get the value of an attribute for the first element in the set of matched elements or set one or more attributes for every matched element.. [Description](#attr) |
-| $.del()      | none                                                                         | Removes matching elements from the DOM. [Description](#del)                                                                                                       |
+| Method       | Parameters                                                                   | Summary                                                                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| $.append()   | `callback` or `templateString`                                               | Appends a new element to the matched elements. [Example](#append-and-prepend)                                                                                 |
+| $.prepend()  | `callback` or `templateString`                                               | Prepends a new element to the matched elements. [Example](#append-and-prepend)                                                                                |
+| $.addChild() | <ul><li>`callback` or `templateString`</li><li>`append` (optional)</li></ul> | Prepends a new child element to the matched elements children. [Example](#addChild)                                                                           |
+| $.text()     | <ul><li>`text`</li><li>`location` (optional)</li></ul>                       | Replaces or adds text content to the matched elements. [Example](#text)                                                                                       |
+| $.attr()     | <ul><li>`property`</li><li>`value` (optional)</li></ul>                      | Get the value of an attribute for the first element in the set of matched elements or set one or more attributes for every matched element.. [Example](#attr) |
+| $.del()      | none                                                                         | Removes matching elements from the DOM. [Example](#del)                                                                                                       |
 
 ---
 
@@ -661,18 +661,17 @@ Parameters:
   - `index` index of iteration
   - `next` function that must be called to execute next iteration
 
-Works exactly like `$.each()` but to execute next iteration, you must call the `next()` function. This iterator is good for chaining data fetching and other async actions.
+Works exactly like `$.each()` but to execute next iteration, you must call the `next()` function. This iterator is good for chaining data fetching and other async actions which could cause issues when all called instantly.
 
 ```js
 $("img").asyncEach(({ next, self }) => {
   const url = $(self).attr("data-url")
 
   new Promise((resolve) => {
-    return fetch("url/of/image")
+    return fetch("request/url")
   })
     .then((response) => response.json())
     .then((response) => {
-      /* */
       $(self).attr("src", response.url)
 
       next()
@@ -697,14 +696,117 @@ const everyEvenChild = $("ul")
   .get()
 ```
 
-### Append
+### Append and Prepend
 
-### Prepend
+Inserts new element(s) either in front or after matched elements
+
+Usage #1 parameters:
+
+- `template` template string
+
+```js
+$("blockquote").prepend("<label>And so they said:</label>")
+```
+
+Usage #2 parameters:
+
+- `callback` exposes:
+  - `self` element which we will add the new element to
+  - `render` render function
+
+```js
+$("input").prepend(({ self }) => {
+  const labelText = $(self).attr("data-label")
+
+  return `<label>${labelText}</label>`
+})
+```
+
+If you are familiar with modern frameworks, you must have heard the term `render function`. Well jCurry's render functions have exactly the same syntax. For reference [Vue documentation](https://vuejs.org/v2/guide/render-function.html#createElement-Arguments)
+
+```js
+$("input").prepend(({ self }) => {
+  const labelText = $(self).attr("data-label")
+
+  return render("label", { title: labelText }, labelText)
+})
+```
 
 ### Add Child
 
+Parameters:
+
+- `callback` exposes:
+  - `self` element which we will add the new element to
+  - `render` render function
+- `append` default: `true` - wether to insert new elements before or after existing children
+
+Works exactly the same way as `$.append` and `$.prepen` except it creates the new element as a child node of the matched elements.
+
+```js
+$(".list-wrap").addChild(({ $util, render }) => {
+  // Generate an array of 5 items starting at index 1
+  const items = $util.from(5, 1).map((item) => {
+    return render("li", `#${item} List item`)
+  })
+
+  // Create an unordered list and append the items as its children
+  return render("ul", { class: ".list" }, items)
+})
+```
+
 ### Text
+
+Parameters:
+
+- `text`
+- `location` default: `replace` - replaces elements text
+  - allowed values: `replace`, `before` OR `prepend`, `after` OR `append`
+
+Replaces or appends text to the matched elements.
+
+```js
+$("p").text("I am the paragraph now")
+$("p").text("The text is as follows:", "before")
+$("p").text(".", "after")
+```
 
 ### Attr
 
+Parameters:
+
+- `property`
+- `value`
+
+Get the value of an attribute for the first element in the set of matched elements or set one or more attributes for every matched element.
+
+```js
+// Returns value of a single attribute
+const path = $("a").attr("href")
+// Returns array of values from selected attributes
+const [path, title] = $("a").attr(["href", "title"])
+
+// Assigns value to key
+$("a").attr("href", "path/to/page")
+
+// Will throw a warning and skip this chain node
+$("a").attr("href", ["path/to/page", "other/to/pat"])
+
+// Assigns key:value pair based on index
+$("a").attr(["href", "title", "data-iterations"], ["/hello", "Hello World", 10])
+
+// Sets the same value for every key
+$("a").attr(["title", "data-description"], "I am the same text!!!")
+```
+
 ### Del
+
+Removes matched elements from the DOM.
+
+```js
+$("ul")
+  .children()
+  .each(({ self, index }) => {
+    if (index % 2 === 0) $(self).del()
+  })
+```
