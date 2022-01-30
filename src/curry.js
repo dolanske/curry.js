@@ -652,7 +652,7 @@ function queryElement(selector) {
         children.push(...node.children)
 
         if (callback) {
-          callback({ self: node, children: node.children, $util, $state })
+          callback({ self: node.children, parent: node, $util, $state })
         }
       })
 

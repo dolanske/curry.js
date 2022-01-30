@@ -251,8 +251,8 @@ $("p").each(({ self }) => {
 Parameters:
 
 - `callback` (optional) exposes:
-  - `self` selector element
-  - `children` child elements
+  - `self` child elements
+  - `parent` parent element
 
 Selects each selected elements child nodes.
 
