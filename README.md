@@ -11,6 +11,10 @@ If you prefer things your way, simply copy the minified code in the source folde
 
 **Notice**: I love feedback. Please, report any issues or feature requests if you have any. I will literally make any of your wishes happen.
 
+## Feature requests
+
+As stated, I will be absolutely delighted if someone has a feature requests and if it's in my powers to implement it. That being said, before you request a feature, check out the [Planned Features](/PlannedFeatures.md) document first.
+
 ---
 
 ## API
@@ -53,7 +57,7 @@ $(".list") // Get all elements with the class .list
 | Method          | Parameters                                                          | Summary                                                                                                    |
 | --------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | $.addClass()    | `classList`                                                         | Adds class name or list of class names to the matched elements. [Description](#add-class)                  |
-| $.delClass()    | `classList`                                                         | Removes class name or list of class names from the matched elements. [Description](#del-class)             |
+| $.delClass()    | `classList`                                                         | Removes class name or list of class names from the matched elements. [Description](#delete-class)          |
 | $.toggleClass() | `classList`                                                         | Toggles between class name or list of class names on the matched elements. [Description](#toggle-class)    |
 | $.show()        | `displayValue` (optional)                                           | Adds `display=block` or user selected `display=displayvalue` to the matched elements. [Description](#show) |
 | $.hide()        | none                                                                | Adds `display=none` to the matched elements. [Description](#hide)                                          |
@@ -343,3 +347,226 @@ $("p").hover(({ self }) => {
 ```
 
 **NOTE:** This is an experimental technology and the reset to previous state might not fully work. Feedback is appreciated.
+
+### Add class
+
+Parameters:
+
+- `classList`
+
+Appends class or a class list to the matched elements.
+
+```js
+$("span").addClass("color-red")
+$("span").addClass("color-red background-blue")
+$("span").addClass(["color-red", "font-size-14"])
+```
+
+### Delete class
+
+Parameters:
+
+- `classList`
+
+Removes class or a class list from the matched elements.
+
+```js
+$("span").delClass("color-red")
+$("span").delClass("color-red background-blue")
+$("span").delClass(["color-red", "font-size-14"])
+```
+
+### Toggle class
+
+Parameters:
+
+- `classList`
+
+Toggles between the provided class or a class list on the matched elements.
+
+```js
+$("button").click(({ self }) => $(self).next().toggleClass("active"))
+```
+
+### Show
+
+Parameters:
+
+- `displayValue` (optional), default: 'block'
+
+Used for showing hidden elements. Applies the `display=displayValue` style to every matched element.
+
+```js
+$("button").click(() => {
+  $(".hidden-wrapper").show("inline-flex")
+})
+```
+
+### Hide
+
+Used for hiding visible elements. Applies `display=none` style to every matched element.
+
+```js
+$("button").click(() => {
+  $(".hidden-wrapper").hide()
+})
+```
+
+### Toggle
+
+Parameters:
+
+- `displayValue` (optional), default: 'block'
+
+Toggles between `$.show(displayValue)` and `$.hide()` on every matched element.
+
+```js
+$("button").click(() => {
+  $(".hidden-wrapper").toggle("inline-flex")
+})
+```
+
+### CSS
+
+Usage #1 parameters:
+
+- `property` CSS property name
+- `value` CSS property value
+
+Appends inline style to the matched elements.
+
+```js
+$("ul").css("listStyle", "none")
+```
+
+Usage #2 parameters:
+
+- `style` object of CSS property:value pairs
+
+Appends a style object to the matched elements,
+
+```js
+$("ul").css({
+  listStyle: "none",
+  background: "blue",
+})
+```
+
+### Slide down
+
+Parameters:
+
+- `duration` (optional) default: `500` ms
+- `easing` (optional) default: `ease-in-out`
+
+Applies revealing sliding down animation to matched elements.
+
+```js
+$("button").click(() => {
+  $(".hidden-wrapper").slideDown(250, "linear")
+})
+```
+
+### Slide Up
+
+Parameters:
+
+- `duration` (optional) default: `500` ms
+- `easing` (optional) default: `ease-in-out`
+
+Applies hiding sliding up animation to matched elements.
+
+```js
+$("button").click(() => {
+  $(".hidden-wrapper").slideUp(1000)
+})
+```
+
+### Slide toggle
+
+Parameters:
+
+- `duration` (optional) default: `500` ms
+- `easing` (optional) default: `ease-in-out`
+
+Toggles between `$.slideDown()` and `$.slideUp()` on matched elements.
+
+```js
+$("button").click(() => {
+  $(".hidden-wrapper").slideToggle(1000)
+})
+```
+
+### Animate
+
+Usage #1 parameters:
+
+- `properties` object of properties to animate (like CSS object)
+- `options` (optional)
+  - `length` (optional) default: `500` ms
+  - `easing` (optional) default: `ease-in-out`
+  - `callback` (optional) executes once animation completes, exposes:
+    - `self` animated element
+
+Applies selected CSS object styles in animation. Unlike jQuery it only applies temporary `transition` property to the animated elements.
+
+```js
+$("button").click(({ $util }) => {
+  $("h1").animate(
+    {
+      marginLeft: 200,
+      backgroundColor: "red",
+    },
+    {
+      length: "1s", // or 'length: 1000'
+      easing: $util.bez("easeInOutCubic"), // cubic-bezoar(0.65, 0, 0.35, 1)
+      callback: ({ self }) => {
+        // In callback we can infinitely execute more animations if needed
+        $(self).animate({
+          marginLeft: "0px",
+          backgroundColor: "transparent",
+        })
+      },
+    }
+  )
+})
+```
+
+Usage #2 parameters:
+
+- `callback` which exposes:
+  - `start` starts the animation, can be called multiple times. Takes in the same parameters as usage #1
+    - `properties`
+    - `options`
+  - `self` animated element
+
+A different and more flexible approach to animation. Allows you to essentially execute keyframed animation in any length you need. You can decide when to trigger each keyframe and so on. You also gain space to execute any kind of code you want before you start the animation.
+
+```js
+$("button").click(({ $util }) => {
+  $("h1").animate(async ({ self, $util, start }) => {
+    // Execute code before animation begins
+    // from which we can gain properties to use in the animation
+
+    // For example, I can get the element's width and use that
+    // const marginLeft = $util.getStyleProperty(self, "width")
+    await start(
+      {
+        marginLeft: "200px",
+        backgroundColor: "red",
+      },
+      {
+        length: 1000,
+        easing: $util.bez("easeInOutCubic"),
+      }
+    )
+
+    await start({
+      marginLeft: 0,
+      backgroundColor: "transparent",
+    }).then(() => {
+      // You can attach .then() to the last keyframe to detect when animation completes
+    })
+  })
+})
+```

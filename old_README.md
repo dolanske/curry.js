@@ -67,7 +67,7 @@ Each callback epxoses the `$util` object which contains a set of helpers functio
 
 Each callback exposes a `$state` property which is a simple way of sharing data in a function chain or even between multiple different chains.
 
-```js
+```js$
 // Selects all list items and saves their text content to an array
 $("ul")
   .children()
