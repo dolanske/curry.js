@@ -274,3 +274,72 @@ Selects the child nodes of the matched elements at provided index.
 ```js
 $("ul").nthChild(2).text("I am second!")
 ```
+
+### On
+
+Parameters:
+
+- `event`
+- `callback` exposes:
+  - `e` or `event`
+  - `self`
+- `options` (optional)
+  - event listener options ([MDN](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener))
+
+Binds an event listener to matched elements.
+
+```js
+$(".wrapper").on("mouseenter", ({ self }) => {
+  $(self).css("backgroundColor", "red")
+})
+```
+
+### Click
+
+Parameters:
+
+- `callback` exposes
+  - `e` or `event`
+  - `self`
+- `options` (optional)
+  - event listener options ([MDN](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener))
+
+Shorthand for binding `$.on('click', callback)` to to matched elements..
+
+```js
+$("button").click(({ self }) => console.log(`Clicked ${self.textContent}`))
+```
+
+### Hover
+
+Usage #1 Parameters:
+
+- `functions`
+  - `enter` callback, executes on `mouseenter`
+  - `leave` callback, executes on `mouseleave`
+- `options` (optional)
+  - event listener options ([MDN](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener))
+
+Shorthand for binding `$.on('mouseenter', callback)` and `$.on('mouseleave', callback)` to matched elements.
+
+```js
+$("p").hover({
+  enter: ({ self }) => $(self).css("background", "red"),
+  leave: ({ self }) => $(self).css("background", "transparent"),
+})
+```
+
+Usage #2 parameters:
+
+- `callback`
+
+In cases where we only want to bind styles / classes and so on when user **enters** and reset once user **leaves**. We can use the function parameter which is the equivalent of only using the `enter` function.
+
+```js
+// This example deems the same result as the previous one
+$("p").hover(({ self }) => {
+  $(self).css("background", "red")
+})
+```
+
+**NOTE:** This is an experimental technology and the reset to previous state might not fully work. Feedback is appreciated.
