@@ -35,9 +35,9 @@ $(".list") // Get all elements with the class .list
 | $(selector)  | `selectors`                                                        | Uses `querySelectorAll` and accepts wide variety of parameters. [Description](#selector)                    |
 | $.get()      | `property` (optional)                                              | Returns either matched elements or array of selected property of matched elements. [Description](#selector) |
 | $.is()       | `condition`                                                        | Iterates over matched elements and if 1 passes the condition, returns true. [Description](#is)              |
-| $.first()    | `callback` (optional)                                              | Selects the first element. [Description](#first)                                                            |
-| $.last()     | `callback` (optional)                                              | Selects the last element. [Description](#last)                                                              |
-| $.nth()      | <ul><li>`index`</li><li>`callback` (optional)</li></ul>            | Selects element at index `n`. [Description](#nth)                                                           |
+| $.first()    | `callback` (optional)                                              | Selects the first element from matched elements. [Description](#first)                                      |
+| $.last()     | `callback` (optional)                                              | Selects the last element from matched elements. [Description](#last)                                        |
+| $.nth()      | <ul><li>`index`</li><li>`callback` (optional)</li></ul>            | Selects element at `index` from matched elements. [Description](#nth)                                       |
 | $.prev()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects previous element or previous nth element. [Description](#prev-and-next)                             |
 | $.next()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects next element or next nth element. [Description](#prev-and-next)                                     |
 | $.parent()   | `callback` (optional)                                              | Selects the element's parent node. [Description](#parent)                                                   |
@@ -261,10 +261,10 @@ Parameters:
 Selects each selected elements child nodes.
 
 ```js
-const listItems = $("ul").children()
+const listItems = $("ul").children().get()
 ```
 
-### Nth Child
+### Nth child
 
 Parameters:
 
@@ -362,7 +362,7 @@ $("span").addClass("color-red background-blue")
 $("span").addClass(["color-red", "font-size-14"])
 ```
 
-### Delete Class
+### Delete class
 
 Parameters:
 
@@ -376,7 +376,7 @@ $("span").delClass("color-red background-blue")
 $("span").delClass(["color-red", "font-size-14"])
 ```
 
-### Toggle Class
+### Toggle class
 
 Parameters:
 
@@ -392,7 +392,7 @@ $("button").click(({ self }) => $(self).next().toggleClass("active"))
 
 Parameters:
 
-- `displayValue` (optional), default: 'block'
+- `displayValue` (optional), default: `block`
 
 Used for showing hidden elements. Applies the `display=displayValue` style to every matched element.
 
@@ -416,7 +416,7 @@ $("button").click(() => {
 
 Parameters:
 
-- `displayValue` (optional), default: 'block'
+- `displayValue` (optional), default: `block`
 
 Toggles between `$.show(displayValue)` and `$.hide()` on every matched element.
 
@@ -452,7 +452,7 @@ $("ul").css({
 })
 ```
 
-### Slide Down
+### Slide down
 
 Parameters:
 
@@ -467,7 +467,7 @@ $("button").click(() => {
 })
 ```
 
-### Slide Up
+### Slide up
 
 Parameters:
 
@@ -482,7 +482,7 @@ $("button").click(() => {
 })
 ```
 
-### Slide Toggle
+### Slide toggle
 
 Parameters:
 
@@ -572,17 +572,130 @@ $("button").click(({ $util }) => {
 })
 ```
 
-### Fade In
+### Fade in
 
-### Fade Out
+Parameters:
+
+- `to` default: `1`, specify opacity to which the element fades in
+- `options` - `$.animate()` options object
+  - `length` (optional) default: `500` ms
+  - `easing` (optional) default: `ease-in-out`
+  - `callback` (optional) executes once animation completes, exposes:
+    - `self` animated element
+
+Applies opacity fade in effect to an element. You can specify at what value it stops.
+
+```js
+$("button").click(() => {
+  // Content class elements will show up with opacity 0.95
+  $(".content").fadeIn(0.95)
+})
+```
+
+### Fade out
+
+Parameters:
+
+- `to` default: `0`, specify opacity to which the element fades out
+- `options` - `$.animate()` options object
+  - `length` (optional) default: `500` ms
+  - `easing` (optional) default: `ease-in-out`
+  - `callback` (optional) executes once animation completes, exposes:
+    - `self` animated element
+
+Applies opacity fade out effect to an element. You can specify at what value it stops.
+
+```js
+$("button").click(() => {
+  // Content class elements will fade-out to opacity 0
+  $(".content").fadeOut()
+})
+```
 
 ### Fade Toggle
 
+Parameters:
+
+- `from` default: `0`
+- `to` default: `1`
+- `options` - `$.animate()` options object
+  - `length` (optional) default: `500` ms
+  - `easing` (optional) default: `ease-in-out`
+  - `callback` (optional) executes once animation completes, exposes:
+    - `self` animated element
+
+Toggles between `$.fadeIn` and `$.fadeOut()`.
+
+```js
+$("button").click(() => {
+  $(".content").fadeToggle(0, 0.5, { length: 500, easing: "linear" })
+})
+```
+
 ### Each
 
-### Async Each
+Parameters:
+
+- `callback`, exposes:
+  - `self` current iterated element
+  - `prev` previous element in iteration
+  - `index` index of iteration
+
+Iterates over selected elements and calls callback function on each iteration
+
+```js
+$("ul")
+  .children()
+  .each(({ self, index }) => {
+    $(self).text(`I am ${index + 1}}.`)
+  })
+```
+
+### Async each
+
+Parameters:
+
+- `callback`, exposes:
+  - `self` current iterated element
+  - `prev` previous element in iteration
+  - `index` index of iteration
+  - `next` function that must be called to execute next iteration
+
+Works exactly like `$.each()` but to execute next iteration, you must call the `next()` function. This iterator is good for chaining data fetching and other async actions.
+
+```js
+$("img").asyncEach(({ next, self }) => {
+  const url = $(self).attr("data-url")
+
+  new Promise((resolve) => {
+    return fetch("url/of/image")
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      /* */
+      $(self).attr("src", response.url)
+
+      next()
+    })
+})
+```
 
 ### Filter
+
+Parameters:
+
+- `callback` exposes:
+  - `self` iterated element
+  - `index`
+
+Iterates over matched elements and removes those which do not match the provided contition.
+
+```js
+const everyEvenChild = $("ul")
+  .children()
+  .filter(({ index }) => index % 2 === 0)
+  .get()
+```
 
 ### Append
 
