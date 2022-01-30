@@ -26,19 +26,19 @@ $(".list") // Get all elements with the class .list
 
 ### Selectors
 
-| Method       | Parameters                                                         | Summary                                                                                                 |
-| ------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| $(selector)  | `selectors`                                                        | Uses `querySelectorAll` and accepts wide variety of parameters. [Description](#selector)                |
-| $.get()      | `property` (optional)                                              | Returns either matched elements or array of selected property of matched elements. [Description](#each) |
-| $.is()       | `condition`                                                        | Iterates over matched elements and if 1 passes the condition, returns true. [Description](#each)        |
-| $.first()    | `callback` (optional)                                              | Selects the first element. [Description](#first)                                                        |
-| $.last()     | `callback` (optional)                                              | Selects the last element. [Description](#last)                                                          |
-| $.nth()      | <ul><li>`index`</li><li>`callback` (optional)</li></ul>            | Selects element at index `n`. [Description](#nth)                                                       |
-| $.prev()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects previous element or previous nth element. [Description](#prev)                                  |
-| $.next()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects next element or next nth element. [Description](#prev)                                          |
-| $.parent()   | `callback` (optional)                                              | Selects the element's parent node. [Description](#parent)                                               |
-| $.children() | `callback` (optional)                                              | Selects the element's child nodes. [Description](#children)                                             |
-| $.nthChild() | <ul><li>`index` </li><li>`callback` (optional)</li></ul>           | Selects element's child node at `index`. [Description](#nth-child)                                      |
+| Method       | Parameters                                                         | Summary                                                                                                     |
+| ------------ | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| $(selector)  | `selectors`                                                        | Uses `querySelectorAll` and accepts wide variety of parameters. [Description](#selector)                    |
+| $.get()      | `property` (optional)                                              | Returns either matched elements or array of selected property of matched elements. [Description](#selector) |
+| $.is()       | `condition`                                                        | Iterates over matched elements and if 1 passes the condition, returns true. [Description](#each)            |
+| $.first()    | `callback` (optional)                                              | Selects the first element. [Description](#first)                                                            |
+| $.last()     | `callback` (optional)                                              | Selects the last element. [Description](#last)                                                              |
+| $.nth()      | <ul><li>`index`</li><li>`callback` (optional)</li></ul>            | Selects element at index `n`. [Description](#nth)                                                           |
+| $.prev()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects previous element or previous nth element. [Description](#prev)                                      |
+| $.next()     | <ul><li>`index` (optional)</li><li>`callback` (optional)</li></ul> | Selects next element or next nth element. [Description](#prev)                                              |
+| $.parent()   | `callback` (optional)                                              | Selects the element's parent node. [Description](#parent)                                                   |
+| $.children() | `callback` (optional)                                              | Selects the element's child nodes. [Description](#children)                                                 |
+| $.nthChild() | <ul><li>`index` </li><li>`callback` (optional)</li></ul>           | Selects element's child node at `index`. [Description](#nth-child)                                          |
 
 ### Event binding
 
@@ -112,7 +112,7 @@ $("ul").on("click", ({ $state }) => console.log($state.listItems))
 
 ---
 
-### Selector `$()`
+### Selector
 
 Selects an array of elements which match the selector. It offers extensive ways to query elements. For full documentation check it out on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector).
 
@@ -138,3 +138,53 @@ const buttons = $("button").get()
 // Returns an array of every input's value
 const values = $("input").get("value")
 ```
+
+### Is
+
+Parameters;
+
+- `condition`
+
+Used in conditions. Accepts the same selector syntax as `$()`. Returns true if condition matches at least one element in the collection.
+
+```js
+if ($("[type=checkbox]").is(":checked")) {
+  // At least one checkbox is checked
+}
+```
+
+### First
+
+Parameters:
+
+- `callback` (optional) exposes:
+  - `self` selected element
+
+Selects the first element from the matched elements. Accepts a callback.
+
+```js
+$("li").first().text("I am first")
+```
+
+### Last
+
+Parameters:
+
+- `callback` (optional) exposes:
+  - `self` selected element
+
+Selects the last element from the matched elements. Accepts a callback.
+
+```js
+$("li").last().text("I am last :(")
+```
+
+### Nth
+
+Parameters
+
+- `index`
+- `callback` (optional) exposes:
+  - `self` selected element
+
+Selects the element at provided index from matched elements
