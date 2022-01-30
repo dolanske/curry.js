@@ -546,10 +546,11 @@ A different and more flexible approach to animation. Allows you to essentially e
 $("button").click(({ $util }) => {
   $("h1").animate(async ({ self, $util, start }) => {
     // Execute code before animation begins
-    // from which we can gain properties to use in the animation
 
     // For example, I can get the element's width and use that
     // const marginLeft = $util.getStyleProperty(self, "width")
+
+    // Or make an API call and then execute animation when it resolves
     await start(
       {
         marginLeft: "200px",
