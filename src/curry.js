@@ -969,6 +969,11 @@ function queryElement(selector) {
             node.removeAttribute("style")
             node.classList = clone.classList
             node.innerHTML = clone.innerHTML
+
+            for (const attr of clone.attributes) {
+              // node.setAttribute
+              console.log(attr)
+            }
           })
         })
       } else {
@@ -1371,11 +1376,11 @@ function queryElement(selector) {
      */
 
     $.attr = (property, value) => {
-      if (!element || element.length === 0) return $
+      if (!element || element.length === 0) return undefined
 
       if (!property) {
         console.warn("[$.attr] Did not provide required property name(s).")
-        return false
+        return undefined
       }
 
       // Returns the first matched element's property
@@ -1412,10 +1417,6 @@ function queryElement(selector) {
           }
         }
       })
-
-      // if (isArray(property)) {
-
-      // }
     }
 
     // TODO: Consider this for 1.2.0
