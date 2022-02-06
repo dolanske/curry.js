@@ -148,12 +148,17 @@ const values = $("input").get("value")
 Parameters:
 
 - `condition`
+- `applier` default: `every` (if condition is an array, set if it should apply to 'some', 'every' or 'none' of the selected elements)
 
 Used in conditions. Accepts the same selector syntax as `$()`. Returns true if condition satisfies at least one element in matched elements.
 
 ```js
 if ($("[type=checkbox]").is(":checked")) {
   // At least one checkbox is checked
+}
+
+if ($("ul").is(["ul", ".specific-list"], "some")) {
+  // Checks if ANY <ul> is, well, <ul> and has '.specific-list' class
 }
 ```
 

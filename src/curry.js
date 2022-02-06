@@ -719,7 +719,7 @@ function queryElement(selector) {
     }
 
     /**
-     * Selects the first element in the
+     * Selects the first element from the selected elements
      *
      * @param {Function} (Optional) callback
      * @returns Instance of curry for function chaining
@@ -735,6 +735,13 @@ function queryElement(selector) {
       return $
     }
 
+    /**
+     * Selects the last element from the selected elements
+     *
+     * @param {Function} (Optional) callback
+     * @returns Instance of curry for function chaining
+     */
+
     $.last = (callback) => {
       if (!element || element.length === 0) return $
 
@@ -745,6 +752,17 @@ function queryElement(selector) {
 
       return $
     }
+
+    /**
+     * Selects the last element from the selected elements
+     *
+     * @param {Function} (Optional) callback
+     * @returns Instance of curry for function chaining
+     */
+
+    // $.odd = () => {}
+
+    // $.event = () => {}
 
     /**
      * Appends html to the selected element(s)
