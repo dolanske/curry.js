@@ -195,7 +195,7 @@ Parameters:
 Selects the element at the provided index in matched elements. It is 1 indexed, meaning if no index or index 0 is provided, it returns the first element.
 
 ```js
-$("li").nth(2).text("I am last :(")
+$("li").nth(2).text("I am second!")
 ```
 
 ### Prev and Next
@@ -806,7 +806,6 @@ Removes matched elements from the DOM.
 ```js
 $("ul")
   .children()
-  .each(({ self, index }) => {
-    if (index % 2 === 0) $(self).del()
-  })
+  .filter(({ self, index }) => index % 2 === 0)
+  .del()
 ```

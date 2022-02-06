@@ -8,16 +8,16 @@
 
 function noop() {}
 
-function getStyleProperty(el, property) {
+function styleProp(el, property) {
   return window.getComputedStyle(el, null).getPropertyValue(property)
 }
 
-function isObject(value) {
+function isObj(value) {
   let type = typeof value
   return value != null && (type == "object" || type == "function")
 }
 
-function isArray(value) {
+function isArr(value) {
   return Array.isArray(value)
 }
 
@@ -29,15 +29,11 @@ function from(n, start = 0) {
   return Array.from({ length: n }, (_, i) => i + start)
 }
 
-function isNodeMap(list) {
-  return list.length !== undefined
-}
-
 function undef(property, def) {
   return isNil(property) ? def : property
 }
 
-function isFunction(func) {
+function isFunc(func) {
   return Object.prototype.toString.call(func) == "[object Function]"
 }
 
@@ -107,7 +103,7 @@ function bindListener(el, name, callback, $state, options) {
  * @param {Function} callback Execute on each loop
  */
 function map(elements, callback) {
-  if (isNodeMap(elements)) {
+  if (elements.length !== undefined) {
     for (let i = 0; i < elements.length; i++) {
       const shouldBreak = callback(elements[i], i)
 
@@ -123,7 +119,7 @@ function render(tag, attrs, children) {
   if (
     typeof attrs === "string" ||
     typeof attrs === "number" ||
-    Array.isArray(attrs)
+    Array.isArr(attrs)
   ) {
     children = attrs
     attrs = {}
@@ -131,7 +127,7 @@ function render(tag, attrs, children) {
 
   // Convert any non-array children to string for the HTML node creation
   if (!isNil(children)) {
-    if (!Array.isArray(children)) {
+    if (!Array.isArr(children)) {
       children = `${children}`
     } else if (typeof children[0] === "string") {
       children = children[0]
@@ -159,7 +155,7 @@ function getSiblingIndex(el) {
 }
 
 function createElement(vnode, container, where) {
-  if (isArray(vnode)) {
+  if (isArr(vnode)) {
     vnode.map((node) => createElement(node, container, where))
     return
   }
@@ -227,14 +223,13 @@ const formatAnimationOptions = (options = {}) => {
 // Helpers object that gets exposed in callback functions
 
 const $util = {
-  getStyleProperty,
-  isObject,
-  isArray,
+  styleProp,
+  isObj,
+  isArr,
   isNil,
-  isFunction,
+  isFunc,
   from,
   render,
-  isElements: isNodeMap,
   mapElements: map,
   getSiblingIndex,
   undef,
@@ -242,7 +237,7 @@ const $util = {
 }
 
 function queryElement(selector) {
-  if (isObject(selector) || selector.nodeType) return [selector]
+  if (isObj(selector) || selector.nodeType) return [selector]
 
   return document.querySelectorAll(selector)
 }
@@ -304,15 +299,13 @@ function queryElement(selector) {
     $.get = (property) => {
       if (!element || element.length === 0) return undefined
 
-      if (property) {
-        if (isNodeMap(element)) {
-          const params = []
-          map(element, (node) => {
-            if (node[property]) params.push(node[property])
-          })
+      if (property && element.lengtj !== undefined) {
+        const params = []
+        map(element, (node) => {
+          if (node[property]) params.push(node[property])
+        })
 
-          return params
-        }
+        return params
       }
 
       return element
@@ -375,7 +368,7 @@ function queryElement(selector) {
         return true
       }
       // If property is an object and style is undefined, we assign inline style
-      else if (isObject(property)) {
+      else if (isObj(property)) {
         Object.entries(property).map(([key, value]) => {
           map(element, (node) => {
             node.style[key] = value
@@ -402,7 +395,7 @@ function queryElement(selector) {
         return $
       }
 
-      if (isArray(classNames)) {
+      if (isArr(classNames)) {
         map(element, (node) => {
           classNames.map((item) => node.classList.add(item))
         })
@@ -438,7 +431,7 @@ function queryElement(selector) {
         return $
       }
 
-      if (isArray(classNames)) {
+      if (isArr(classNames)) {
         map(element, (node) => {
           classNames.map((item) => node.classList.remove(item))
         })
@@ -479,7 +472,7 @@ function queryElement(selector) {
         }
       }
 
-      if (isArray(classNames)) {
+      if (isArr(classNames)) {
         map(element, (node) => {
           classNames.map((cls) => toggle(cls, node))
         })
@@ -918,8 +911,7 @@ function queryElement(selector) {
       }
 
       map(element, (node) => {
-        const isActive =
-          getStyleProperty(node, "display") === "none" ? false : true
+        const isActive = styleProp(node, "display") === "none" ? false : true
 
         toggleSelf(isActive, node, onActive)
       })
@@ -938,7 +930,7 @@ function queryElement(selector) {
     $.hover = (functions) => {
       if (!element || element.length === 0) return $
 
-      if (isObject(functions) && !isFunction(functions)) {
+      if (isObj(functions) && !isFunc(functions)) {
         const { enter, leave, options } = functions
 
         if (enter && leave) {
@@ -951,29 +943,42 @@ function queryElement(selector) {
             "[$.hover] Function $.hover({ enter, leave }) requires both parameters. This chain node will be skipped."
           )
         }
-      } else if (isFunction(functions)) {
+      } else if (isFunc(functions)) {
         // Stores "clean" elements before any on-hover is applied
-        const cloned = []
+        let cloned = []
 
         map(element, (node, index) => {
-          cloned.push(node.cloneNode(true))
+          // cloned.push(node.cloneNode(true))
+          cloned[index] = node.cloneNode(true)
           // Apply styles like normal
-          $(node).on("mouseenter", (args) => functions({ ...args }))
+          $(node).on("mouseenter", (args) => {
+            functions({ ...args })
+          })
 
           // Reset node
           $(node).on("mouseleave", () => {
-            // Reset node
-            // TODO: Figure out attributes to reset
-            // TODO: replace attributes with clone
             const clone = cloned[index]
             node.removeAttribute("style")
             node.classList = clone.classList
             node.innerHTML = clone.innerHTML
 
-            for (const attr of clone.attributes) {
-              // node.setAttribute
-              console.log(attr)
+            const keepAttrs = []
+            // Remove all attributes, save the ones from the clone
+            // I had to use while because for some reason not all attributes
+            // would get removed in a for loop. There is probably faster
+            // way to achieve the same results but I have small brain
+            while (node.attributes.length > 0) {
+              const attr = node.attributes[0].name
+
+              node.removeAttribute(attr)
+
+              if ($(clone).attr(attr)) keepAttrs.push(attr)
             }
+
+            // Iterated over saved ones
+            keepAttrs.map((attr) => {
+              node.setAttribute(attr, $(clone).attr(attr))
+            })
           })
         })
       } else {
@@ -1093,7 +1098,7 @@ function queryElement(selector) {
 
       options = formatAnimationOptions(options)
 
-      if (isFunction(properties)) {
+      if (isFunc(properties)) {
         // Using the function callback
         const execute = properties
 
@@ -1236,7 +1241,7 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       const st = (el) => {
-        const display = getStyleProperty(el, "display")
+        const display = styleProp(el, "display")
 
         if (display === "none") {
           $(el).slideDown(duration, easing)
@@ -1256,12 +1261,21 @@ function queryElement(selector) {
      * Iterates over elements and if one passes the check (same as using querySelectorAll)
      * it returns true. Otherwise returns false
      *
-     * @param {String} condition
+     * @param {String | Array} condition
+     * @param {String} apply Used wif condition is array, sets how conditions are applied
      * @returns If condition matches or not
      */
 
-    $.is = (condition) => {
+    $.is = (condition, apply = "every") => {
       if (!element || element.length === 0) return false
+
+      if (isArr(condition)) {
+        if (!["some", "every", "none"].includes(apply)) {
+          console.warn(
+            '[$.is] Uknown condition method used. Please use "some", "every" or "none". \nAutomatically defaults to "every".'
+          )
+        }
+      }
 
       const matches = (el, selector) =>
         (
@@ -1274,7 +1288,25 @@ function queryElement(selector) {
         ).call(el, selector)
 
       for (const node of element) {
-        if (matches(node, condition)) return true
+        if (isArr(condition)) {
+          switch (apply) {
+            case "some": {
+              return condition.some((item) => matches(node, item))
+            }
+
+            case "none": {
+              return !condition.every((item) => matches(node, item))
+            }
+
+            // Default to every.
+            default:
+            case "every": {
+              return condition.every((item) => matches(node, item))
+            }
+          }
+        } else {
+          if (matches(node, condition)) return true
+        }
       }
 
       return false
@@ -1354,7 +1386,7 @@ function queryElement(selector) {
       options = formatAnimationOptions(options)
 
       map(element, (node) => {
-        const opacity = parseFloat(getStyleProperty(node, "opacity"))
+        const opacity = parseFloat(styleProp(node, "opacity"))
 
         if (opacity > from) {
           $(node).fadeOut(from, options)
@@ -1385,7 +1417,7 @@ function queryElement(selector) {
 
       // Returns the first matched element's property
       if (!value) {
-        if (isArray(property)) {
+        if (isArr(property)) {
           return property.map((prop) => element[0].getAttribute(prop))
         }
 
@@ -1393,8 +1425,8 @@ function queryElement(selector) {
       }
 
       map(element, (node) => {
-        if (isArray(property)) {
-          if (isArray(value)) {
+        if (isArr(property)) {
+          if (isArr(value)) {
             // Assign attribute value for property at index N to value at index N
             // Example [title,desc], ['Hello','World]
             // title=Hello, desc=World
@@ -1406,7 +1438,7 @@ function queryElement(selector) {
             property.map((prop) => node.setAttribute(prop, value))
           }
         } else {
-          if (isArray(value)) {
+          if (isArr(value)) {
             // Set every value to the attribute
             console.warn(
               "[$.attr] Cannot set array of values to a single property."
