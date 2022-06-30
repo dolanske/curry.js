@@ -664,16 +664,13 @@ Parameters:
 Works exactly like `$.each()` but to execute next iteration, you must call the `next()` function. This iterator is good for chaining data fetching and other async actions which could cause issues when all called instantly.
 
 ```js
-$("img").asyncEach(({ next, self }) => {
-  const url = $(self).attr("data-url")
+$(".users").asyncEach(({ next, self }) => {
+  const users = $(self).attr("data-users-endpoint")
 
-  new Promise((resolve) => {
-    return fetch("request/url")
-  })
+  new Promise((resolve) => return fetch(users))
     .then((response) => response.json())
     .then((response) => {
-      $(self).attr("src", response.url)
-
+      $(self).addChild(response.template)
       next()
     })
 })
