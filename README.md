@@ -667,7 +667,7 @@ Works exactly like `$.each()` but to execute next iteration, you must call the `
 $(".users").asyncEach(({ next, self }) => {
   const users = $(self).attr("data-users-endpoint")
 
-  new Promise((resolve) => return fetch(users))
+  new Promise((resolve) => fetch(users))
     .then((response) => response.json())
     .then((response) => {
       $(self).addChild(response.template)
