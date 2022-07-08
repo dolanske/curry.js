@@ -5,9 +5,6 @@
  * Helpers & Utilities
  *
  */
-
-function noop() {}
-
 function styleProp(el, property) {
   return window.getComputedStyle(el, null).getPropertyValue(property)
 }
@@ -35,6 +32,10 @@ function undef(property, def) {
 
 function isFunc(func) {
   return Object.prototype.toString.call(func) == "[object Function]"
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 function bez(...args) {
@@ -84,13 +85,15 @@ function bindListener(el, name, callback, $state, options) {
   el.addEventListener(
     name,
     (e) => {
-      callback({
-        event: e,
-        e: e,
-        self: el,
-        $util,
-        $state,
-      })
+      callback.apply(el, [
+        {
+          event: e,
+          e: e,
+          self: el,
+          $util,
+          $state,
+        },
+      ])
     },
     options
   )
@@ -105,7 +108,7 @@ function bindListener(el, name, callback, $state, options) {
 function map(elements, callback) {
   if (elements.length !== undefined) {
     for (let i = 0; i < elements.length; i++) {
-      const shouldBreak = callback(elements[i], i)
+      const shouldBreak = callback.apply(elements[i], [elements[i], i])
 
       if (shouldBreak) {
         break
@@ -234,6 +237,7 @@ const $util = {
   getSiblingIndex,
   undef,
   bez,
+  delay,
 }
 
 function queryElement(selector) {
@@ -336,7 +340,7 @@ function queryElement(selector) {
       if (!element || element.length === 0) return $
 
       map(element, (node) => {
-        bindListener(node, event, callback, $state, options)
+        bindListener(node, event, callback.bind(node), $state, options)
       })
 
       return $
@@ -501,7 +505,7 @@ function queryElement(selector) {
       let prev = null
 
       map(element, (node, index) => {
-        callback({ self: node, prev, $util, index, $state })
+        callback.apply(node, [{ self: node, prev, $util, index, $state }])
         prev = node
       })
 
@@ -529,14 +533,16 @@ function queryElement(selector) {
 
       for (const el of element) {
         await new Promise((resolve) =>
-          callback({
-            self: el,
-            prev,
-            $util,
-            index,
-            next: resolve,
-            $state,
-          })
+          callback.apply(el, [
+            {
+              self: el,
+              prev,
+              $util,
+              index,
+              next: resolve,
+              $state,
+            },
+          ])
         )
 
         prev = el
@@ -577,7 +583,7 @@ function queryElement(selector) {
       }
 
       if (callback) {
-        callback({ self: element[0], $util, index, $state })
+        callback.apply(element[0], [{ self: element[0], $util, index, $state }])
       }
 
       return $
@@ -621,7 +627,7 @@ function queryElement(selector) {
       })
 
       children.map((child) => {
-        if (callback) callback({ self: child, $util, $state })
+        if (callback) callback.apply(child, [{ self: child, $util, $state }])
       })
 
       element = children
@@ -645,7 +651,9 @@ function queryElement(selector) {
         children.push(...node.children)
 
         if (callback) {
-          callback({ self: node.children, parent: node, $util, $state })
+          callback.apply(node.children, [
+            { self: node.children, parent: node, $util, $state },
+          ])
         }
       })
 
@@ -700,12 +708,12 @@ function queryElement(selector) {
 
             // Callback
             if (callback) {
-              callback({ self: node, prev, index: getSiblingIndex(node), $util, $state, }) //prettier-ignore
+              callback.apply(node, [{ self: node, prev, index: getSiblingIndex(node), $util, $state, }]) //prettier-ignore
             }
           } else {
             // otherwise just select the next item
             if (callback) {
-              callback({ self: node[siblingPlace], prev: node, index: getSiblingIndex(node[siblingPlace]), $util, $state, }) //prettier-ignore
+              callback.apply(node, [{ self: node[siblingPlace], prev: node, index: getSiblingIndex(node[siblingPlace]), $util, $state, }]) //prettier-ignore
             }
 
             matches.push(node[siblingPlace])
@@ -730,7 +738,7 @@ function queryElement(selector) {
 
       element = [element[0]]
 
-      if (callback) callback({ self: element, $util, $state })
+      if (callback) callback.apply(element, [{ self: element, $util, $state }])
 
       return $
     }
@@ -748,7 +756,8 @@ function queryElement(selector) {
       const index = element.length - 1
       element = [element[index]]
 
-      if (callback) callback({ self: element, $util, index, $state })
+      if (callback)
+        callback.apply(element, [{ self: element, $util, index, $state }])
 
       return $
     }
@@ -760,9 +769,11 @@ function queryElement(selector) {
      * @returns Instance of curry for function chaining
      */
 
+    // TODO
     // $.odd = () => {}
 
-    // $.event = () => {}
+    // TODO
+    // $.even = () => {}
 
     /**
      * Appends html to the selected element(s)
@@ -777,7 +788,7 @@ function queryElement(selector) {
       map(element, (node) => {
         const vdom =
           typeof callback === "function"
-            ? callback({ self: node, render, $util, $state })
+            ? callback.apply(node, [{ self: node, render, $util, $state }])
             : callback
 
         if (typeof vdom === "string") {
@@ -803,7 +814,7 @@ function queryElement(selector) {
       map(element, (node) => {
         const vdom =
           typeof callback === "function"
-            ? callback({ self: node, render, $util, $state })
+            ? callback.apply(node, [{ self: node, render, $util, $state }])
             : callback
 
         if (typeof vdom === "string") {
@@ -830,7 +841,9 @@ function queryElement(selector) {
       map(element, (node) => {
         const vdom =
           typeof callback === "function"
-            ? callback({ self: element, render, $util, $state })
+            ? callback.apply(element, [
+                { self: element, render, $util, $state },
+              ])
             : callback
 
         if (typeof vdom === "string") {
@@ -1020,7 +1033,11 @@ function queryElement(selector) {
       if (!element || !callback) return $
 
       map(element, (node) => {
-        $(node).on("click", (args) => callback({ ...args }), options)
+        $(node).on(
+          "click",
+          (args) => callback.apply(node, [{ ...args }]),
+          options
+        )
       })
 
       return $
@@ -1044,12 +1061,14 @@ function queryElement(selector) {
           const parent = node.parentNode
 
           if (callback) {
-            callback({
-              self: parent,
-              child: node,
-              $util,
-              $state,
-            })
+            callback.apply(parent, [
+              {
+                self: parent,
+                child: node,
+                $util,
+                $state,
+              },
+            ])
           }
 
           children.push(parent)
@@ -1084,12 +1103,14 @@ function queryElement(selector) {
       const filtered = []
 
       map(element, (node, index) => {
-        const result = callback({
-          self: node,
-          index,
-          $util,
-          $state,
-        })
+        const result = callback.apply(node, [
+          {
+            self: node,
+            index,
+            $util,
+            $state,
+          },
+        ])
 
         if (result) {
           filtered.push(node)
@@ -1132,7 +1153,7 @@ function queryElement(selector) {
           return Promise.all(promises)
         }
 
-        await execute({ self: element, $util, start, $state })
+        await execute.apply(element, [{ self: element, $util, start, $state }])
       } else {
         // Properties is an object
         map(element, (node) => {
@@ -1167,7 +1188,7 @@ function queryElement(selector) {
         // Reapply previous transition property
         el.style.transition = prevTransition
 
-        if (callback) callback({ self: el, $util, $state })
+        if (callback) callback.apply(el, [{ self: el, $util, $state }])
       })
     }
 
@@ -1182,23 +1203,20 @@ function queryElement(selector) {
     $.slideDown = (duration = 500, easing = "ease-in-out") => {
       if (!element || element.length === 0) return $
 
-      const sd = (el) => {
-        // Set default pre-style values
+      const sd = async (el) => {
         el.style.display = "block"
-        el.style.overflow = "hidden"
-        el.style.height = 0
+        el.style.transform = `scale(1, 0)`
 
-        // Save transition and height
-        const height = el.scrollHeight
+        await delay(1)
 
         $(el).animate(
-          { height },
+          { transform: `scale(1,1)` },
           {
             duration,
             easing,
-            callback: ({ self }) => {
-              self.style.overflow = "inherit"
-              self.style.height = "inherit"
+            callback() {
+              this.style.transformOrigin = "inherit"
+              this.style.transform = `inherit`
             },
           }
         )
@@ -1222,18 +1240,20 @@ function queryElement(selector) {
     $.slideUp = (duration = 500, easing = "ease-in-out") => {
       if (!element || element.length === 0) return $
 
-      const su = (el) => {
-        el.style.overflow = "hidden"
-        el.style.height = el.scrollHeight
+      const su = async (el) => {
+        el.style.transformOrigin = `center top`
+
+        await delay(1)
 
         setTimeout(() => {
           $(el).animate(
-            { height: 0 },
+            { transform: `scale(1, 0)` },
             {
               duration,
               easing,
-              callback: ({ self }) => {
-                self.style.display = "none"
+              callback() {
+                this.style.display = "none"
+                // this.style.transform = "inherit"
               },
             }
           )
@@ -1274,6 +1294,18 @@ function queryElement(selector) {
 
       return $
     }
+
+    // TODO
+    // $.slideDownLeft
+
+    // TODO
+    // $.slideUpLeft
+
+    // TODO
+    // $.slideDownRight
+
+    // TODO
+    // $.slideUpRight
 
     /**
      * Iterates over elements and if one passes the check (same as using querySelectorAll)
