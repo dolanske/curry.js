@@ -148,12 +148,17 @@ const values = $("input").get("value")
 Parameters:
 
 - `condition`
+- `applier` default: `every` (if condition is an array, set if it should apply to 'some', 'every' or 'none' of the selected elements)
 
 Used in conditions. Accepts the same selector syntax as `$()`. Returns true if condition satisfies at least one element in matched elements.
 
 ```js
 if ($("[type=checkbox]").is(":checked")) {
   // At least one checkbox is checked
+}
+
+if ($("ul").is(["ul", ".specific-list"], "some")) {
+  // Checks if ANY <ul> is, well, <ul> and has '.specific-list' class
 }
 ```
 
@@ -195,7 +200,7 @@ Parameters:
 Selects the element at the provided index in matched elements. It is 1 indexed, meaning if no index or index 0 is provided, it returns the first element.
 
 ```js
-$("li").nth(2).text("I am last :(")
+$("li").nth(2).text("I am second!")
 ```
 
 ### Prev and Next
@@ -803,7 +808,6 @@ Removes matched elements from the DOM.
 ```js
 $("ul")
   .children()
-  .each(({ self, index }) => {
-    if (index % 2 === 0) $(self).del()
-  })
+  .filter(({ self, index }) => index % 2 === 0)
+  .del()
 ```
