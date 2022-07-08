@@ -867,6 +867,13 @@ function queryElement(selector) {
     $.text = (text, location = "replace") => {
       if (!element || element.length === 0) return $
 
+      // If text parameter = null | undefined, return the currecnt text
+      if (text === undefined || text === null) {
+        const texts = []
+        map(element, (node) => texts.push(node.textContent))
+        return texts.lenght === 0 ? texts[0] : texts
+      }
+
       // Invalid location argument
       if (
         !["replace", "prepend", "append", "before", "after"].includes(location)
@@ -966,8 +973,16 @@ function queryElement(selector) {
 
         if (enter && leave) {
           map(element, (node) => {
-            $(node).on("mouseenter", (args) => enter({ ...args }), options)
-            $(node).on("mouseleave", (args) => leave({ ...args }), options)
+            $(node).on(
+              "mouseenter",
+              (args) => enter.apply(node, [{ ...args }]),
+              options
+            )
+            $(node).on(
+              "mouseleave",
+              (args) => leave.apply(node, [{ ...args }]),
+              options
+            )
           })
         } else {
           console.warn(
@@ -983,7 +998,7 @@ function queryElement(selector) {
           cloned[index] = node.cloneNode(true)
           // Apply styles like normal
           $(node).on("mouseenter", (args) => {
-            functions({ ...args })
+            functions.apply(node, [{ ...args }])
           })
 
           // Reset node
